@@ -7,4 +7,5 @@ class ApiConstants {
   static const String updateProfile = '$baseUrl/api/v1/profile';
   static const String verifyQr = '$baseUrl/api/v1/qr/verify';
   static const String me = '$baseUrl/api/v1/me';
+  static const String orders = '$baseUrl/api/v1/orders';
 }
