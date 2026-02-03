@@ -6,6 +6,7 @@ import '../../app/app_theme.dart';
 import '../../viewmodels/qr_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import 'qr_success_view.dart';
 
 class QrScannerView extends StatefulWidget {
   const QrScannerView({super.key});
@@ -53,7 +54,23 @@ class _QrScannerViewState extends State<QrScannerView> {
         final success = await viewModel.verifyQr(code);
 
         if (mounted) {
-          _showResultDialog(context, success, viewModel);
+          if (success && viewModel.lastScanResult != null) {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) =>
+                    QrSuccessView(response: viewModel.lastScanResult!),
+              ),
+            );
+            // After coming back from success screen, reset scanning
+            if (mounted) {
+              setState(() {
+                _isScanning = true;
+                viewModel.reset();
+              });
+            }
+          } else {
+            _showResultDialog(context, false, viewModel);
+          }
         }
       }
     }

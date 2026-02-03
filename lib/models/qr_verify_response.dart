@@ -2,6 +2,8 @@ class QrVerifyResponse {
   final bool success;
   final String result;
   final String message;
+  final int? earned;
+  final int? balance;
   final QrVerifyDetail? qr;
   final ProductVerifyDetail? product;
 
@@ -9,6 +11,8 @@ class QrVerifyResponse {
     required this.success,
     required this.result,
     required this.message,
+    this.earned,
+    this.balance,
     this.qr,
     this.product,
   });
@@ -18,6 +22,8 @@ class QrVerifyResponse {
       success: json['success'] as bool,
       result: json['result'] as String? ?? '',
       message: json['message'] as String? ?? '',
+      earned: json['earned'] as int?,
+      balance: json['balance'] as int?,
       qr: json['qr'] != null ? QrVerifyDetail.fromJson(json['qr']) : null,
       product: json['product'] != null
           ? ProductVerifyDetail.fromJson(json['product'])
