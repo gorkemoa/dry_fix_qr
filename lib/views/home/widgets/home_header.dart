@@ -14,81 +14,101 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: SizeTokens.p24,
-        vertical: SizeTokens.p16,
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        SizeTokens.p24,
+        SizeTokens.p24,
+        SizeTokens.p24,
+        SizeTokens.p24,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Hoş geldin,",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f16,
-                    color: AppColors.gray,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Hoş geldiniz,",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f14,
+                      color: AppColors.gray,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Text(
+                    userName,
+                    style: TextStyle(
+                      fontSize: SizeTokens.f20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkBlue,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(SizeTokens.r12),
+                  border: Border.all(
+                    color: AppColors.darkBlue.withOpacity(0.1),
                   ),
                 ),
-                Text(
-                  userName,
-                  style: TextStyle(
-                    fontSize: SizeTokens.f20 * 1.2,
-                    fontWeight: FontWeight.bold,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.notifications_none_rounded,
                     color: AppColors.darkBlue,
                   ),
+                  onPressed: () {},
                 ),
-                SizedBox(height: SizeTokens.p4),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: SizeTokens.p8,
-                    vertical: SizeTokens.p4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.blue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(SizeTokens.r20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.wallet,
-                        color: AppColors.blue,
-                        size: SizeTokens.f14,
-                      ),
-                      SizedBox(width: SizeTokens.p4),
-                      Text(
-                        "DryPara: $tokenBalance",
-                        style: TextStyle(
-                          fontSize: SizeTokens.f14 * 0.9,
-                          color: AppColors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+          SizedBox(height: SizeTokens.p20),
           Container(
+            padding: EdgeInsets.all(SizeTokens.p16),
             decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(SizeTokens.r12),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.darkBlue.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
+              color: AppColors.darkBlue,
+              borderRadius: BorderRadius.circular(SizeTokens.r16),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: AppColors.white,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: SizeTokens.p12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "DryPara Bakiyesi",
+                      style: TextStyle(
+                        fontSize: SizeTokens.f12,
+                        color: AppColors.white.withOpacity(0.7),
+                      ),
+                    ),
+                    Text(
+                      "$tokenBalance DryPara",
+                      style: TextStyle(
+                        fontSize: SizeTokens.f18,
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.menu, color: AppColors.darkBlue),
-              onPressed: () {},
             ),
           ),
         ],

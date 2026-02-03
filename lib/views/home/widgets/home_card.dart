@@ -20,55 +20,53 @@ class HomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(SizeTokens.r20),
-      child: Container(
-        padding: EdgeInsets.all(SizeTokens.p20),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(SizeTokens.r20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.darkBlue.withOpacity(0.03),
-              blurRadius: 20,
-              spreadRadius: 0,
-              offset: const Offset(0, 10),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r12),
+        border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(SizeTokens.r12),
+          child: Padding(
+            padding: EdgeInsets.all(SizeTokens.p16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(SizeTokens.p8),
+                  decoration: BoxDecoration(
+                    color: iconColor.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                  ),
+                  child: Icon(icon, color: iconColor, size: SizeTokens.p24),
+                ),
+                const Spacer(),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: SizeTokens.f12,
+                    color: AppColors.gray,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(SizeTokens.p12),
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: iconColor, size: SizeTokens.p32),
-            ),
-            SizedBox(height: SizeTokens.p16),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: SizeTokens.f16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.darkBlue,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: SizeTokens.p8),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: SizeTokens.f14 * 0.9,
-                color: AppColors.gray,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+          ),
         ),
       ),
     );

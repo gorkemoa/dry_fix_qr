@@ -16,64 +16,51 @@ class ProductItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(SizeTokens.r16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.darkBlue.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
-            Expanded(
+            AspectRatio(
+              aspectRatio: 1,
               child: Stack(
                 children: [
                   Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(SizeTokens.r16),
-                        topRight: Radius.circular(SizeTokens.r16),
-                      ),
-                    ),
+                    height: double.infinity,
+                    decoration: const BoxDecoration(color: Colors.transparent),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(SizeTokens.r16),
-                        topRight: Radius.circular(SizeTokens.r16),
-                      ),
                       child: Image.network(
                         product.image,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
                             const Icon(
-                              Icons.image_not_supported_outlined,
+                              Icons.inventory_2_outlined,
                               color: AppColors.gray,
+                              size: 32,
                             ),
                       ),
                     ),
                   ),
                   if (product.stock <= 5 && product.stock > 0)
                     Positioned(
-                      top: SizeTokens.p8,
-                      right: SizeTokens.p8,
+                      top: 8,
+                      right: 8,
                       child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p8,
-                          vertical: SizeTokens.p4,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(SizeTokens.r8),
+                          color: Colors.orange.shade800,
+                          borderRadius: BorderRadius.circular(0),
                         ),
                         child: Text(
                           "Son ${product.stock}",
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
-                            fontSize: SizeTokens.f12 * 0.8,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -83,19 +70,16 @@ class ProductItem extends StatelessWidget {
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(SizeTokens.r16),
-                            topRight: Radius.circular(SizeTokens.r16),
-                          ),
+                          color: Colors.black.withOpacity(0.4),
+                          borderRadius: BorderRadius.vertical(),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             "TÜKENDİ",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: SizeTokens.f14,
+                              fontSize: 12,
                             ),
                           ),
                         ),
@@ -111,44 +95,38 @@ class ProductItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    product.name,
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.darkBlue,
+                  SizedBox(
+                    height: 40,
+                    child: Text(
+                      product.name,
+                      style: TextStyle(
+                        fontSize: SizeTokens.f14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.darkBlue,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: SizeTokens.p4),
-                  if (product.tokenPrice != 0) ...[
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.toll_outlined,
-                          size: SizeTokens.p16,
-                          color: AppColors.blue,
-                        ),
-                        SizedBox(width: SizeTokens.p4),
-                        Text(
-                          "${product.tokenPrice} DryPara",
-                          style: TextStyle(
-                            fontSize: SizeTokens.f14,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.blue,
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 4),
+                  if (product.tokenPrice != 0)
+                    Text(
+                      "${product.tokenPrice} DryPara",
+                      style: TextStyle(
+                        fontSize: SizeTokens.f16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.blue,
+                      ),
                     ),
-                    SizedBox(height: SizeTokens.p4),
-                  ],
                   if (product.price != "0.00")
                     Text(
-                      "${product.price} ₺",
+                      "${product.price} DryPara",
                       style: TextStyle(
                         fontSize: SizeTokens.f12,
                         color: AppColors.gray,
+                        decoration: product.tokenPrice != 0
+                            ? TextDecoration.none
+                            : TextDecoration.none,
                       ),
                     ),
                 ],

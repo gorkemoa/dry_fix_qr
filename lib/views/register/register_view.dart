@@ -28,96 +28,160 @@ class _RegisterViewState extends State<RegisterView> {
     final viewModel = Provider.of<RegisterViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Kayıt Ol")),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.darkBlue,
+            size: 20,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "Kayıt Ol",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontSize: SizeTokens.f18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(SizeTokens.p24),
+        padding: EdgeInsets.symmetric(
+          horizontal: SizeTokens.p32,
+          vertical: SizeTokens.p16,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               "Yeni Hesap Oluştur",
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: SizeTokens.f20 * 1.5,
+              style: TextStyle(
+                fontSize: SizeTokens.f24,
                 fontWeight: FontWeight.bold,
                 color: AppColors.darkBlue,
+                letterSpacing: -0.5,
               ),
-              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: SizeTokens.p8),
+            Text(
+              "Sisteme kayıt olmak için bilgilerinizi girin.",
+              style: TextStyle(fontSize: SizeTokens.f14, color: AppColors.gray),
             ),
             SizedBox(height: SizeTokens.p32),
+
+            _buildFieldLabel("Ad Soyad"),
             _buildTextField(
               controller: _nameController,
-              label: "Ad Soyad",
-              icon: Icons.person_outline,
+              hint: "Örn: Ahmet Yılmaz",
+              icon: Icons.person_outline_rounded,
             ),
-            SizedBox(height: SizeTokens.p16),
+            SizedBox(height: SizeTokens.p20),
+
+            _buildFieldLabel("E-Posta"),
             _buildTextField(
               controller: _emailController,
-              label: "E-Posta",
+              hint: "Örn: ahmet@domain.com",
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(height: SizeTokens.p16),
+            SizedBox(height: SizeTokens.p20),
+
+            _buildFieldLabel("Telefon"),
             _buildTextField(
               controller: _phoneController,
-              label: "Telefon",
+              hint: "+90 5xx ...",
               icon: Icons.phone_android_outlined,
               keyboardType: TextInputType.phone,
             ),
-            SizedBox(height: SizeTokens.p16),
+            SizedBox(height: SizeTokens.p20),
+
+            _buildFieldLabel("Şifre"),
             _buildTextField(
               controller: _passwordController,
-              label: "Şifre",
-              icon: Icons.lock_outline,
+              hint: "••••••••",
+              icon: Icons.lock_outline_rounded,
               obscureText: true,
             ),
-            SizedBox(height: SizeTokens.p16),
+            SizedBox(height: SizeTokens.p20),
+
+            _buildFieldLabel("Şifre Tekrar"),
             _buildTextField(
               controller: _passwordConfirmController,
-              label: "Şifre Tekrar",
-              icon: Icons.lock_outline,
+              hint: "••••••••",
+              icon: Icons.lock_outline_rounded,
               obscureText: true,
             ),
+
             SizedBox(height: SizeTokens.p32),
+
             if (viewModel.isLoading)
               const Center(
-                child: CircularProgressIndicator(color: AppColors.blue),
+                child: CircularProgressIndicator(color: AppColors.darkBlue),
               )
             else
-              ElevatedButton(
-                onPressed: () async {
-                  final request = RegisterRequest(
-                    name: _nameController.text,
-                    email: _emailController.text,
-                    phone: _phoneController.text,
-                    password: _passwordController.text,
-                    passwordConfirmation: _passwordConfirmController.text,
-                  );
-                  final success = await viewModel.register(request);
-                  if (success && mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const HomeView()),
-                      (route) => false,
+              SizedBox(
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final request = RegisterRequest(
+                      name: _nameController.text,
+                      email: _emailController.text,
+                      phone: _phoneController.text,
+                      password: _passwordController.text,
+                      passwordConfirmation: _passwordConfirmController.text,
                     );
-                  }
-                },
-                child: Text(
-                  "Kayıt Ol",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f16,
-                    fontWeight: FontWeight.bold,
+                    final success = await viewModel.register(request);
+                    if (success && mounted) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const HomeView()),
+                        (route) => false,
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.darkBlue,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(SizeTokens.r8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Kayıt Ol",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
+
             if (viewModel.errorMessage != null)
               Padding(
                 padding: EdgeInsets.only(top: SizeTokens.p16),
                 child: Text(
                   viewModel.errorMessage!,
-                  style: const TextStyle(color: Colors.redAccent),
+                  style: const TextStyle(color: Colors.redAccent, fontSize: 13),
                   textAlign: TextAlign.center,
                 ),
               ),
+
+            SizedBox(height: SizeTokens.p32),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: SizeTokens.p8),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: SizeTokens.f12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.darkBlue.withOpacity(0.7),
         ),
       ),
     );
@@ -125,7 +189,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   Widget _buildTextField({
     required TextEditingController controller,
-    required String label,
+    required String hint,
     required IconData icon,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
@@ -135,15 +199,29 @@ class _RegisterViewState extends State<RegisterView> {
       obscureText: obscureText,
       keyboardType: keyboardType,
       decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: AppColors.gray),
-        labelStyle: const TextStyle(color: AppColors.gray),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SizeTokens.r12),
-          borderSide: const BorderSide(color: AppColors.blue),
+        hintText: hint,
+        hintStyle: TextStyle(
+          color: AppColors.gray.withOpacity(0.5),
+          fontSize: SizeTokens.f14,
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: SizeTokens.p16,
+          vertical: SizeTokens.p12,
+        ),
+        filled: true,
+        fillColor: AppColors.background,
+        prefixIcon: Icon(
+          icon,
+          color: AppColors.darkBlue.withOpacity(0.5),
+          size: 20,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SizeTokens.r12),
+          borderRadius: BorderRadius.circular(SizeTokens.r8),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(SizeTokens.r8),
+          borderSide: const BorderSide(color: AppColors.darkBlue, width: 1),
         ),
       ),
     );
