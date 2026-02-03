@@ -5,6 +5,7 @@ import '../../viewmodels/login_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
+import '../register/register_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -116,18 +117,17 @@ class _LoginViewState extends State<LoginView> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            if (viewModel.user != null)
-              Padding(
-                padding: EdgeInsets.only(top: SizeTokens.p16),
-                child: Text(
-                  "Hoşgeldin, ${viewModel.user!.name}\nBakiye: ${viewModel.user!.tokenBalance}",
-                  style: const TextStyle(
-                    color: AppColors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const RegisterView()));
+              },
+              child: const Text(
+                "Hesabın yok mu? Kayıt Ol",
+                style: TextStyle(color: AppColors.blue),
               ),
+            ),
           ],
         ),
       ),

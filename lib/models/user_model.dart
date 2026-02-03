@@ -40,11 +40,13 @@ class User {
 
 class AuthResponse {
   final bool success;
+  final String? message;
   final String token;
   final User user;
 
   AuthResponse({
     required this.success,
+    this.message,
     required this.token,
     required this.user,
   });
@@ -52,9 +54,36 @@ class AuthResponse {
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(
       success: json['success'] as bool,
+      message: json['message'] as String?,
       token: json['token'] as String,
       user: User.fromJson(json['user']),
     );
+  }
+}
+
+class RegisterRequest {
+  final String name;
+  final String email;
+  final String phone;
+  final String password;
+  final String passwordConfirmation;
+
+  RegisterRequest({
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.password,
+    required this.passwordConfirmation,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
+    };
   }
 }
 

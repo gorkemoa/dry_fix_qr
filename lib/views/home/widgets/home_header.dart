@@ -4,7 +4,13 @@ import '../../../core/responsive/size_tokens.dart';
 
 class HomeHeader extends StatelessWidget {
   final String userName;
-  const HomeHeader({super.key, required this.userName});
+  final int tokenBalance;
+
+  const HomeHeader({
+    super.key,
+    required this.userName,
+    required this.tokenBalance,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,25 +22,57 @@ class HomeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Hoş geldin,",
-                style: TextStyle(
-                  fontSize: SizeTokens.f16,
-                  color: AppColors.gray,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Hoş geldin,",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    color: AppColors.gray,
+                  ),
                 ),
-              ),
-              Text(
-                userName,
-                style: TextStyle(
-                  fontSize: SizeTokens.f20 * 1.2,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.darkBlue,
+                Text(
+                  userName,
+                  style: TextStyle(
+                    fontSize: SizeTokens.f20 * 1.2,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: SizeTokens.p4),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeTokens.p8,
+                    vertical: SizeTokens.p4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(SizeTokens.r20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.wallet,
+                        color: AppColors.blue,
+                        size: SizeTokens.f14,
+                      ),
+                      SizedBox(width: SizeTokens.p4),
+                      Text(
+                        "Bakiye: $tokenBalance",
+                        style: TextStyle(
+                          fontSize: SizeTokens.f14 * 0.9,
+                          color: AppColors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           Container(
             decoration: BoxDecoration(

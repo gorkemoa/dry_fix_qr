@@ -4,8 +4,9 @@ import 'app/app_theme.dart';
 import 'core/network/api_client.dart';
 import 'services/auth_service.dart';
 import 'viewmodels/login_view_model.dart';
-import 'views/login/login_view.dart';
+import 'viewmodels/register_view_model.dart';
 import 'viewmodels/home_view_model.dart';
+import 'views/login/login_view.dart';
 // import 'views/home/home_view.dart'; // No longer needed here if not initial home
 
 void main() {
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel(authService)),
-        ChangeNotifierProvider(create: (_) => HomeViewModel()),
+        ChangeNotifierProvider(create: (_) => RegisterViewModel(authService)),
+        ChangeNotifierProvider(create: (_) => HomeViewModel(authService)),
       ],
       child: MaterialApp(
         title: 'DryFix Boyacı',

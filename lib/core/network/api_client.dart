@@ -5,7 +5,6 @@ import '../utils/logger.dart';
 
 class ApiClient {
   late final Dio _dio;
-  String? _token;
 
   ApiClient() {
     _dio = Dio(
@@ -19,7 +18,6 @@ class ApiClient {
   }
 
   void setToken(String token) {
-    _token = token;
     _dio.options.headers['Authorization'] = 'Bearer $token';
     Logger.info('Token updated in ApiClient');
   }
