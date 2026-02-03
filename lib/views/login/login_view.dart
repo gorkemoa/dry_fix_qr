@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../app/app_theme.dart';
 import '../../viewmodels/login_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../home/home_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -36,6 +38,7 @@ class _LoginViewState extends State<LoginView> {
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontSize: SizeTokens.f20 * 1.5,
                 fontWeight: FontWeight.bold,
+                color: AppColors.darkBlue,
               ),
               textAlign: TextAlign.center,
             ),
@@ -44,6 +47,11 @@ class _LoginViewState extends State<LoginView> {
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: "E-Posta",
+                labelStyle: const TextStyle(color: AppColors.gray),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(SizeTokens.r12),
+                  borderSide: const BorderSide(color: AppColors.blue),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(SizeTokens.r12),
                 ),
@@ -54,6 +62,11 @@ class _LoginViewState extends State<LoginView> {
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: "Şifre",
+                labelStyle: const TextStyle(color: AppColors.gray),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(SizeTokens.r12),
+                  borderSide: const BorderSide(color: AppColors.blue),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(SizeTokens.r12),
                 ),
@@ -62,24 +75,36 @@ class _LoginViewState extends State<LoginView> {
             ),
             SizedBox(height: SizeTokens.p24),
             if (viewModel.isLoading)
-              const Center(child: CircularProgressIndicator())
+              const Center(
+                child: CircularProgressIndicator(color: AppColors.blue),
+              )
             else
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.darkBlue,
                   padding: EdgeInsets.symmetric(vertical: SizeTokens.p16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(SizeTokens.r12),
                   ),
                 ),
-                onPressed: () {
-                  viewModel.login(
+                onPressed: () async {
+                  await viewModel.login(
                     _emailController.text,
                     _passwordController.text,
                   );
+                  if (viewModel.user != null && mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const HomeView()),
+                    );
+                  }
                 },
                 child: Text(
                   "Giriş Yap",
-                  style: TextStyle(fontSize: SizeTokens.f16),
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             if (viewModel.errorMessage != null)
@@ -87,7 +112,7 @@ class _LoginViewState extends State<LoginView> {
                 padding: EdgeInsets.only(top: SizeTokens.p16),
                 child: Text(
                   viewModel.errorMessage!,
-                  style: const TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.redAccent),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -96,7 +121,10 @@ class _LoginViewState extends State<LoginView> {
                 padding: EdgeInsets.only(top: SizeTokens.p16),
                 child: Text(
                   "Hoşgeldin, ${viewModel.user!.name}\nBakiye: ${viewModel.user!.tokenBalance}",
-                  style: const TextStyle(color: Colors.green),
+                  style: const TextStyle(
+                    color: AppColors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),

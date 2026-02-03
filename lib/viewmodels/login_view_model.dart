@@ -26,10 +26,10 @@ class LoginViewModel extends ChangeNotifier {
 
     if (result is Success<AuthResponse>) {
       _user = result.data.user;
-      // Note: Ideally, store the token here or via a SessionManager
-      Logger.log("Login Success: Token: ${result.data.token}");
+      Logger.info("Login Success: User: ${_user?.name}");
     } else if (result is Failure<AuthResponse>) {
       _errorMessage = result.errorMessage;
+      Logger.warning("Login Failed: $_errorMessage");
     }
 
     _isLoading = false;
