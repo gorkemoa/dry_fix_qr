@@ -51,6 +51,19 @@ class ApiClient {
     }
   }
 
+  Future<dynamic> put(String path, {dynamic data}) async {
+    Logger.request('PUT', path, data);
+    try {
+      final response = await _dio.put(path, data: data);
+      Logger.response(path, response.data);
+      return response.data;
+    } on DioException catch (e) {
+      final error = _handleDioError(e);
+      Logger.error('PUT FAILED: $path', error.message, e.stackTrace);
+      throw error;
+    }
+  }
+
   ApiException _handleDioError(DioException error) {
     if (error.response != null) {
       String message = 'Unknown error';

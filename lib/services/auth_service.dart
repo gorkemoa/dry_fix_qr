@@ -62,10 +62,18 @@ class AuthService {
 
   Future<ApiResult<bool>> updatePassword(UpdatePasswordRequest request) async {
     try {
-      await _apiClient.post(
-        ApiConstants.updatePassword,
-        data: request.toJson(),
-      );
+      await _apiClient.put(ApiConstants.updatePassword, data: request.toJson());
+      return Success(true);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<bool>> updateProfile(UpdateProfileRequest request) async {
+    try {
+      await _apiClient.put(ApiConstants.updateProfile, data: request.toJson());
       return Success(true);
     } on ApiException catch (e) {
       return Failure(e.message);

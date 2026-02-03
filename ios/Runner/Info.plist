@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>QR kodları tarayabilmek için kamera erişimine ihtiyaç duyulmaktadır.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Galeriden QR kod seçebilmeniz için galeri erişimine ihtiyaç duyulmaktadır.</string>
 </dict>
 </plist>

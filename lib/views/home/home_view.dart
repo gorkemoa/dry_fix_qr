@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/home_view_model.dart';
 import '../../viewmodels/history_view_model.dart';
 import '../transactions/transactions_view.dart';
-import '../profile/update_password_view.dart';
+import '../profile/profile_view.dart';
+import '../qr_scanner/qr_scanner_view.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../app/app_theme.dart';
@@ -78,7 +79,13 @@ class _HomeViewState extends State<HomeView> {
                               subtitle: "Hızlıca işle",
                               icon: Icons.qr_code_scanner,
                               iconColor: AppColors.blue,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const QrScannerView(),
+                                  ),
+                                );
+                              },
                             ),
                             HomeCard(
                               title: "İşlerim",
@@ -95,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) => const UpdatePasswordView(),
+                                    builder: (_) => const ProfileView(),
                                   ),
                                 );
                               },
