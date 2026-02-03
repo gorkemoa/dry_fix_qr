@@ -3,6 +3,7 @@ import '../core/network/api_result.dart';
 import '../core/network/api_exception.dart';
 import '../app/api_constants.dart';
 import '../models/order_model.dart';
+import '../models/order_detail_model.dart';
 
 class OrderService {
   final ApiClient _apiClient;
@@ -20,6 +21,18 @@ class OrderService {
       );
 
       final orderResponse = OrderResponse.fromJson(response);
+      return Success(orderResponse);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<OrderDetailResponse>> fetchOrderDetail(int id) async {
+    try {
+      final response = await _apiClient.get(ApiConstants.orderDetail(id));
+      final orderResponse = OrderDetailResponse.fromJson(response);
       return Success(orderResponse);
     } on ApiException catch (e) {
       return Failure(e.message);

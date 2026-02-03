@@ -6,6 +6,7 @@ import 'services/auth_service.dart';
 import 'services/history_service.dart';
 import 'services/qr_service.dart';
 import 'services/order_service.dart';
+import 'services/product_service.dart';
 import 'viewmodels/login_view_model.dart';
 import 'viewmodels/register_view_model.dart';
 import 'viewmodels/home_view_model.dart';
@@ -14,6 +15,7 @@ import 'viewmodels/update_password_view_model.dart';
 import 'viewmodels/profile_view_model.dart';
 import 'viewmodels/qr_view_model.dart';
 import 'viewmodels/order_view_model.dart';
+import 'viewmodels/product_view_model.dart';
 import 'views/login/login_view.dart';
 // import 'views/home/home_view.dart'; // No longer needed here if not initial home
 
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
     final historyService = HistoryService(apiClient);
     final qrService = QrService(apiClient);
     final orderService = OrderService(apiClient);
+    final productService = ProductService(apiClient);
 
     return MultiProvider(
       providers: [
@@ -45,6 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileViewModel(authService)),
         ChangeNotifierProvider(create: (_) => QrViewModel(qrService)),
         ChangeNotifierProvider(create: (_) => OrderViewModel(orderService)),
+        ChangeNotifierProvider(create: (_) => ProductViewModel(productService)),
       ],
       child: MaterialApp(
         title: 'DryFix Boyacı',

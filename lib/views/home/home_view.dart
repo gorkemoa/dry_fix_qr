@@ -5,6 +5,8 @@ import '../../viewmodels/history_view_model.dart';
 import '../transactions/transactions_view.dart';
 import '../profile/profile_view.dart';
 import '../qr_scanner/qr_scanner_view.dart';
+import '../orders/orders_view.dart';
+import '../products/products_view.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../app/app_theme.dart';
@@ -87,11 +89,17 @@ class _HomeViewState extends State<HomeView> {
                               },
                             ),
                             HomeCard(
-                              title: "İşlerim",
-                              subtitle: "Bekleyenler",
-                              icon: Icons.assignment_outlined,
+                              title: "Siparişlerim",
+                              subtitle: "Tüm Siparişler",
+                              icon: Icons.shopping_basket_outlined,
                               iconColor: AppColors.blue,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const OrdersView(),
+                                  ),
+                                );
+                              },
                             ),
                             HomeCard(
                               title: "Profilim",
@@ -107,11 +115,17 @@ class _HomeViewState extends State<HomeView> {
                               },
                             ),
                             HomeCard(
-                              title: "Destek",
-                              subtitle: "Yardım al",
-                              icon: Icons.help_outline,
-                              iconColor: AppColors.gray,
-                              onTap: () {},
+                              title: "Mağaza",
+                              subtitle: "Ürünleri incele",
+                              icon: Icons.storefront_outlined,
+                              iconColor: Colors.orange,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const ProductsView(),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../core/network/api_result.dart';
 import '../services/order_service.dart';
 import '../models/order_model.dart';
+import '../models/order_detail_model.dart';
 import '../core/utils/logger.dart';
 
 class OrderViewModel extends ChangeNotifier {
@@ -15,11 +16,16 @@ class OrderViewModel extends ChangeNotifier {
   List<OrderModel> _orders = [];
   OrderMeta? _meta;
 
+  OrderDetailResponse? _orderDetail;
+  bool _isDetailLoading = false;
+
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
+  bool get isDetailLoading => _isDetailLoading;
   String? get errorMessage => _errorMessage;
   List<OrderModel> get orders => _orders;
   bool get hasMore => _meta != null && _meta!.currentPage < _meta!.lastPage;
+  OrderDetailResponse? get orderDetail => _orderDetail;
 
   Future<void> fetchOrders() async {
     _isLoading = true;
@@ -38,6 +44,29 @@ class OrderViewModel extends ChangeNotifier {
     }
 
     _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchOrderDetail(int id) async {
+    _isDetailLoading = true;
+    _errorMessage = null;
+    _orderDetail = null;
+    notifyListeners();
+
+    final result = await _orderService.fetchOrderDetail(id);
+
+    if (result is Success<OrderDetailResponse>) {
+      _orderDetail = result.data;
+      Logger.info("Order detail fetched: $id");
+    } else if (result is Failure<OrderDetailResponse>) {
+      _errorMessage = result.errorMessage;
+      Logger.error(
+        "Order detail fetch failed",
+        _errorMessage ?? "Unknown error",
+      );
+    }
+
+    _isDetailLoading = false;
     notifyListeners();
   }
 
