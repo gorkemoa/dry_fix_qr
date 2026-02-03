@@ -2,6 +2,7 @@ import 'size_config.dart';
 
 class SizeTokens {
   // Padding
+  static double get p4 => getProportionateScreenWidth(4);
   static double get p8 => getProportionateScreenWidth(8);
   static double get p12 => getProportionateScreenWidth(12);
   static double get p16 => getProportionateScreenWidth(16);

@@ -51,7 +51,10 @@ class _HomeViewState extends State<HomeView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const HomeHeader(userName: "Test Kullanıcı"),
+                      HomeHeader(
+                        userName: viewModel.user?.name ?? "Kullanıcı",
+                        tokenBalance: viewModel.user?.tokenBalance ?? 0,
+                      ),
 
                       // Grid Section
                       Padding(
