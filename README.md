@@ -265,7 +265,16 @@ parse error
 
 ViewModel içinde statusCode == ... kontrolü YASAK.
 
-8) TEKRAR KULLANIM KURALI (WIDGET)
+8) LOGLAMA STANDARTI (ZORUNLU)
+
+Uygulama genelinde Debugging ve monitoring için detaylı loglama zorunludur:
+
+- Tüm API istekleri (Request) ve cevapları (Response) core/utils/logger.dart üzerinden loglanmalıdır.
+- Hata durumlarında StackTrace ve detaylı hata mesajı basılmalıdır.
+- "Print" kullanımı kesinlikle YASAK. Sadece Logger sınıfı kullanılabilir.
+- Loglar kategorize edilmelidir: INFO, ERROR, WARNING, DEBUG, REQUEST, RESPONSE.
+
+9) TEKRAR KULLANIM KURALI (WIDGET)
 
 Bir widget 2+ ekranda kullanılacaksa:
 
