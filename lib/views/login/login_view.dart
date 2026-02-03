@@ -28,107 +28,225 @@ class _LoginViewState extends State<LoginView> {
     final viewModel = Provider.of<LoginViewModel>(context);
 
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              "Giriş Yap",
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: SizeTokens.f20 * 1.5,
-                fontWeight: FontWeight.bold,
-                color: AppColors.darkBlue,
+      backgroundColor: AppColors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: SizeTokens.p32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+              // Corporate Logo Placeholder
+              Column(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: AppColors.darkBlue,
+                      borderRadius: BorderRadius.circular(SizeTokens.r12),
+                    ),
+                    child: const Icon(
+                      Icons.qr_code_2_rounded,
+                      color: AppColors.white,
+                      size: 40,
+                    ),
+                  ),
+                  SizedBox(height: SizeTokens.p24),
+                  Text(
+                    "Dry Fix QR",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkBlue,
+                      letterSpacing: -1,
+                    ),
+                  ),
+                  SizedBox(height: SizeTokens.p8),
+                  Text(
+                    "Kurumsal QR Yönetim Sistemi",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f14,
+                      color: AppColors.gray,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: SizeTokens.p32),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: "E-Posta",
-                labelStyle: const TextStyle(color: AppColors.gray),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
-                  borderSide: const BorderSide(color: AppColors.blue),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
+              SizedBox(height: SizeTokens.p32 * 2),
+
+              // Email field
+              Text(
+                "E-Posta Adresi",
+                style: TextStyle(
+                  fontSize: SizeTokens.f12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.darkBlue.withOpacity(0.7),
                 ),
               ),
-            ),
-            SizedBox(height: SizeTokens.p16),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: "Şifre",
-                labelStyle: const TextStyle(color: AppColors.gray),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
-                  borderSide: const BorderSide(color: AppColors.blue),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
-                ),
-              ),
-              obscureText: true,
-            ),
-            SizedBox(height: SizeTokens.p24),
-            if (viewModel.isLoading)
-              const Center(
-                child: CircularProgressIndicator(color: AppColors.blue),
-              )
-            else
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkBlue,
-                  padding: EdgeInsets.symmetric(vertical: SizeTokens.p16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(SizeTokens.r12),
+              SizedBox(height: SizeTokens.p8),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  hintText: "Örn: kurumsal@domain.com",
+                  hintStyle: TextStyle(
+                    color: AppColors.gray.withOpacity(0.5),
+                    fontSize: SizeTokens.f14,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: SizeTokens.p16,
+                    vertical: SizeTokens.p12,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.background,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                    borderSide: const BorderSide(
+                      color: AppColors.darkBlue,
+                      width: 1,
+                    ),
                   ),
                 ),
-                onPressed: () async {
-                  await viewModel.login(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-                  if (viewModel.user != null && mounted) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const HomeView()),
-                    );
-                  }
-                },
-                child: Text(
-                  "Giriş Yap",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f16,
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
+              ),
+              SizedBox(height: SizeTokens.p20),
+
+              // Password field
+              Text(
+                "Şifre",
+                style: TextStyle(
+                  fontSize: SizeTokens.f12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.darkBlue.withOpacity(0.7),
+                ),
+              ),
+              SizedBox(height: SizeTokens.p8),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: "••••••••",
+                  hintStyle: TextStyle(
+                    color: AppColors.gray.withOpacity(0.5),
+                    fontSize: SizeTokens.f14,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: SizeTokens.p16,
+                    vertical: SizeTokens.p12,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.background,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                    borderSide: const BorderSide(
+                      color: AppColors.darkBlue,
+                      width: 1,
+                    ),
                   ),
                 ),
               ),
-            if (viewModel.errorMessage != null)
-              Padding(
-                padding: EdgeInsets.only(top: SizeTokens.p16),
-                child: Text(
-                  viewModel.errorMessage!,
-                  style: const TextStyle(color: Colors.redAccent),
-                  textAlign: TextAlign.center,
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Şifremi Unuttum",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f12,
+                      color: AppColors.blue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => const RegisterView()));
-              },
-              child: const Text(
-                "Hesabın yok mu? Kayıt Ol",
-                style: TextStyle(color: AppColors.blue),
+
+              SizedBox(height: SizeTokens.p24),
+
+              if (viewModel.isLoading)
+                const Center(
+                  child: CircularProgressIndicator(color: AppColors.darkBlue),
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await viewModel.login(
+                        _emailController.text,
+                        _passwordController.text,
+                      );
+                      if (viewModel.user != null && mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const HomeView()),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkBlue,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(SizeTokens.r8),
+                      ),
+                    ),
+                    child: const Text(
+                      "Giriş Yap",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+
+              if (viewModel.errorMessage != null)
+                Padding(
+                  padding: EdgeInsets.only(top: SizeTokens.p16),
+                  child: Text(
+                    viewModel.errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 13,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+              SizedBox(height: SizeTokens.p32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Henüz bir hesabınız yok mu? ",
+                    style: TextStyle(
+                      color: AppColors.gray,
+                      fontSize: SizeTokens.f12,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const RegisterView()),
+                      );
+                    },
+                    child: Text(
+                      "Kayıt Ol",
+                      style: TextStyle(
+                        color: AppColors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: SizeTokens.f12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

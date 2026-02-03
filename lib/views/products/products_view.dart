@@ -48,64 +48,77 @@ class _ProductsViewState extends State<ProductsView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text("Ürünler"),
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.white,
         elevation: 0,
-        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.darkBlue,
+            size: 20,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "Ürünler",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontSize: SizeTokens.f18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: Column(
         children: [
           // Search & Filter Header
-          Padding(
-            padding: EdgeInsets.all(SizeTokens.p16),
+          Container(
+            color: AppColors.white,
+            padding: EdgeInsets.fromLTRB(
+              SizeTokens.p24,
+              SizeTokens.p8,
+              SizeTokens.p24,
+              SizeTokens.p16,
+            ),
             child: Column(
               children: [
                 // Search Bar
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(SizeTokens.r12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.darkBlue.withOpacity(0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: viewModel.setSearchQuery,
-                    decoration: InputDecoration(
-                      hintText: "Ürün ara...",
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: AppColors.gray,
-                      ),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.clear,
-                                color: AppColors.gray,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                viewModel.setSearchQuery("");
-                              },
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: SizeTokens.p16,
-                        vertical: SizeTokens.p12,
+                TextField(
+                  controller: _searchController,
+                  onChanged: viewModel.setSearchQuery,
+                  decoration: InputDecoration(
+                    hintText: "Ürün ara...",
+                    hintStyle: TextStyle(
+                      color: AppColors.gray.withOpacity(0.5),
+                      fontSize: SizeTokens.f14,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: AppColors.darkBlue.withOpacity(0.5),
+                      size: 20,
+                    ),
+                    filled: true,
+                    fillColor: AppColors.background,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: SizeTokens.p16,
+                      vertical: SizeTokens.p12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(SizeTokens.r8),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(SizeTokens.r8),
+                      borderSide: const BorderSide(
+                        color: AppColors.darkBlue,
+                        width: 1,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: SizeTokens.p12),
+                SizedBox(height: SizeTokens.p16),
                 // Filter Chips
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   child: Row(
                     children: [
                       _FilterChip(
@@ -115,13 +128,13 @@ class _ProductsViewState extends State<ProductsView> {
                       ),
                       SizedBox(width: SizeTokens.p8),
                       _FilterChip(
-                        label: "Stokta Olanlar",
+                        label: "Stokta",
                         isSelected: viewModel.inStock == true,
                         onTap: () => viewModel.setInStockFilter(true),
                       ),
                       SizedBox(width: SizeTokens.p8),
                       _FilterChip(
-                        label: "Tükenenler",
+                        label: "Tükenen",
                         isSelected: viewModel.inStock == false,
                         onTap: () => viewModel.setInStockFilter(false),
                       ),
@@ -136,49 +149,22 @@ class _ProductsViewState extends State<ProductsView> {
           Expanded(
             child: viewModel.isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.blue),
+                    child: CircularProgressIndicator(color: AppColors.darkBlue),
                   )
                 : viewModel.errorMessage != null
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          viewModel.errorMessage!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: SizeTokens.f16,
-                          ),
-                        ),
-                        SizedBox(height: SizeTokens.p16),
-                        ElevatedButton(
-                          onPressed: () => viewModel.fetchProducts(),
-                          child: const Text("Tekrar Dene"),
-                        ),
-                      ],
-                    ),
-                  )
+                ? _buildErrorView(viewModel)
                 : viewModel.products.isEmpty
-                ? Center(
-                    child: Text(
-                      "Aradığınız kriterlere uygun ürün bulunamadı.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: SizeTokens.f16,
-                        color: AppColors.gray,
-                      ),
-                    ),
-                  )
+                ? _buildEmptyView()
                 : RefreshIndicator(
                     onRefresh: () => viewModel.refresh(),
-                    color: AppColors.blue,
+                    color: AppColors.darkBlue,
                     child: GridView.builder(
                       controller: _scrollController,
-                      padding: EdgeInsets.symmetric(horizontal: SizeTokens.p16),
+                      padding: EdgeInsets.all(SizeTokens.p24),
+                      physics: const BouncingScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.75,
+                        childAspectRatio: 0.608,
                         crossAxisSpacing: SizeTokens.p16,
                         mainAxisSpacing: SizeTokens.p16,
                       ),
@@ -189,20 +175,70 @@ class _ProductsViewState extends State<ProductsView> {
                         if (index < viewModel.products.length) {
                           return ProductItem(
                             product: viewModel.products[index],
-                            onTap: () {
-                              // Product detail navigation can be added here
-                            },
+                            onTap: () {},
                           );
                         } else {
                           return const Center(
                             child: CircularProgressIndicator(
-                              color: AppColors.blue,
+                              color: AppColors.darkBlue,
                             ),
                           );
                         }
                       },
                     ),
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView(ProductViewModel viewModel) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline_rounded,
+            color: Colors.red.shade300,
+            size: 48,
+          ),
+          SizedBox(height: SizeTokens.p16),
+          Text(
+            viewModel.errorMessage!,
+            style: TextStyle(
+              fontSize: SizeTokens.f14,
+              color: AppColors.darkBlue,
+            ),
+          ),
+          SizedBox(height: SizeTokens.p16),
+          ElevatedButton(
+            onPressed: () => viewModel.fetchProducts(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.darkBlue,
+              elevation: 0,
+            ),
+            child: const Text("Tekrar Dene"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off_rounded,
+            color: AppColors.gray.withOpacity(0.3),
+            size: 64,
+          ),
+          SizedBox(height: SizeTokens.p16),
+          Text(
+            "Ürün bulunamadı.",
+            style: TextStyle(fontSize: SizeTokens.f14, color: AppColors.gray),
           ),
         ],
       ),
@@ -231,20 +267,20 @@ class _FilterChip extends StatelessWidget {
           vertical: SizeTokens.p8,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.blue : AppColors.white,
-          borderRadius: BorderRadius.circular(SizeTokens.r20),
+          color: isSelected ? AppColors.darkBlue : AppColors.background,
+          borderRadius: BorderRadius.circular(SizeTokens.r8),
           border: Border.all(
             color: isSelected
-                ? AppColors.blue
-                : AppColors.gray.withOpacity(0.2),
+                ? AppColors.darkBlue
+                : AppColors.darkBlue.withOpacity(0.1),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.darkBlue,
+            color: isSelected ? AppColors.white : AppColors.darkBlue,
             fontSize: SizeTokens.f12,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),
         ),
       ),

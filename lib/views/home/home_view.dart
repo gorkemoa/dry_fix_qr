@@ -38,206 +38,154 @@ class _HomeViewState extends State<HomeView> {
     final historyViewModel = context.watch<HistoryViewModel>();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: viewModel.isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.blue),
+              child: CircularProgressIndicator(color: AppColors.darkBlue),
             )
-          : Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.titleLight.withOpacity(0.3),
-                    AppColors.background,
-                  ],
-                ),
-              ),
-              child: SafeArea(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      HomeHeader(
-                        userName: viewModel.user?.name ?? "Kullanıcı",
-                        tokenBalance: viewModel.user?.tokenBalance ?? 0,
+          : SafeArea(
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: HomeHeader(
+                      userName: viewModel.user?.name ?? "Kullanıcı",
+                      tokenBalance: viewModel.user?.tokenBalance ?? 0,
+                    ),
+                  ),
+
+                  // Grid Section
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
+                    sliver: SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: SizeTokens.p16,
+                        crossAxisSpacing: SizeTokens.p16,
+                        childAspectRatio: 1.15,
                       ),
-
-                      // Grid Section
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p24,
+                      delegate: SliverChildListDelegate([
+                        HomeCard(
+                          title: "QR Tara",
+                          subtitle: "Hızlı İşlem",
+                          icon: Icons.qr_code_scanner_rounded,
+                          iconColor: AppColors.darkBlue,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const QrScannerView(),
+                              ),
+                            );
+                          },
                         ),
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: SizeTokens.p16,
-                          crossAxisSpacing: SizeTokens.p16,
-                          children: [
-                            HomeCard(
-                              title: "QR Tara",
-                              subtitle: "Hızlıca işle",
-                              icon: Icons.qr_code_scanner,
-                              iconColor: AppColors.blue,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const QrScannerView(),
-                                  ),
-                                );
-                              },
-                            ),
-                            HomeCard(
-                              title: "Siparişlerim",
-                              subtitle: "Tüm Siparişler",
-                              icon: Icons.shopping_basket_outlined,
-                              iconColor: AppColors.blue,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const OrdersView(),
-                                  ),
-                                );
-                              },
-                            ),
-                            HomeCard(
-                              title: "Profilim",
-                              subtitle: "Ayarlar ve Bilgi",
-                              icon: Icons.person_outline,
-                              iconColor: AppColors.darkBlue,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const ProfileView(),
-                                  ),
-                                );
-                              },
-                            ),
-                            HomeCard(
-                              title: "Mağaza",
-                              subtitle: "Ürünleri incele",
-                              icon: Icons.storefront_outlined,
-                              iconColor: Colors.orange,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const ProductsView(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
+                        HomeCard(
+                          title: "Siparişlerim",
+                          subtitle: "Durum Takibi",
+                          icon: Icons.inventory_2_outlined,
+                          iconColor: AppColors.blue,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const OrdersView(),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-
-                      SizedBox(height: SizeTokens.p32),
-
-                      // History Section
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p24,
+                        HomeCard(
+                          title: "Profilim",
+                          subtitle: "Hesap Bilgileri",
+                          icon: Icons.person_outline_rounded,
+                          iconColor: AppColors.darkBlue,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ProfileView(),
+                              ),
+                            );
+                          },
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Son İşlemler",
+                        HomeCard(
+                          title: "Mağaza",
+                          subtitle: "Yeni Ürünler",
+                          icon: Icons.shopping_bag_outlined,
+                          iconColor: AppColors.blue,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ProductsView(),
+                              ),
+                            );
+                          },
+                        ),
+                      ]),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(child: SizedBox(height: SizeTokens.p32)),
+
+                  // History Section Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Son İşlemler",
+                            style: TextStyle(
+                              fontSize: SizeTokens.f18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.darkBlue,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const TransactionsView(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Tümünü Gör",
                               style: TextStyle(
-                                fontSize: SizeTokens.f18,
-                                fontWeight: FontWeight.bold,
+                                color: AppColors.blue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // History List
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
+                    sliver: historyViewModel.isLoading
+                        ? const SliverToBoxAdapter(
+                            child: Center(
+                              child: CircularProgressIndicator(
                                 color: AppColors.darkBlue,
                               ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const TransactionsView(),
-                                  ),
+                          )
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                return HistoryItem(
+                                  item: historyViewModel.items[index],
                                 );
                               },
-                              child: const Text(
-                                "Hepsini Gör",
-                                style: TextStyle(color: AppColors.blue),
-                              ),
+                              childCount: historyViewModel.items.length > 5
+                                  ? 5
+                                  : historyViewModel.items.length,
                             ),
-                          ],
-                        ),
-                      ),
-
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p24,
-                        ),
-                        child: historyViewModel.isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.blue,
-                                ),
-                              )
-                            : Column(
-                                children: historyViewModel.items
-                                    .take(5)
-                                    .map((item) => HistoryItem(item: item))
-                                    .toList(),
-                              ),
-                      ),
-
-                      SizedBox(height: SizeTokens.p24),
-
-                      // Bottom Banner
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p24,
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all(SizeTokens.p20),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [AppColors.darkBlue, AppColors.blue],
-                            ),
-                            borderRadius: BorderRadius.circular(SizeTokens.r20),
                           ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Mobil Uygulamamızı\nKeşfedin",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: SizeTokens.f16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: SizeTokens.p8),
-                                    Text(
-                                      "Tüm özellikler parmaklarınızın ucunda.",
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.8),
-                                        fontSize: SizeTokens.f14 * 0.8,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.rocket_launch,
-                                color: Colors.white,
-                                size: SizeTokens.p32 * 1.5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: SizeTokens.p32),
-                    ],
                   ),
-                ),
+
+                  SliverToBoxAdapter(child: SizedBox(height: SizeTokens.p32)),
+                ],
               ),
             ),
     );
