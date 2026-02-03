@@ -5,6 +5,7 @@ import '../utils/logger.dart';
 
 class ApiClient {
   late final Dio _dio;
+  String? _token;
 
   ApiClient() {
     _dio = Dio(
@@ -15,7 +16,28 @@ class ApiClient {
         headers: {'Accept': 'application/json'},
       ),
     );
-    // _dio.interceptors.add(LogInterceptor(responseBody: true)); // Ensure this is only for dev
+  }
+
+  void setToken(String token) {
+    _token = token;
+    _dio.options.headers['Authorization'] = 'Bearer $token';
+    Logger.info('Token updated in ApiClient');
+  }
+
+  Future<dynamic> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    Logger.request('GET', path, queryParameters);
+    try {
+      final response = await _dio.get(path, queryParameters: queryParameters);
+      Logger.response(path, response.data);
+      return response.data;
+    } on DioException catch (e) {
+      final error = _handleDioError(e);
+      Logger.error('GET FAILED: $path', error.message, e.stackTrace);
+      throw error;
+    }
   }
 
   Future<dynamic> post(String path, {dynamic data}) async {
@@ -35,7 +57,7 @@ class ApiClient {
     if (error.response != null) {
       String message = 'Unknown error';
       if (error.response?.data is Map &&
-          error.response?.data['message'] != null) {
+          (error.response?.data as Map).containsKey('message')) {
         message = error.response?.data['message'];
       }
       return ApiException(message, statusCode: error.response?.statusCode);
