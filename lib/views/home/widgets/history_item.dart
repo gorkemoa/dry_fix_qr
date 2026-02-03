@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
+import '../../../models/history_model.dart' as model;
 
 class HistoryItem extends StatelessWidget {
-  final String title;
-  final String date;
-  final IconData icon;
+  final model.HistoryItem item;
 
-  const HistoryItem({
-    super.key,
-    required this.title,
-    required this.date,
-    required this.icon,
-  });
+  const HistoryItem({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +29,18 @@ class HistoryItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(SizeTokens.p8),
             decoration: BoxDecoration(
-              color: AppColors.blue.withOpacity(0.1),
+              color:
+                  (item.direction == 'credit' ? Colors.green : AppColors.blue)
+                      .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(SizeTokens.r12),
             ),
-            child: Icon(icon, color: AppColors.blue, size: SizeTokens.p20),
+            child: Icon(
+              item.direction == 'credit'
+                  ? Icons.add_circle_outline
+                  : Icons.remove_circle_outline,
+              color: item.direction == 'credit' ? Colors.green : AppColors.blue,
+              size: SizeTokens.p20,
+            ),
           ),
           SizedBox(width: SizeTokens.p16),
           Expanded(
@@ -46,7 +48,7 @@ class HistoryItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  item.note,
                   style: TextStyle(
                     fontSize: SizeTokens.f14,
                     fontWeight: FontWeight.w600,
@@ -56,7 +58,7 @@ class HistoryItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  date,
+                  item.createdAt,
                   style: TextStyle(
                     fontSize: SizeTokens.f14 * 0.8,
                     color: AppColors.gray,
@@ -65,6 +67,15 @@ class HistoryItem extends StatelessWidget {
               ],
             ),
           ),
+          Text(
+            "${item.direction == 'credit' ? '+' : '-'}${item.tokenAmount}",
+            style: TextStyle(
+              fontSize: SizeTokens.f16,
+              fontWeight: FontWeight.bold,
+              color: item.direction == 'credit' ? Colors.green : Colors.red,
+            ),
+          ),
+          SizedBox(width: SizeTokens.p8),
           IconButton(
             icon: const Icon(Icons.more_vert, color: AppColors.gray),
             onPressed: () {},
