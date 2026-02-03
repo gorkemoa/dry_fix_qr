@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.smartmetrics.dryfix_qr"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
