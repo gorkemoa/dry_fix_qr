@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/home_view_model.dart';
+import '../../viewmodels/history_view_model.dart';
+import '../transactions/transactions_view.dart';
+import '../profile/update_password_view.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../app/app_theme.dart';
@@ -21,6 +24,7 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().init();
+      context.read<HistoryViewModel>().fetchHistory();
     });
   }
 
@@ -28,6 +32,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     SizeConfig.init(context);
     final viewModel = context.watch<HomeViewModel>();
+    final historyViewModel = context.watch<HistoryViewModel>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -87,7 +92,13 @@ class _HomeViewState extends State<HomeView> {
                               subtitle: "Ayarlar ve Bilgi",
                               icon: Icons.person_outline,
                               iconColor: AppColors.darkBlue,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const UpdatePasswordView(),
+                                  ),
+                                );
+                              },
                             ),
                             HomeCard(
                               title: "Destek",
@@ -119,7 +130,13 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const TransactionsView(),
+                                  ),
+                                );
+                              },
                               child: const Text(
                                 "Hepsini Gör",
                                 style: TextStyle(color: AppColors.blue),
@@ -133,25 +150,18 @@ class _HomeViewState extends State<HomeView> {
                         padding: EdgeInsets.symmetric(
                           horizontal: SizeTokens.p24,
                         ),
-                        child: Column(
-                          children: const [
-                            HistoryItem(
-                              title: "Boya Uygulaması - Merkez",
-                              date: "Bugün, 14:30",
-                              icon: Icons.brush_outlined,
-                            ),
-                            HistoryItem(
-                              title: "Malzeme Talebi #123",
-                              date: "Dün, 09:15",
-                              icon: Icons.inventory_2_outlined,
-                            ),
-                            HistoryItem(
-                              title: "QR Okuma - Kat 2",
-                              date: "2 gün önce",
-                              icon: Icons.qr_code_2,
-                            ),
-                          ],
-                        ),
+                        child: historyViewModel.isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.blue,
+                                ),
+                              )
+                            : Column(
+                                children: historyViewModel.items
+                                    .take(5)
+                                    .map((item) => HistoryItem(item: item))
+                                    .toList(),
+                              ),
                       ),
 
                       SizedBox(height: SizeTokens.p24),
