@@ -4,5 +4,7 @@ class ApiConstants {
   static const String register = '$baseUrl/api/v1/auth/register';
   static const String history = '$baseUrl/api/v1/history';
   static const String updatePassword = '$baseUrl/api/v1/profile/password';
+  static const String updateProfile = '$baseUrl/api/v1/profile';
+  static const String verifyQr = '$baseUrl/api/v1/qr/verify';
   static const String me = '$baseUrl/api/v1/me';
 }
