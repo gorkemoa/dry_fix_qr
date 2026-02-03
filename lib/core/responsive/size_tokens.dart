@@ -17,8 +17,11 @@ class SizeTokens {
   static double get r20 => getProportionateScreenWidth(20);
 
   // Font Sizes
+  static double get f12 => getProportionateScreenWidth(12);
   static double get f14 => getProportionateScreenWidth(14);
   static double get f16 => getProportionateScreenWidth(16);
   static double get f18 => getProportionateScreenWidth(18);
   static double get f20 => getProportionateScreenWidth(20);
+  static double get f24 => getProportionateScreenWidth(24);
+  static double get f32 => getProportionateScreenWidth(32);
 }
