@@ -92,7 +92,7 @@ class QrSuccessView extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        "Kazanılan Puan",
+                        "Kazanılan DryPara",
                         style: TextStyle(
                           fontSize: SizeTokens.f14,
                           color: AppColors.gray,
@@ -116,11 +116,11 @@ class QrSuccessView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Yeni Bakiyeniz",
+                            "DryPara Bakiyeniz",
                             style: TextStyle(color: AppColors.gray),
                           ),
                           Text(
-                            "${response.balance ?? '---'} Puan",
+                            "${response.balance ?? '---'} DryPara",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.darkBlue,

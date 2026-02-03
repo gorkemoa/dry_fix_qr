@@ -8,4 +8,6 @@ class ApiConstants {
   static const String verifyQr = '$baseUrl/api/v1/qr/verify';
   static const String me = '$baseUrl/api/v1/me';
   static const String orders = '$baseUrl/api/v1/orders';
+  static String orderDetail(int id) => '$orders/$id';
+  static const String products = '$baseUrl/api/v1/products';
 }

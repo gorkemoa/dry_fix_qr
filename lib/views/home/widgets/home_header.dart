@@ -61,7 +61,7 @@ class HomeHeader extends StatelessWidget {
                       ),
                       SizedBox(width: SizeTokens.p4),
                       Text(
-                        "Bakiye: $tokenBalance",
+                        "DryPara: $tokenBalance",
                         style: TextStyle(
                           fontSize: SizeTokens.f14 * 0.9,
                           color: AppColors.blue,
