@@ -36,7 +36,15 @@ class _HomeViewState extends State<HomeView> {
     final historyViewModel = context.watch<HistoryViewModel>();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const QrScannerView()));
+        },
+        backgroundColor: AppColors.blue,
+        child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+      ),
       body: viewModel.isLoading
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.blue),
