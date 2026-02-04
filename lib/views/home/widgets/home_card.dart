@@ -49,7 +49,7 @@ class HomeCard extends StatelessWidget {
                     color: iconColor.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(SizeTokens.r16),
                   ),
-                  child: Icon(icon, color: iconColor, size: 24),
+                  child: Icon(icon, color: iconColor, size: SizeTokens.f24),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

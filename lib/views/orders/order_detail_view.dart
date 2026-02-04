@@ -35,10 +35,10 @@ class _OrderDetailViewState extends State<OrderDetailView> {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: AppColors.darkBlue,
-            size: 20,
+            size: SizeTokens.p20,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -99,7 +99,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             Icon(
               Icons.error_outline_rounded,
               color: Colors.red.shade300,
-              size: 48,
+              size: SizeTokens.p8 * 6, // 48
             ),
             SizedBox(height: SizeTokens.p16),
             Text(
@@ -229,8 +229,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
       child: Row(
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: SizeTokens.p50,
+            height: SizeTokens.p50,
             decoration: BoxDecoration(
               color: AppColors.background,
               borderRadius: BorderRadius.circular(SizeTokens.r8),
@@ -240,10 +240,10 @@ class _OrderDetailViewState extends State<OrderDetailView> {
               child: Image.network(
                 item.product.image,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(
+                errorBuilder: (_, __, ___) => Icon(
                   Icons.inventory_2_outlined,
                   color: AppColors.gray,
-                  size: 20,
+                  size: SizeTokens.p20,
                 ),
               ),
             ),
@@ -300,10 +300,10 @@ class _OrderDetailViewState extends State<OrderDetailView> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_outlined,
                 color: AppColors.blue,
-                size: 18,
+                size: SizeTokens.p18,
               ),
               SizedBox(width: SizeTokens.p8),
               Text(

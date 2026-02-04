@@ -64,7 +64,7 @@ class _HistoryItemState extends State<HistoryItem> {
                 child: Icon(
                   isCredit ? Icons.add_rounded : Icons.remove_rounded,
                   color: isCredit ? Colors.green : Colors.red,
-                  size: 20,
+                  size: SizeTokens.p20,
                 ),
               ),
               SizedBox(width: SizeTokens.p16),
@@ -138,8 +138,8 @@ class _HistoryItemState extends State<HistoryItem> {
                       child: Row(
                         children: [
                           Container(
-                            width: 50,
-                            height: 50,
+                            width: SizeTokens.p50,
+                            height: SizeTokens.p50,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                 SizeTokens.r8,
