@@ -58,4 +58,29 @@ class ProfileViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<void> deactivateAccount(String password) async {
+    _isLoading = true;
+    _errorMessage = null;
+    _isSuccess = false;
+    notifyListeners();
+
+    final result = await _authService.deactivateAccount(password);
+
+    if (result is Success<bool>) {
+      _isSuccess = true;
+      logout(); // Clear token after deactivation
+    } else if (result is Failure<bool>) {
+      _errorMessage = result.errorMessage;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void logout() {
+    _authService.logout();
+    _user = null;
+    notifyListeners();
+  }
 }

@@ -22,6 +22,11 @@ class ApiClient {
     Logger.info('Token updated in ApiClient');
   }
 
+  void clearToken() {
+    _dio.options.headers.remove('Authorization');
+    Logger.info('Token cleared in ApiClient');
+  }
+
   Future<dynamic> get(
     String path, {
     Map<String, dynamic>? queryParameters,

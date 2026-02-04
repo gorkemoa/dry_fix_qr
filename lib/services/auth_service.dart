@@ -81,4 +81,22 @@ class AuthService {
       return Failure(e.toString());
     }
   }
+
+  Future<ApiResult<bool>> deactivateAccount(String password) async {
+    try {
+      await _apiClient.post(
+        ApiConstants.deactivate,
+        data: {'password': password},
+      );
+      return Success(true);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  void logout() {
+    _apiClient.clearToken();
+  }
 }

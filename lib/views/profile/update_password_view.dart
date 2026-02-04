@@ -5,6 +5,7 @@ import '../../viewmodels/update_password_view_model.dart';
 import '../../models/user_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../login/login_view.dart';
 
 class UpdatePasswordView extends StatefulWidget {
   const UpdatePasswordView({super.key});
@@ -112,8 +113,88 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
                   textAlign: TextAlign.center,
                 ),
               ),
+            SizedBox(height: SizeTokens.p48),
+            const Divider(),
+            SizedBox(height: SizeTokens.p16),
+            TextButton(
+              onPressed: () => _showDeactivateDialog(context, viewModel),
+              child: const Text(
+                "Hesabı Kapat",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeactivateDialog(
+    BuildContext context,
+    UpdatePasswordViewModel viewModel,
+  ) {
+    final TextEditingController passwordController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Hesabı Kapat"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Hesabınızı kapatmak istediğinize emin misiniz? Bu işlem geri alınamaz.",
+            ),
+            SizedBox(height: SizeTokens.p16),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: "Şifreniz",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Vazgeç"),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (passwordController.text.isEmpty) return;
+
+              await viewModel.deactivateAccount(passwordController.text);
+
+              if (viewModel.isSuccess && context.mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginView()),
+                  (route) => false,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Hesabınız kapatıldı.")),
+                );
+              } else if (viewModel.errorMessage != null && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(viewModel.errorMessage!),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              }
+            },
+            child: const Text(
+              "Hesabı Kapat",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

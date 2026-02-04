@@ -37,6 +37,25 @@ class UpdatePasswordViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deactivateAccount(String password) async {
+    _isLoading = true;
+    _errorMessage = null;
+    _isSuccess = false;
+    notifyListeners();
+
+    final result = await _authService.deactivateAccount(password);
+
+    if (result is Success<bool>) {
+      _isSuccess = true;
+      _authService.logout(); // Clear token after deactivation
+    } else if (result is Failure<bool>) {
+      _errorMessage = result.errorMessage;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
   void resetState() {
     _isSuccess = false;
     _errorMessage = null;
