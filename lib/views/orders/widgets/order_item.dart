@@ -50,6 +50,7 @@ class OrderItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(SizeTokens.r12),
+          // ignore: deprecated_member_use
           border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
         ),
         child: Column(
@@ -59,7 +60,7 @@ class OrderItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Sipariş #${order.id}",
+                  "Sipariş Kodu  #${order.id}",
                   style: TextStyle(
                     fontSize: SizeTokens.f16,
                     fontWeight: FontWeight.bold,
@@ -73,9 +74,11 @@ class OrderItem extends StatelessWidget {
                     vertical: SizeTokens.p4,
                   ),
                   decoration: BoxDecoration(
+                    // ignore: deprecated_member_use
                     color: _getStatusColor().withOpacity(0.05),
                     borderRadius: BorderRadius.circular(SizeTokens.r20),
                     border: Border.all(
+                      // ignore: deprecated_member_use
                       color: _getStatusColor().withOpacity(0.2),
                     ),
                   ),
@@ -137,7 +140,7 @@ class OrderItem extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "${order.totalPrice} DryPara",
+                  "${order.totalPrice} TL",
                   style: TextStyle(
                     fontSize: SizeTokens.f18,
                     fontWeight: FontWeight.bold,
