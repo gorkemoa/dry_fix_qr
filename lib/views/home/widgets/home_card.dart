@@ -40,22 +40,16 @@ class HomeCard extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.all(SizeTokens.p20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: EdgeInsets.all(SizeTokens.p12),
-                  decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(SizeTokens.r16),
-                  ),
-                  child: Icon(icon, color: iconColor, size: SizeTokens.f24),
-                ),
+                Icon(icon, color: iconColor, size: SizeTokens.p32),
+                SizedBox(height: SizeTokens.p16),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: SizeTokens.f16,
                         fontWeight: FontWeight.bold,
@@ -66,6 +60,7 @@ class HomeCard extends StatelessWidget {
                     SizedBox(height: SizeTokens.p4),
                     Text(
                       subtitle,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: SizeTokens.f12,
                         color: AppColors.gray,
