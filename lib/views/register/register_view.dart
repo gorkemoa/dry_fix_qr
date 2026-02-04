@@ -6,6 +6,7 @@ import '../../models/user_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -57,6 +58,14 @@ class _RegisterViewState extends State<RegisterView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Center(
+              child: SvgPicture.asset(
+                'assets/dry_fix.svg',
+                height: 60,
+                width: 60,
+              ),
+            ),
+            SizedBox(height: SizeTokens.p24),
             Text(
               "Yeni Hesap Oluştur",
               style: TextStyle(

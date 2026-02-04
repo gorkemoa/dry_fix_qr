@@ -6,6 +6,7 @@ import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
 import '../register/register_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -39,19 +40,7 @@ class _LoginViewState extends State<LoginView> {
               // Corporate Logo Placeholder
               Column(
                 children: [
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: AppColors.darkBlue,
-                      borderRadius: BorderRadius.circular(SizeTokens.r12),
-                    ),
-                    child: const Icon(
-                      Icons.qr_code_2_rounded,
-                      color: AppColors.white,
-                      size: 40,
-                    ),
-                  ),
+                  SvgPicture.asset('assets/dry_fix.svg', height: 80, width: 80),
                   SizedBox(height: SizeTokens.p24),
                   Text(
                     "Dry Fix QR",

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
 import '../../../models/history_model.dart' as model;
-
 import '../../../core/utils/date_utils.dart';
 
 class HistoryItem extends StatelessWidget {
@@ -14,28 +13,30 @@ class HistoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isCredit = item.direction == 'credit';
     return Container(
-      padding: EdgeInsets.symmetric(vertical: SizeTokens.p12),
+      margin: EdgeInsets.only(bottom: SizeTokens.p12),
+      padding: EdgeInsets.all(SizeTokens.p16),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.darkBlue.withOpacity(0.05),
-            width: 1,
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(SizeTokens.p8),
+            padding: EdgeInsets.all(SizeTokens.p10),
             decoration: BoxDecoration(
-              color: (isCredit ? Colors.green : AppColors.blue).withOpacity(
-                0.1,
-              ),
-              borderRadius: BorderRadius.circular(SizeTokens.r8),
+              color: (isCredit ? Colors.green : Colors.red).withOpacity(0.08),
+              shape: BoxShape.circle,
             ),
             child: Icon(
               isCredit ? Icons.add_rounded : Icons.remove_rounded,
-              color: isCredit ? Colors.green : AppColors.blue,
+              color: isCredit ? Colors.green : Colors.red,
               size: 20,
             ),
           ),
@@ -50,11 +51,11 @@ class HistoryItem extends StatelessWidget {
                       : item.note,
                   style: TextStyle(
                     fontSize: SizeTokens.f14,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.bold,
                     color: AppColors.darkBlue,
-                    letterSpacing: -0.3,
                   ),
                 ),
+                SizedBox(height: SizeTokens.p4),
                 Text(
                   DateFormatter.toTurkish(item.createdAt),
                   style: TextStyle(
@@ -65,12 +66,30 @@ class HistoryItem extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            "${isCredit ? '+' : '-'}${item.tokenAmount} DryPara",
-            style: TextStyle(
-              fontSize: SizeTokens.f16,
-              fontWeight: FontWeight.bold,
-              color: isCredit ? Colors.green : Colors.red.shade700,
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "${isCredit ? '+' : '-'}${item.tokenAmount} ",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    fontWeight: FontWeight.bold,
+                    color: isCredit ? Colors.green : Colors.red,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+                TextSpan(
+                  text: "DP",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f10,
+                    fontWeight: FontWeight.bold,
+                    color: (isCredit ? Colors.green : Colors.red).withOpacity(
+                      0.7,
+                    ),
+                    fontFamily: 'Inter',
+                  ),
+                ),
+              ],
             ),
           ),
         ],
