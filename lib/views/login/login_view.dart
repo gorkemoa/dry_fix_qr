@@ -43,16 +43,6 @@ class _LoginViewState extends State<LoginView> {
                   SvgPicture.asset('assets/dry_fix.svg', height: 80, width: 80),
                   SizedBox(height: SizeTokens.p24),
                   Text(
-                    "Dry Fix QR",
-                    style: TextStyle(
-                      fontSize: SizeTokens.f24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.darkBlue,
-                      letterSpacing: -1,
-                    ),
-                  ),
-                  SizedBox(height: SizeTokens.p8),
-                  Text(
                     "Kurumsal QR Yönetim Sistemi",
                     style: TextStyle(
                       fontSize: SizeTokens.f14,
@@ -62,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ],
               ),
-              SizedBox(height: SizeTokens.p32 * 2),
+              SizedBox(height: SizeTokens.p32),
 
               // Email field
               Text(

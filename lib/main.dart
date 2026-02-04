@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'app/app_theme.dart';
 import 'core/network/api_client.dart';
@@ -17,9 +18,16 @@ import 'viewmodels/qr_view_model.dart';
 import 'viewmodels/order_view_model.dart';
 import 'viewmodels/product_view_model.dart';
 import 'views/login/login_view.dart';
-// import 'views/home/home_view.dart'; // No longer needed here if not initial home
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // App de dönme olmasın (Lock orientation to portrait)
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   runApp(const MyApp());
 }
 
@@ -53,6 +61,17 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'DryFix Boyacı',
         theme: AppTheme.lightTheme,
+        builder: (context, child) {
+          return GestureDetector(
+            // Klavye kapanma kolaylığı (Dismiss keyboard on tap)
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: MediaQuery(
+              // Sistem ayarlarında kalın metin olanları varsayılana döndür (Ignore system bold text)
+              data: MediaQuery.of(context).copyWith(boldText: false),
+              child: child!,
+            ),
+          );
+        },
         home: const LoginView(),
       ),
     );
