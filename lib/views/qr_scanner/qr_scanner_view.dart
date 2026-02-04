@@ -15,15 +15,22 @@ class QrScannerView extends StatefulWidget {
   State<QrScannerView> createState() => _QrScannerViewState();
 }
 
-class _QrScannerViewState extends State<QrScannerView> {
+class _QrScannerViewState extends State<QrScannerView>
+    with SingleTickerProviderStateMixin {
   bool _hasPermission = false;
   bool _isScanning = true;
+  bool _isTorchOn = false;
   final MobileScannerController _controller = MobileScannerController();
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     _checkPermission();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
   }
 
   Future<void> _checkPermission() async {
@@ -36,6 +43,7 @@ class _QrScannerViewState extends State<QrScannerView> {
   @override
   void dispose() {
     _controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -61,7 +69,6 @@ class _QrScannerViewState extends State<QrScannerView> {
                     QrSuccessView(response: viewModel.lastScanResult!),
               ),
             );
-            // After coming back from success screen, reset scanning
             if (mounted) {
               setState(() {
                 _isScanning = true;
@@ -81,8 +88,6 @@ class _QrScannerViewState extends State<QrScannerView> {
     bool success,
     QrViewModel viewModel,
   ) {
-    final result = viewModel.lastScanResult;
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -108,28 +113,12 @@ class _QrScannerViewState extends State<QrScannerView> {
             ),
             SizedBox(height: SizeTokens.p16),
             Text(
-              viewModel.errorMessage ?? result?.message ?? "İşlem tamamlandı.",
+              viewModel.errorMessage ??
+                  viewModel.lastScanResult?.message ??
+                  "İşlem tamamlandı.",
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.gray),
             ),
-            if (success && result?.qr != null) ...[
-              SizedBox(height: SizeTokens.p16),
-              const Divider(),
-              SizedBox(height: SizeTokens.p16),
-              Text(
-                "Kazanılan Puan: ${result?.qr?.tokenValue}",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.blue,
-                  fontSize: SizeTokens.f16,
-                ),
-              ),
-              if (result?.product != null)
-                Text(
-                  "Ürün: ${result?.product?.name}",
-                  style: TextStyle(color: AppColors.darkBlue),
-                ),
-            ],
           ],
         ),
         actions: [
@@ -160,7 +149,7 @@ class _QrScannerViewState extends State<QrScannerView> {
 
     if (!_hasPermission) {
       return Scaffold(
-        appBar: AppBar(title: const Text("QR Tara")),
+        backgroundColor: AppColors.background,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -188,55 +177,122 @@ class _QrScannerViewState extends State<QrScannerView> {
       body: Stack(
         children: [
           MobileScanner(controller: _controller, onDetect: _onDetect),
-          // Scanner Overlay
-          Center(
-            child: Container(
-              width: SizeTokens.p32 * 8,
-              height: SizeTokens.p32 * 8,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.blue, width: 4),
-                borderRadius: BorderRadius.circular(SizeTokens.r20),
-              ),
+
+          // Unified Custom Overlay (Hole, Corners, Dots, Laser)
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return CustomPaint(
+                  painter: ScannerOverlayPainter(
+                    animationValue: _animationController.value,
+                  ),
+                );
+              },
             ),
           ),
-          // Back Button
-          Positioned(
-            top: SizeTokens.p32,
-            left: SizeTokens.p24,
-            child: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-          ),
-          // Torch Button
-          Positioned(
-            top: SizeTokens.p32,
-            right: SizeTokens.p24,
-            child: CircleAvatar(
-              backgroundColor: Colors.black54,
-              child: IconButton(
-                icon: const Icon(Icons.flash_on, color: Colors.white),
-                onPressed: () => _controller.toggleTorch(),
-              ),
-            ),
-          ),
-          // Title
-          Positioned(
-            bottom: SizeTokens.p32 * 4,
-            left: 0,
-            right: 0,
-            child: const Center(
-              child: Text(
-                "Lütfen ürün üzerindeki QR kodu okutun",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  shadows: [Shadow(blurRadius: 10, color: Colors.black)],
+
+          // Content Layer
+          SafeArea(
+            child: Column(
+              children: [
+                // Top Bar
+                Padding(
+                  padding: EdgeInsets.all(SizeTokens.p16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _CircleActionButton(
+                        icon: Icons.close,
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      Text(
+                        "QR Kodunu Taratın",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: SizeTokens.f20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      _CircleActionButton(
+                        icon: _isTorchOn ? Icons.flash_on : Icons.flash_off,
+                        onPressed: () {
+                          _controller.toggleTorch();
+                          setState(() {
+                            _isTorchOn = !_isTorchOn;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+
+                // This Spacer pushes the following content below the scanner hole
+                const SizedBox(height: 400),
+
+                // Bottom Content
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: SizeTokens.p32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Kamerayı boya kutusunun üzerindeki\nQR koduna doğrultun",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: SizeTokens.f16,
+                        ),
+                      ),
+                      SizedBox(height: SizeTokens.p24),
+                      // Manual Input Button
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.keyboard_outlined,
+                          color: Colors.white,
+                          size: SizeTokens.f24,
+                        ),
+                        label: Text(
+                          "Kodu Elle Gir",
+                          style: TextStyle(
+                            fontSize: SizeTokens.f16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.6),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: SizeTokens.p24,
+                            vertical: SizeTokens.p16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(SizeTokens.r32),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: SizeTokens.p16),
+                      // Gallery Button
+                      _CircleActionButton(
+                        icon: Icons.image_outlined,
+                        size: 56,
+                        onPressed: () {},
+                      ),
+                      SizedBox(height: SizeTokens.p24),
+                      // Version Text
+                      Text(
+                        "Dryfix v1.0.0",
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.5),
+                          fontSize: SizeTokens.f12,
+                        ),
+                      ),
+                      SizedBox(height: SizeTokens.p16),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -251,4 +307,180 @@ class _QrScannerViewState extends State<QrScannerView> {
       ),
     );
   }
+}
+
+class _CircleActionButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+  final double size;
+
+  const _CircleActionButton({
+    required this.icon,
+    required this.onPressed,
+    this.size = 40,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white, size: size * 0.5),
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+      ),
+    );
+  }
+}
+
+class ScannerOverlayPainter extends CustomPainter {
+  final double animationValue;
+
+  ScannerOverlayPainter({required this.animationValue});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black.withOpacity(0.65)
+      ..style = PaintingStyle.fill;
+
+    final backgroundPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    final cutOutPadding = 48.0;
+    final cutOutWidth = size.width - (cutOutPadding * 2);
+    final cutOutHeight = cutOutWidth;
+    final cutOutRect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: cutOutWidth,
+      height: cutOutHeight,
+    );
+
+    final cutOutPath = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(cutOutRect, const Radius.circular(24)),
+      );
+
+    canvas.drawPath(
+      Path.combine(PathOperation.difference, backgroundPath, cutOutPath),
+      paint,
+    );
+
+    // Everything inside this block is clipped to the scanner hole
+    canvas.save();
+    canvas.clipPath(cutOutPath);
+
+    // 1. Draw Dot Grid
+    final dotPaint = Paint()
+      ..color = Colors.white.withOpacity(0.15)
+      ..style = PaintingStyle.fill;
+
+    const double spacing = 24.0;
+    const double dotSize = 2.0;
+
+    for (
+      double x = cutOutRect.left + spacing / 2;
+      x < cutOutRect.right;
+      x += spacing
+    ) {
+      for (
+        double y = cutOutRect.top + spacing / 2;
+        y < cutOutRect.bottom;
+        y += spacing
+      ) {
+        canvas.drawCircle(Offset(x, y), dotSize / 2, dotPaint);
+      }
+    }
+
+    // 2. Draw Laser Line
+
+    final laserY = cutOutRect.top + (animationValue * cutOutHeight);
+    final shadowPaint = Paint()
+      ..color = Colors.blue.withOpacity(0.4)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+
+    canvas.drawRect(
+      Rect.fromLTWH(cutOutRect.left + 10, laserY, cutOutWidth - 20, 2),
+      shadowPaint,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(cutOutRect.left + 10, laserY, cutOutWidth - 20, 2),
+      Paint()..color = Colors.blue,
+    );
+
+    canvas.restore();
+
+    // 3. Draw Corners
+    final cornerPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+
+    const cornerLength = 40.0;
+    const cornerRadius = 24.0;
+
+    // Top Left
+    canvas.drawPath(
+      Path()
+        ..moveTo(cutOutRect.left, cutOutRect.top + cornerLength)
+        ..lineTo(cutOutRect.left, cutOutRect.top + cornerRadius)
+        ..arcToPoint(
+          Offset(cutOutRect.left + cornerRadius, cutOutRect.top),
+          radius: const Radius.circular(cornerRadius),
+        )
+        ..lineTo(cutOutRect.left + cornerLength, cutOutRect.top),
+      cornerPaint,
+    );
+
+    // Top Right
+    canvas.drawPath(
+      Path()
+        ..moveTo(cutOutRect.right - cornerLength, cutOutRect.top)
+        ..lineTo(cutOutRect.right - cornerRadius, cutOutRect.top)
+        ..arcToPoint(
+          Offset(cutOutRect.right, cutOutRect.top + cornerRadius),
+          radius: const Radius.circular(cornerRadius),
+        )
+        ..lineTo(cutOutRect.right, cutOutRect.top + cornerLength),
+      cornerPaint,
+    );
+
+    // Bottom Left
+    canvas.drawPath(
+      Path()
+        ..moveTo(cutOutRect.left, cutOutRect.bottom - cornerLength)
+        ..lineTo(cutOutRect.left, cutOutRect.bottom - cornerRadius)
+        ..arcToPoint(
+          Offset(cutOutRect.left + cornerRadius, cutOutRect.bottom),
+          radius: const Radius.circular(cornerRadius),
+          clockwise: false,
+        )
+        ..lineTo(cutOutRect.left + cornerLength, cutOutRect.bottom),
+      cornerPaint,
+    );
+
+    // Bottom Right
+    canvas.drawPath(
+      Path()
+        ..moveTo(cutOutRect.right - cornerLength, cutOutRect.bottom)
+        ..lineTo(cutOutRect.right - cornerRadius, cutOutRect.bottom)
+        ..arcToPoint(
+          Offset(cutOutRect.right, cutOutRect.bottom - cornerRadius),
+          radius: const Radius.circular(cornerRadius),
+          clockwise: false,
+        )
+        ..lineTo(cutOutRect.right, cutOutRect.bottom - cornerLength),
+      cornerPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant ScannerOverlayPainter oldDelegate) =>
+      oldDelegate.animationValue != animationValue;
 }

@@ -23,46 +23,56 @@ class HomeCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r12),
-        border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
+        borderRadius: BorderRadius.circular(SizeTokens.r24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(SizeTokens.r12),
+          borderRadius: BorderRadius.circular(SizeTokens.r24),
           child: Padding(
-            padding: EdgeInsets.all(SizeTokens.p16),
+            padding: EdgeInsets.all(SizeTokens.p20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: EdgeInsets.all(SizeTokens.p8),
+                  padding: EdgeInsets.all(SizeTokens.p12),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                    color: iconColor.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(SizeTokens.r16),
                   ),
-                  child: Icon(icon, color: iconColor, size: SizeTokens.p24),
+                  child: Icon(icon, color: iconColor, size: 24),
                 ),
-                const Spacer(),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: SizeTokens.f16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.darkBlue,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                SizedBox(height: SizeTokens.p2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: SizeTokens.f12,
-                    color: AppColors.gray,
-                    fontWeight: FontWeight.w400,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: SizeTokens.f16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.darkBlue,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    SizedBox(height: SizeTokens.p4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: SizeTokens.f12,
+                        color: AppColors.gray,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

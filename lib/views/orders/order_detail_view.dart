@@ -4,6 +4,7 @@ import '../../app/app_theme.dart';
 import '../../viewmodels/order_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/utils/date_utils.dart';
 
 class OrderDetailView extends StatefulWidget {
   final int orderId;
@@ -184,7 +185,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                   ),
                 ),
                 Text(
-                  order.purchasedAt.split('T')[0],
+                  DateFormatter.toTurkish(order.purchasedAt),
                   style: TextStyle(
                     fontSize: SizeTokens.f12,
                     color: AppColors.gray,

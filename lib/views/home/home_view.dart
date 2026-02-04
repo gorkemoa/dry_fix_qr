@@ -60,16 +60,16 @@ class _HomeViewState extends State<HomeView> {
                     sliver: SliverGrid(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        mainAxisSpacing: SizeTokens.p16,
-                        crossAxisSpacing: SizeTokens.p16,
-                        childAspectRatio: 1.15,
+                        mainAxisSpacing: SizeTokens.p20,
+                        crossAxisSpacing: SizeTokens.p20,
+                        childAspectRatio: 1.0,
                       ),
                       delegate: SliverChildListDelegate([
                         HomeCard(
                           title: "QR Tara",
                           subtitle: "Hızlı İşlem",
                           icon: Icons.qr_code_scanner_rounded,
-                          iconColor: AppColors.darkBlue,
+                          iconColor: AppColors.blue,
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -107,8 +107,8 @@ class _HomeViewState extends State<HomeView> {
                         HomeCard(
                           title: "Mağaza",
                           subtitle: "Yeni Ürünler",
-                          icon: Icons.shopping_bag_outlined,
-                          iconColor: AppColors.blue,
+                          icon: Icons.storefront_outlined,
+                          iconColor: const Color(0xFF00BFA5),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -133,7 +133,7 @@ class _HomeViewState extends State<HomeView> {
                           Text(
                             "Son İşlemler",
                             style: TextStyle(
-                              fontSize: SizeTokens.f18,
+                              fontSize: SizeTokens.f20,
                               fontWeight: FontWeight.bold,
                               color: AppColors.darkBlue,
                             ),
@@ -161,7 +161,7 @@ class _HomeViewState extends State<HomeView> {
 
                   // History List
                   SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
+                    padding: EdgeInsets.all(SizeTokens.p24),
                     sliver: historyViewModel.isLoading
                         ? const SliverToBoxAdapter(
                             child: Center(

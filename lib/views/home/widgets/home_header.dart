@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 class HomeHeader extends StatelessWidget {
   final String userName;
   final int tokenBalance;
@@ -27,34 +29,22 @@ class HomeHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Text(
-                    "Hoş geldiniz,",
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      color: AppColors.gray,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Text(
-                    userName,
-                    style: TextStyle(
-                      fontSize: SizeTokens.f20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.darkBlue,
-                    ),
-                  ),
+                  SvgPicture.asset('assets/dry_fix.svg', height: 30, width: 30),
                 ],
               ),
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.white,
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
-                  border: Border.all(
-                    color: AppColors.darkBlue.withOpacity(0.1),
-                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: IconButton(
                   icon: const Icon(
@@ -66,47 +56,78 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: SizeTokens.p20),
+          SizedBox(height: SizeTokens.p24),
+          // Balance Card
           Container(
-            padding: EdgeInsets.all(SizeTokens.p16),
+            padding: EdgeInsets.all(SizeTokens.p24),
             decoration: BoxDecoration(
-              color: AppColors.darkBlue,
-              borderRadius: BorderRadius.circular(SizeTokens.r16),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF001A3D), Color(0xFF002452)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(SizeTokens.r12),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.darkBlue.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(SizeTokens.p12),
                   decoration: BoxDecoration(
-                    color: AppColors.white.withOpacity(0.1),
-                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(SizeTokens.r12),
                   ),
                   child: const Icon(
                     Icons.account_balance_wallet_outlined,
-                    color: AppColors.white,
-                    size: 20,
+                    color: Colors.white,
+                    size: 24,
                   ),
                 ),
-                SizedBox(width: SizeTokens.p12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "DryPara Bakiyesi",
-                      style: TextStyle(
-                        fontSize: SizeTokens.f12,
-                        color: AppColors.white.withOpacity(0.7),
+                SizedBox(width: SizeTokens.p16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${userName.toUpperCase()} DRYPARA BAKİYESİ",
+                        style: TextStyle(
+                          fontSize: SizeTokens.f12,
+                          color: Colors.white.withOpacity(0.6),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "$tokenBalance DryPara",
-                      style: TextStyle(
-                        fontSize: SizeTokens.f18,
-                        color: AppColors.white,
-                        fontWeight: FontWeight.bold,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            "$tokenBalance",
+                            style: TextStyle(
+                              fontSize: SizeTokens.f32,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: SizeTokens.p4),
+                          Text(
+                            "DryPara",
+                            style: TextStyle(
+                              fontSize: SizeTokens.f16,
+                              color: Colors.white.withOpacity(0.8),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
 import '../../../models/order_model.dart';
 import '../order_detail_view.dart';
+import '../../../core/utils/date_utils.dart';
 
 class OrderItem extends StatelessWidget {
   final OrderModel order;
@@ -129,7 +130,7 @@ class OrderItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  order.purchasedAt,
+                  DateFormatter.toTurkish(order.purchasedAt),
                   style: TextStyle(
                     fontSize: SizeTokens.f12,
                     color: AppColors.gray,
