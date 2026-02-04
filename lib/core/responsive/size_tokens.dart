@@ -8,10 +8,18 @@ class SizeTokens {
   static double get p8 => getProportionateScreenWidth(8);
   static double get p10 => getProportionateScreenWidth(10);
   static double get p12 => getProportionateScreenWidth(12);
+  static double get p14 => getProportionateScreenWidth(14);
   static double get p16 => getProportionateScreenWidth(16);
+  static double get p18 => getProportionateScreenWidth(18);
   static double get p20 => getProportionateScreenWidth(20);
   static double get p24 => getProportionateScreenWidth(24);
   static double get p32 => getProportionateScreenWidth(32);
+  static double get p40 => getProportionateScreenWidth(40);
+  static double get p48 => getProportionateScreenWidth(48);
+  static double get p50 => getProportionateScreenWidth(50);
+  static double get p64 => getProportionateScreenWidth(64);
+  static double get p80 => getProportionateScreenWidth(80);
+  static double get p100 => getProportionateScreenWidth(100);
 
   // Radius
   static double get r8 => getProportionateScreenWidth(8);
@@ -22,14 +30,14 @@ class SizeTokens {
   static double get r32 => getProportionateScreenWidth(32);
 
   // Font Sizes
-  static double get f10 => getProportionateScreenWidth(10);
-  static double get f11 => getProportionateScreenWidth(11);
-  static double get f12 => getProportionateScreenWidth(12);
-  static double get f13 => getProportionateScreenWidth(13);
-  static double get f14 => getProportionateScreenWidth(14);
-  static double get f16 => getProportionateScreenWidth(16);
-  static double get f18 => getProportionateScreenWidth(18);
-  static double get f20 => getProportionateScreenWidth(20);
-  static double get f24 => getProportionateScreenWidth(24);
-  static double get f32 => getProportionateScreenWidth(32);
+  static double get f10 => getProportionateScreenWidth(8);
+  static double get f11 => getProportionateScreenWidth(9);
+  static double get f12 => getProportionateScreenWidth(10);
+  static double get f13 => getProportionateScreenWidth(11);
+  static double get f14 => getProportionateScreenWidth(12);
+  static double get f16 => getProportionateScreenWidth(13);
+  static double get f18 => getProportionateScreenWidth(15);
+  static double get f20 => getProportionateScreenWidth(16);
+  static double get f24 => getProportionateScreenWidth(20);
+  static double get f32 => getProportionateScreenWidth(24);
 }

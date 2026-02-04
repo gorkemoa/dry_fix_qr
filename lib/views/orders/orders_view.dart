@@ -49,10 +49,10 @@ class _OrdersViewState extends State<OrdersView> {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: AppColors.darkBlue,
-            size: 20,
+            size: SizeTokens.p20,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -79,7 +79,7 @@ class _OrdersViewState extends State<OrdersView> {
                     Icon(
                       Icons.error_outline_rounded,
                       color: Colors.red.shade300,
-                      size: 48,
+                      size: SizeTokens.p48,
                     ),
                     SizedBox(height: SizeTokens.p16),
                     Text(
@@ -92,7 +92,7 @@ class _OrdersViewState extends State<OrdersView> {
                     ),
                     SizedBox(height: SizeTokens.p24),
                     SizedBox(
-                      width: 160,
+                      width: SizeTokens.p8 * 20, // 160
                       child: ElevatedButton(
                         onPressed: () => viewModel.fetchOrders(),
                         style: ElevatedButton.styleFrom(
@@ -117,7 +117,7 @@ class _OrdersViewState extends State<OrdersView> {
                   Icon(
                     Icons.shopping_basket_outlined,
                     color: AppColors.gray.withOpacity(0.3),
-                    size: 64,
+                    size: SizeTokens.p64,
                   ),
                   SizedBox(height: SizeTokens.p16),
                   Text(

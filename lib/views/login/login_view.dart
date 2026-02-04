@@ -36,11 +36,15 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+              SizedBox(height: SizeTokens.p100),
               // Corporate Logo Placeholder
               Column(
                 children: [
-                  SvgPicture.asset('assets/dry_fix.svg', height: 80, width: 80),
+                  SvgPicture.asset(
+                    'assets/dry_fix.svg',
+                    height: SizeTokens.p80,
+                    width: SizeTokens.p80,
+                  ),
                   SizedBox(height: SizeTokens.p24),
                   Text(
                     "Kurumsal QR Yönetim Sistemi",
@@ -156,7 +160,7 @@ class _LoginViewState extends State<LoginView> {
               else
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
+                  height: getProportionateScreenHeight(48),
                   child: ElevatedButton(
                     onPressed: () async {
                       await viewModel.login(
@@ -188,9 +192,9 @@ class _LoginViewState extends State<LoginView> {
                   padding: EdgeInsets.only(top: SizeTokens.p16),
                   child: Text(
                     viewModel.errorMessage!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.redAccent,
-                      fontSize: 13,
+                      fontSize: SizeTokens.f13,
                     ),
                     textAlign: TextAlign.center,
                   ),

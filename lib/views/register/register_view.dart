@@ -34,10 +34,10 @@ class _RegisterViewState extends State<RegisterView> {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: AppColors.darkBlue,
-            size: 20,
+            size: SizeTokens.p20,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -61,8 +61,8 @@ class _RegisterViewState extends State<RegisterView> {
             Center(
               child: SvgPicture.asset(
                 'assets/dry_fix.svg',
-                height: 60,
-                width: 60,
+                height: SizeTokens.p64,
+                width: SizeTokens.p64,
               ),
             ),
             SizedBox(height: SizeTokens.p24),
@@ -133,7 +133,7 @@ class _RegisterViewState extends State<RegisterView> {
               )
             else
               SizedBox(
-                height: 48,
+                height: SizeTokens.p48,
                 child: ElevatedButton(
                   onPressed: () async {
                     final request = RegisterRequest(
@@ -170,7 +170,10 @@ class _RegisterViewState extends State<RegisterView> {
                 padding: EdgeInsets.only(top: SizeTokens.p16),
                 child: Text(
                   viewModel.errorMessage!,
-                  style: const TextStyle(color: Colors.redAccent, fontSize: 13),
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: SizeTokens.f13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -222,7 +225,7 @@ class _RegisterViewState extends State<RegisterView> {
         prefixIcon: Icon(
           icon,
           color: AppColors.darkBlue.withOpacity(0.5),
-          size: 20,
+          size: SizeTokens.p20,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SizeTokens.r8),

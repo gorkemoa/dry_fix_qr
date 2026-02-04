@@ -31,7 +31,11 @@ class HomeHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  SvgPicture.asset('assets/dry_fix.svg', height: 30, width: 30),
+                  SvgPicture.asset(
+                    'assets/dry_fix.svg',
+                    height: SizeTokens.p32,
+                    width: SizeTokens.p32,
+                  ),
                 ],
               ),
               Container(
@@ -83,10 +87,10 @@ class HomeHeader extends StatelessWidget {
                     color: Colors.white.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(SizeTokens.r12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.account_balance_wallet_outlined,
                     color: Colors.white,
-                    size: 24,
+                    size: SizeTokens.f24,
                   ),
                 ),
                 SizedBox(width: SizeTokens.p16),

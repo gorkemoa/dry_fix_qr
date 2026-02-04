@@ -131,6 +131,14 @@ core/responsive/size_tokens.dart
 
 View içinde inline stil minimum.
 
+4.4 Büyük Ekran ve Sistem Ayarı Koruması (ZORUNLU)
+
+Uygulamanın iPhone Pro Max, Tabletler ve büyük ekranlı Android cihazlarda devasa görünmesini engellemek için:
+
+- **Scaling Cap (Ölçekleme Sınırı):** `size_config.dart` içindeki hesaplamalar iPhone 13 ölçüleri (Genişlik: 390px, Yükseklik: 844px) ile sınırlandırılmalıdır. Bu sınırın üzerindeki cihazlarda öğeler büyümez, ekran ferahlar.
+- **Font Scaling Protection:** Sistem ayarlarından yazı tipi boyutu değiştirilse bile tasarımın bozulmaması için `main.dart` içinde `MediaQuery`'ye `textScaler: TextScaler.noScaling` eklenmelidir.
+- **Platform Uyumu:** Bu kurallar hem iOS hem de Android için ortak uygulanır.
+
 5) MVVM AKIŞI (NET)
 
 View → ViewModel → Service → ApiClient → HTTP

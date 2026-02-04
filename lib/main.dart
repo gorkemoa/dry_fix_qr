@@ -66,8 +66,10 @@ class MyApp extends StatelessWidget {
             // Klavye kapanma kolaylığı (Dismiss keyboard on tap)
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: MediaQuery(
-              // Sistem ayarlarında kalın metin olanları varsayılana döndür (Ignore system bold text)
-              data: MediaQuery.of(context).copyWith(boldText: false),
+              // Sistem ayarlarında yazı boyutu ve kalın metin olanları varsayılana döndür (Ignore system font and bold settings)
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: TextScaler.noScaling, boldText: false),
               child: child!,
             ),
           );
