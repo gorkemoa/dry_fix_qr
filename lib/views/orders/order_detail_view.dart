@@ -5,6 +5,7 @@ import '../../viewmodels/order_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/utils/date_utils.dart';
+import '../../models/order_detail_model.dart';
 
 class OrderDetailView extends StatefulWidget {
   final int orderId;
@@ -32,23 +33,16 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.darkBlue,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: AppColors.darkBlue,
-            size: SizeTokens.p20,
-          ),
+          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           "Sipariş Detayı",
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: SizeTokens.f18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: viewModel.isDetailLoading
@@ -60,29 +54,32 @@ class _OrderDetailViewState extends State<OrderDetailView> {
           : viewModel.orderDetail == null
           ? const Center(child: Text("Sipariş bulunamadı."))
           : SingleChildScrollView(
-              padding: EdgeInsets.all(SizeTokens.p24),
+              padding: EdgeInsets.all(SizeTokens.p16),
               physics: const BouncingScrollPhysics(),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildStatusSection(viewModel.orderDetail!.order),
-                  SizedBox(height: SizeTokens.p24),
-                  _buildSectionTitle("Ürünler"),
+                  SizedBox(height: SizeTokens.p16),
+
+                  // items list
                   ...viewModel.orderDetail!.items.map(
                     (item) => _buildProductItem(item),
                   ),
-                  SizedBox(height: SizeTokens.p24),
+
+                  SizedBox(height: SizeTokens.p16),
                   _buildSectionTitle("Teslimat Adresi"),
                   _buildAddressCard(viewModel.orderDetail!.address),
+
+                  SizedBox(height: SizeTokens.p16),
+                  _buildPaymentSummary(viewModel.orderDetail!.order),
+
                   if (viewModel.orderDetail!.order.notes != null &&
                       viewModel.orderDetail!.order.notes!.isNotEmpty) ...[
-                    SizedBox(height: SizeTokens.p24),
+                    SizedBox(height: SizeTokens.p16),
                     _buildSectionTitle("Sipariş Notu"),
                     _buildNoteCard(viewModel.orderDetail!.order.notes!),
                   ],
-                  SizedBox(height: SizeTokens.p32),
-                  _buildSummaryCard(viewModel.orderDetail!.order),
-                  SizedBox(height: SizeTokens.p32),
                 ],
               ),
             ),
@@ -99,7 +96,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             Icon(
               Icons.error_outline_rounded,
               color: Colors.red.shade300,
-              size: SizeTokens.p8 * 6, // 48
+              size: SizeTokens.p48,
             ),
             SizedBox(height: SizeTokens.p16),
             Text(
@@ -118,57 +115,145 @@ class _OrderDetailViewState extends State<OrderDetailView> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: EdgeInsets.only(bottom: SizeTokens.p12),
+      padding: EdgeInsets.only(bottom: SizeTokens.p8, left: SizeTokens.p4),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: SizeTokens.f14,
+          fontSize: SizeTokens.f16,
           fontWeight: FontWeight.bold,
           color: AppColors.darkBlue,
-          letterSpacing: -0.3,
         ),
       ),
     );
   }
 
-  Widget _buildStatusSection(dynamic order) {
-    Color statusColor = AppColors.blue;
-    String statusText = order.status;
+  Widget _buildStatusSection(OrderDetailModel order) {
+    Color statusColor;
+    String statusText;
+    IconData statusIcon;
 
     switch (order.status.toLowerCase()) {
       case 'paid':
         statusColor = Colors.green;
-        statusText = "Ödendi";
+        statusText = "Ödeme Alındı"; // Or 'Ödendi'
+        statusIcon = Icons.check_circle_rounded;
         break;
       case 'shipped':
         statusColor = AppColors.blue;
         statusText = "Kargolandı";
+        statusIcon = Icons.local_shipping_rounded;
         break;
       case 'cancelled':
         statusColor = Colors.red;
         statusText = "İptal Edildi";
+        statusIcon = Icons.cancel_rounded;
         break;
+      default:
+        statusColor = AppColors.gray;
+        statusText = order.status;
+        statusIcon = Icons.info_rounded;
     }
 
     return Container(
-      padding: EdgeInsets.all(SizeTokens.p20),
+      padding: EdgeInsets.all(SizeTokens.p16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r12),
-        border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormatter.toTurkish(order.purchasedAt),
+                    style: TextStyle(
+                      color: AppColors.darkBlue,
+                      fontWeight: FontWeight.w600,
+                      fontSize: SizeTokens.f14,
+                    ),
+                  ),
+                  SizedBox(height: SizeTokens.p4),
+                  Text(
+                    "Sipariş No: #${order.id}",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f12,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeTokens.p12,
+                  vertical: SizeTokens.p6,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: statusColor.withOpacity(0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(statusIcon, color: statusColor, size: SizeTokens.p16),
+                    SizedBox(width: SizeTokens.p6),
+                    Text(
+                      statusText,
+                      style: TextStyle(
+                        fontSize: SizeTokens.f12,
+                        fontWeight: FontWeight.bold,
+                        color: statusColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductItem(OrderItemModel item) {
+    return Container(
+      margin: EdgeInsets.only(bottom: SizeTokens.p10),
+      padding: EdgeInsets.all(SizeTokens.p12),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(SizeTokens.p10),
+            width: 70,
+            height: 70,
+            padding: EdgeInsets.all(SizeTokens.p4),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.05),
-              shape: BoxShape.circle,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(SizeTokens.r8),
+              border: Border.all(color: Colors.grey.shade200),
             ),
-            child: Icon(
-              Icons.receipt_long_rounded,
-              color: statusColor,
-              size: 24,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.network(
+                item.product.image,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Icon(
+                  Icons.image_not_supported_outlined,
+                  color: Colors.grey,
+                  size: SizeTokens.p24,
+                ),
+              ),
             ),
           ),
           SizedBox(width: SizeTokens.p16),
@@ -177,108 +262,35 @@ class _OrderDetailViewState extends State<OrderDetailView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Sipariş #${order.id}",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.darkBlue,
-                  ),
-                ),
-                Text(
-                  DateFormatter.toTurkish(order.purchasedAt),
-                  style: TextStyle(
-                    fontSize: SizeTokens.f12,
-                    color: AppColors.gray,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: SizeTokens.p12,
-              vertical: SizeTokens.p4,
-            ),
-            decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(SizeTokens.r20),
-            ),
-            child: Text(
-              statusText,
-              style: TextStyle(
-                fontSize: SizeTokens.f12,
-                fontWeight: FontWeight.bold,
-                color: statusColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProductItem(dynamic item) {
-    return Container(
-      margin: EdgeInsets.only(bottom: SizeTokens.p12),
-      padding: EdgeInsets.all(SizeTokens.p12),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r12),
-        border: Border.all(color: AppColors.darkBlue.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: SizeTokens.p50,
-            height: SizeTokens.p50,
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(SizeTokens.r8),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(SizeTokens.r8),
-              child: Image.network(
-                item.product.image,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Icon(
-                  Icons.inventory_2_outlined,
-                  color: AppColors.gray,
-                  size: SizeTokens.p20,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: SizeTokens.p12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
                   item.product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: SizeTokens.f14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.darkBlue,
+                    height: 1.3,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
+                SizedBox(height: SizeTokens.p4),
                 Text(
                   "${item.quantity} Adet",
                   style: TextStyle(
-                    fontSize: SizeTokens.f12,
+                    fontSize: SizeTokens.f13,
                     color: AppColors.gray,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p8),
+                Text(
+                  "${item.tokenPriceAtPurchase} DryPara",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.blue,
                   ),
                 ),
               ],
-            ),
-          ),
-          Text(
-            "${item.tokenPriceAtPurchase} DryPara",
-            style: TextStyle(
-              fontSize: SizeTokens.f14,
-              fontWeight: FontWeight.bold,
-              color: AppColors.darkBlue,
             ),
           ),
         ],
@@ -286,14 +298,14 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     );
   }
 
-  Widget _buildAddressCard(dynamic address) {
+  Widget _buildAddressCard(OrderAddressModel address) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(SizeTokens.p20),
+      padding: EdgeInsets.all(SizeTokens.p16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r12),
-        border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,8 +314,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: AppColors.blue,
-                size: SizeTokens.p18,
+                color: AppColors.darkBlue,
+                size: SizeTokens.p20,
               ),
               SizedBox(width: SizeTokens.p8),
               Text(
@@ -316,102 +328,176 @@ class _OrderDetailViewState extends State<OrderDetailView> {
               ),
             ],
           ),
-          SizedBox(height: SizeTokens.p12),
-          Text(
-            address.phone,
-            style: TextStyle(fontSize: SizeTokens.f13, color: AppColors.gray),
-          ),
-          SizedBox(height: SizeTokens.p4),
-          Text(
-            "${address.addressLine1}${address.addressLine2 != null ? ', ${address.addressLine2}' : ''}",
-            style: TextStyle(
-              fontSize: SizeTokens.f13,
-              color: AppColors.darkBlue,
-            ),
-          ),
-          Text(
+          Divider(height: 24, color: Colors.grey.shade200),
+          _buildAddressRow(Icons.phone_outlined, address.phone),
+          SizedBox(height: SizeTokens.p8),
+          _buildAddressRow(
+            Icons.map_outlined,
             "${address.district} / ${address.city}",
-            style: TextStyle(
-              fontSize: SizeTokens.f13,
-              color: AppColors.darkBlue,
+          ),
+          SizedBox(height: SizeTokens.p8),
+          _buildAddressRow(Icons.home_outlined, address.addressLine1),
+          if (address.addressLine2 != null &&
+              address.addressLine2!.isNotEmpty) ...[
+            SizedBox(height: SizeTokens.p4),
+            Padding(
+              padding: EdgeInsets.only(left: 28), // 20 icon + 8 spacer
+              child: Text(
+                address.addressLine2!,
+                style: TextStyle(
+                  fontSize: SizeTokens.f13,
+                  color: Colors.black87,
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNoteCard(String note) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(SizeTokens.p16),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(SizeTokens.r8),
-        border: Border.all(color: AppColors.darkBlue.withOpacity(0.05)),
-      ),
-      child: Text(
-        note,
-        style: TextStyle(
-          fontSize: SizeTokens.f13,
-          color: AppColors.gray,
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSummaryCard(dynamic order) {
-    return Container(
-      padding: EdgeInsets.all(SizeTokens.p24),
-      decoration: BoxDecoration(
-        color: AppColors.darkBlue,
-        borderRadius: BorderRadius.circular(SizeTokens.r16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.darkBlue.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildSummaryRow(
-            "Sipariş Toplamı",
-            "${order.totalTokenSpent} DryPara",
-            isTotal: true,
-          ),
-          if (order.totalPrice != "0.00") ...[
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Divider(color: Colors.white10, height: 1),
-            ),
-            _buildSummaryRow("Nakit Tutar", "${order.totalPrice} DryPara"),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildSummaryRow(String label, String value, {bool isTotal = false}) {
+  Widget _buildAddressRow(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: Colors.grey),
+        SizedBox(width: SizeTokens.p12),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: SizeTokens.f13,
+              color: Colors.black87,
+              height: 1.3,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoteCard(String note) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(SizeTokens.p12),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.note_alt_outlined,
+            color: Colors.orange.shade800,
+            size: 20,
+          ),
+          SizedBox(width: SizeTokens.p8),
+          Expanded(
+            child: Text(
+              note,
+              style: TextStyle(
+                fontSize: SizeTokens.f13,
+                color: Colors.black87,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentSummary(OrderDetailModel order) {
+    return Container(
+      padding: EdgeInsets.all(SizeTokens.p16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Ödeme Özeti",
+            style: TextStyle(
+              fontSize: SizeTokens.f16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.darkBlue,
+            ),
+          ),
+          Divider(height: 24, color: Colors.grey.shade200),
+          _buildSummaryRow("Sipariş Tutarı", "${order.totalPrice} TL"),
+          if (order.totalTokenSpent > 0) ...[
+            SizedBox(height: SizeTokens.p8),
+            _buildSummaryRow(
+              "Harcanan Puan",
+              "${order.totalTokenSpent} DP",
+              valueColor: AppColors.darkBlue,
+            ),
+          ],
+          SizedBox(height: SizeTokens.p12),
+          const Divider(height: 1),
+          SizedBox(height: SizeTokens.p12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Toplam",
+                style: TextStyle(
+                  fontSize: SizeTokens.f16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "${order.totalPrice} TL",
+                    style: TextStyle(
+                      color: AppColors.blue,
+                      fontSize: SizeTokens.f18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (order.totalTokenSpent > 0)
+                    Text(
+                      "+ ${order.totalTokenSpent} DP",
+                      style: TextStyle(
+                        color: AppColors.darkBlue,
+                        fontSize: SizeTokens.f12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(String label, String value, {Color? valueColor}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
           style: TextStyle(
-            color: isTotal ? Colors.white : Colors.white70,
-            fontSize: isTotal ? SizeTokens.f14 : SizeTokens.f13,
-            fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+            fontSize: SizeTokens.f14,
+            color: Colors.grey.shade700,
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            color: Colors.white,
-            fontSize: isTotal ? SizeTokens.f20 : SizeTokens.f16,
-            fontWeight: FontWeight.bold,
+            fontSize: SizeTokens.f14,
+            fontWeight: FontWeight.w600,
+            color: valueColor ?? Colors.black87,
           ),
         ),
       ],
