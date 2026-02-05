@@ -16,6 +16,9 @@ class ProductViewModel extends ChangeNotifier {
   List<ProductModel> _products = [];
   ProductMeta? _meta;
 
+  // Cart State
+  final List<ProductModel> _cart = [];
+
   // Search & Filters
   String _searchQuery = "";
   bool? _inStock;
@@ -28,6 +31,13 @@ class ProductViewModel extends ChangeNotifier {
   bool get hasMore => _meta != null && _meta!.currentPage < _meta!.lastPage;
   String get searchQuery => _searchQuery;
   bool? get inStock => _inStock;
+
+  List<ProductModel> get cart => _cart;
+  int get cartCount => _cart.length;
+  double get cartTotalPrice =>
+      _cart.fold(0, (sum, item) => sum + double.parse(item.price));
+  int get cartTotalTokenPrice =>
+      _cart.fold(0, (sum, item) => sum + item.tokenPrice);
 
   Future<void> fetchProducts({bool isRefresh = false}) async {
     if (!isRefresh) {
@@ -96,6 +106,24 @@ class ProductViewModel extends ChangeNotifier {
     if (_inStock == value) return;
     _inStock = value;
     fetchProducts();
+  }
+
+  // Cart Methods
+  void addToCart(ProductModel product) {
+    // For now, simpler cart: allow multiples of same product
+    _cart.add(product);
+    notifyListeners();
+    Logger.info("Added to cart: ${product.name}");
+  }
+
+  void removeFromCart(ProductModel product) {
+    _cart.remove(product);
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _cart.clear();
+    notifyListeners();
   }
 
   Future<void> refresh() => fetchProducts(isRefresh: true);

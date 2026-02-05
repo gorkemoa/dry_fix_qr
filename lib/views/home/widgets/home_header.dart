@@ -7,11 +7,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 class HomeHeader extends StatelessWidget {
   final String userName;
   final int tokenBalance;
+  final int cartItemCount;
+  final VoidCallback? onCartTap;
 
   const HomeHeader({
     super.key,
     required this.userName,
     required this.tokenBalance,
+    this.cartItemCount = 0,
+    this.onCartTap,
   });
 
   @override
@@ -38,25 +42,80 @@ class HomeHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+              Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: SizeTokens.p12),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.notifications_none_rounded,
-                    color: AppColors.darkBlue,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.shopping_cart_outlined,
+                            color: AppColors.darkBlue,
+                          ),
+                          onPressed: onCartTap,
+                        ),
+                        if (cartItemCount > 0)
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 14,
+                                minHeight: 14,
+                              ),
+                              child: Text(
+                                '$cartItemCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                  onPressed: () {},
-                ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: AppColors.darkBlue,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

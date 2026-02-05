@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../models/product_model.dart';
-import '../../core/utils/date_utils.dart'; // Assuming we might need this or just for consistancy imports
+import '../../viewmodels/product_view_model.dart';
 
 class ProductDetailView extends StatelessWidget {
   final ProductModel product;
@@ -91,7 +92,7 @@ class ProductDetailView extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(SizeTokens.r4),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: Colors.red.withOpacity(0.3),
                             ),
@@ -191,9 +192,15 @@ class ProductDetailView extends StatelessWidget {
             child: ElevatedButton(
               onPressed: product.canBuy && product.stock > 0
                   ? () {
-                      // Handle buy action
-                      // Typically user would add to cart or proceed to checkout
-                      // For now, we can show a placeholder or call a viewModel method if available
+                      final viewModel = context.read<ProductViewModel>();
+                      viewModel.addToCart(product);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Ürün sepete eklendi"),
+                          backgroundColor: Colors.green,
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
                     }
                   : null, // Disable if cannot buy
               style: ElevatedButton.styleFrom(

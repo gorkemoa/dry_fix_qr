@@ -6,6 +6,8 @@ import '../../viewmodels/home_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import 'widgets/product_item.dart';
+import 'product_detail_view.dart';
+import '../cart/cart_view.dart';
 
 class ProductsView extends StatefulWidget {
   const ProductsView({super.key});
@@ -66,6 +68,48 @@ class _ProductsViewState extends State<ProductsView> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CartView()),
+                  );
+                },
+              ),
+              if (viewModel.cartCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${viewModel.cartCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           Container(
             margin: EdgeInsets.only(right: SizeTokens.p16),
             padding: EdgeInsets.symmetric(
