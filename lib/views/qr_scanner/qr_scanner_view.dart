@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../app/app_theme.dart';
 import '../../viewmodels/qr_view_model.dart';
+import '../../viewmodels/home_view_model.dart';
+import '../../viewmodels/history_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import 'qr_success_view.dart';
@@ -22,6 +25,7 @@ class _QrScannerViewState extends State<QrScannerView>
   bool _isTorchOn = false;
   final MobileScannerController _controller = MobileScannerController();
   late AnimationController _animationController;
+  String _version = "";
 
   @override
   void initState() {
@@ -31,6 +35,14 @@ class _QrScannerViewState extends State<QrScannerView>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
+    _getAppVersion();
+  }
+
+  Future<void> _getAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version;
+    });
   }
 
   Future<void> _checkPermission() async {
@@ -63,6 +75,10 @@ class _QrScannerViewState extends State<QrScannerView>
 
         if (mounted) {
           if (success && viewModel.lastScanResult != null) {
+            // Proactively refresh home and history data
+            context.read<HomeViewModel>().init();
+            context.read<HistoryViewModel>().fetchHistory();
+
             await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) =>
@@ -244,35 +260,9 @@ class _QrScannerViewState extends State<QrScannerView>
                           fontSize: SizeTokens.f16,
                         ),
                       ),
-                      SizedBox(height: SizeTokens.p24),
+                      SizedBox(height: SizeTokens.p100),
                       // Manual Input Button
-                      ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.keyboard_outlined,
-                          color: Colors.white,
-                          size: SizeTokens.f24,
-                        ),
-                        label: Text(
-                          "Kodu Elle Gir",
-                          style: TextStyle(
-                            fontSize: SizeTokens.f16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black.withOpacity(0.6),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: SizeTokens.p24,
-                            vertical: SizeTokens.p16,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(SizeTokens.r32),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: SizeTokens.p16),
+
                       // Gallery Button
                       _CircleActionButton(
                         icon: Icons.image_outlined,
@@ -282,7 +272,7 @@ class _QrScannerViewState extends State<QrScannerView>
                       SizedBox(height: SizeTokens.p24),
                       // Version Text
                       Text(
-                        "Dryfix v1.0.0",
+                        "Dryfix v$_version",
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.5),
                           fontSize: SizeTokens.f12,

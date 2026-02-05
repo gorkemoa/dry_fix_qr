@@ -39,155 +39,168 @@ class _HomeViewState extends State<HomeView> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: viewModel.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.darkBlue),
-            )
-          : SafeArea(
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: HomeHeader(
-                      userName: viewModel.user?.name ?? "Kullanıcı",
-                      tokenBalance: viewModel.user?.tokenBalance ?? 0,
-                    ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          color: AppColors.blue,
+          onRefresh: () async {
+            await Future.wait([
+              context.read<HomeViewModel>().init(),
+              context.read<HistoryViewModel>().fetchHistory(),
+            ]);
+          },
+          child: viewModel.isLoading && viewModel.user == null
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.darkBlue),
+                )
+              : CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
                   ),
-
-                  // Grid Section
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: SizeTokens.p20,
-                        crossAxisSpacing: SizeTokens.p20,
-                        childAspectRatio: 1.0,
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: HomeHeader(
+                        userName: viewModel.user?.name ?? "Kullanıcı",
+                        tokenBalance: viewModel.user?.tokenBalance ?? 0,
                       ),
-                      delegate: SliverChildListDelegate([
-                        HomeCard(
-                          title: "QR Tara",
-                          subtitle: "Hızlı İşlem",
-                          icon: Icons.qr_code_scanner_rounded,
-                          iconColor: AppColors.blue,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const QrScannerView(),
-                              ),
-                            );
-                          },
-                        ),
-                        HomeCard(
-                          title: "Siparişlerim",
-                          subtitle: "Durum Takibi",
-                          icon: Icons.inventory_2_outlined,
-                          iconColor: AppColors.blue,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const OrdersView(),
-                              ),
-                            );
-                          },
-                        ),
-                        HomeCard(
-                          title: "Profilim",
-                          subtitle: "Hesap Bilgileri",
-                          icon: Icons.person_outline_rounded,
-                          iconColor: AppColors.darkBlue,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ProfileView(),
-                              ),
-                            );
-                          },
-                        ),
-                        HomeCard(
-                          title: "Mağaza",
-                          subtitle: "Yeni Ürünler",
-                          icon: Icons.storefront_outlined,
-                          iconColor: const Color(0xFF00BFA5),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ProductsView(),
-                              ),
-                            );
-                          },
-                        ),
-                      ]),
                     ),
-                  ),
 
-                  SliverToBoxAdapter(child: SizedBox(height: SizeTokens.p32)),
-
-                  // History Section Header
-                  SliverToBoxAdapter(
-                    child: Padding(
+                    // Grid Section
+                    SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Son İşlemler",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f20,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.darkBlue,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: SizeTokens.p20,
+                          crossAxisSpacing: SizeTokens.p20,
+                          childAspectRatio: 1.0,
+                        ),
+                        delegate: SliverChildListDelegate([
+                          HomeCard(
+                            title: "QR Tara",
+                            subtitle: "Hızlı İşlem",
+                            icon: Icons.qr_code_scanner_rounded,
+                            iconColor: AppColors.blue,
+                            onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => const TransactionsView(),
+                                  builder: (_) => const QrScannerView(),
                                 ),
                               );
                             },
-                            child: const Text(
-                              "Tümünü Gör",
-                              style: TextStyle(
-                                color: AppColors.blue,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
                           ),
-                        ],
+                          HomeCard(
+                            title: "Siparişlerim",
+                            subtitle: "Durum Takibi",
+                            icon: Icons.inventory_2_outlined,
+                            iconColor: AppColors.blue,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const OrdersView(),
+                                ),
+                              );
+                            },
+                          ),
+                          HomeCard(
+                            title: "Profilim",
+                            subtitle: "Hesap Bilgileri",
+                            icon: Icons.person_outline_rounded,
+                            iconColor: AppColors.darkBlue,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const ProfileView(),
+                                ),
+                              );
+                            },
+                          ),
+                          HomeCard(
+                            title: "Mağaza",
+                            subtitle: "Yeni Ürünler",
+                            icon: Icons.storefront_outlined,
+                            iconColor: const Color(0xFF00BFA5),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const ProductsView(),
+                                ),
+                              );
+                            },
+                          ),
+                        ]),
                       ),
                     ),
-                  ),
 
-                  // History List
-                  SliverPadding(
-                    padding: EdgeInsets.all(SizeTokens.p24),
-                    sliver: historyViewModel.isLoading
-                        ? const SliverToBoxAdapter(
-                            child: Center(
-                              child: CircularProgressIndicator(
+                    SliverToBoxAdapter(child: SizedBox(height: SizeTokens.p32)),
+
+                    // History Section Header
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: SizeTokens.p24,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Son İşlemler",
+                              style: TextStyle(
+                                fontSize: SizeTokens.f20,
+                                fontWeight: FontWeight.bold,
                                 color: AppColors.darkBlue,
                               ),
                             ),
-                          )
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                return HistoryItem(
-                                  item: historyViewModel.items[index],
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const TransactionsView(),
+                                  ),
                                 );
                               },
-                              childCount: historyViewModel.items.length > 5
-                                  ? 5
-                                  : historyViewModel.items.length,
+                              child: const Text(
+                                "Tümünü Gör",
+                                style: TextStyle(
+                                  color: AppColors.blue,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ),
-                  ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-                  SliverToBoxAdapter(child: SizedBox(height: SizeTokens.p32)),
-                ],
-              ),
-            ),
+                    // History List
+                    SliverPadding(
+                      padding: EdgeInsets.all(SizeTokens.p24),
+                      sliver: historyViewModel.isLoading
+                          ? const SliverToBoxAdapter(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.darkBlue,
+                                ),
+                              ),
+                            )
+                          : SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  return HistoryItem(
+                                    item: historyViewModel.items[index],
+                                  );
+                                },
+                                childCount: historyViewModel.items.length > 5
+                                    ? 5
+                                    : historyViewModel.items.length,
+                              ),
+                            ),
+                    ),
+
+                    SliverToBoxAdapter(child: SizedBox(height: SizeTokens.p32)),
+                  ],
+                ),
+        ),
+      ),
     );
   }
 }

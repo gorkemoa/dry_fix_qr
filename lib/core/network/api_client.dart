@@ -2,9 +2,13 @@ import 'package:dio/dio.dart';
 import 'api_exception.dart';
 import '../../app/api_constants.dart';
 import '../utils/logger.dart';
+import '../utils/navigation_service.dart';
+import '../storage/storage_manager.dart';
+import '../../views/login/login_view.dart';
 
 class ApiClient {
   late final Dio _dio;
+  bool _isRedirecting = false;
 
   ApiClient() {
     _dio = Dio(
@@ -13,6 +17,31 @@ class ApiClient {
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {'Accept': 'application/json'},
+      ),
+    );
+
+    // Add interceptor for global 401 handling
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException e, handler) async {
+          if (e.response?.statusCode == 401 && !_isRedirecting) {
+            _isRedirecting = true;
+            Logger.error(
+              'UNAUTHORIZED (401)',
+              'Session expired, redirecting to login',
+            );
+
+            // Clear local data
+            await StorageManager.deleteToken();
+            clearToken();
+
+            // Navigate to login
+            NavigationService.navigateToWidget(const LoginView());
+
+            _isRedirecting = false;
+          }
+          return handler.next(e);
+        },
       ),
     );
   }

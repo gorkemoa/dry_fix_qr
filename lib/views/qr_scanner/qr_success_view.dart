@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/qr_verify_response.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../viewmodels/home_view_model.dart';
+import '../../viewmodels/history_view_model.dart';
 
 class QrSuccessView extends StatelessWidget {
   final QrVerifyResponse response;
@@ -199,9 +202,11 @@ class QrSuccessView extends StatelessWidget {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.of(
-                      context,
-                    ).popUntil((route) => route.isFirst),
+                    onPressed: () {
+                      context.read<HomeViewModel>().init();
+                      context.read<HistoryViewModel>().fetchHistory();
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkBlue,
                       foregroundColor: Colors.white,
