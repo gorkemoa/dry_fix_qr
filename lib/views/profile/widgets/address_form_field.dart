@@ -12,6 +12,7 @@ class AddressFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int maxLines;
   final bool isRequired;
+  final bool obscureText;
   final Widget? prefix;
   final Widget? suffix;
 
@@ -26,6 +27,7 @@ class AddressFormField extends StatelessWidget {
     this.validator,
     this.maxLines = 1,
     this.isRequired = true,
+    this.obscureText = false,
     this.prefix,
     this.suffix,
   });
@@ -61,6 +63,7 @@ class AddressFormField extends StatelessWidget {
           textCapitalization: textCapitalization,
           validator: validator,
           maxLines: maxLines,
+          obscureText: obscureText,
           style: TextStyle(
             color: AppColors.darkBlue,
             fontSize: SizeTokens.f14,

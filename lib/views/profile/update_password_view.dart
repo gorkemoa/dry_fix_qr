@@ -6,6 +6,7 @@ import '../../models/user_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../login/login_view.dart';
+import 'widgets/address_form_field.dart';
 
 class UpdatePasswordView extends StatefulWidget {
   const UpdatePasswordView({super.key});
@@ -15,6 +16,8 @@ class UpdatePasswordView extends StatefulWidget {
 }
 
 class _UpdatePasswordViewState extends State<UpdatePasswordView> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _currentPasswordController =
       TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
@@ -35,98 +38,171 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
     final viewModel = context.watch<UpdatePasswordViewModel>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Şifre Değiştir")),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.darkBlue,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Şifre Değiştir",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(SizeTokens.p24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              "Güvenliğiniz için şifrenizi düzenli aralıklarla güncelleyin.",
-              style: TextStyle(fontSize: SizeTokens.f14, color: AppColors.gray),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: SizeTokens.p32),
-            _buildPasswordField(
-              controller: _currentPasswordController,
-              label: "Mevcut Şifre",
-            ),
-            SizedBox(height: SizeTokens.p16),
-            _buildPasswordField(
-              controller: _newPasswordController,
-              label: "Yeni Şifre",
-            ),
-            SizedBox(height: SizeTokens.p16),
-            _buildPasswordField(
-              controller: _confirmPasswordController,
-              label: "Yeni Şifre Tekrar",
-            ),
-            SizedBox(height: SizeTokens.p32),
-            if (viewModel.isLoading)
-              const Center(
-                child: CircularProgressIndicator(color: AppColors.blue),
-              )
-            else
-              ElevatedButton(
-                onPressed: () async {
-                  if (_newPasswordController.text !=
-                      _confirmPasswordController.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Yeni şifreler eşleşmiyor."),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.all(SizeTokens.p12),
+                decoration: BoxDecoration(
+                  color: AppColors.darkBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: AppColors.darkBlue,
+                      size: SizeTokens.f20,
+                    ),
+                    SizedBox(width: SizeTokens.p12),
+                    Expanded(
+                      child: Text(
+                        "Güvenliğiniz için şifrenizi düzenli aralıklarla güncelleyin.",
+                        style: TextStyle(
+                          color: AppColors.darkBlue,
+                          fontSize: SizeTokens.f12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    );
-                    return;
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: SizeTokens.p24),
+
+              AddressFormField(
+                controller: _currentPasswordController,
+                label: "Mevcut Şifre",
+                hint: "********",
+                obscureText: true,
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              AddressFormField(
+                controller: _newPasswordController,
+                label: "Yeni Şifre",
+                hint: "********",
+                obscureText: true,
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              AddressFormField(
+                controller: _confirmPasswordController,
+                label: "Yeni Şifre Tekrar",
+                hint: "********",
+                obscureText: true,
+                validator: (v) {
+                  if (v?.isEmpty ?? true) return "Gerekli";
+                  if (v != _newPasswordController.text) {
+                    return "Şifreler eşleşmiyor";
                   }
-
-                  final request = UpdatePasswordRequest(
-                    currentPassword: _currentPasswordController.text,
-                    password: _newPasswordController.text,
-                    passwordConfirmation: _confirmPasswordController.text,
-                  );
-
-                  await viewModel.updatePassword(request);
-
-                  if (viewModel.isSuccess && mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Şifreniz başarıyla güncellendi."),
-                      ),
-                    );
-                    Navigator.of(context).pop();
-                  }
+                  return null;
                 },
-                child: Text(
-                  "Şifreyi Güncelle",
+              ),
+
+              SizedBox(height: SizeTokens.p32),
+
+              ElevatedButton(
+                onPressed: viewModel.isLoading
+                    ? null
+                    : () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          final request = UpdatePasswordRequest(
+                            currentPassword: _currentPasswordController.text,
+                            password: _newPasswordController.text,
+                            passwordConfirmation:
+                                _confirmPasswordController.text,
+                          );
+
+                          await viewModel.updatePassword(request);
+
+                          if (viewModel.isSuccess && mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  "Şifreniz başarıyla güncellendi.",
+                                ),
+                                backgroundColor: AppColors.darkBlue,
+                              ),
+                            );
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.darkBlue,
+                  minimumSize: const Size(double.infinity, 56),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                  ),
+                ),
+                child: viewModel.isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        "Şifreyi Güncelle",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              ),
+
+              if (viewModel.errorMessage != null)
+                Padding(
+                  padding: EdgeInsets.only(top: SizeTokens.p16),
+                  child: Text(
+                    viewModel.errorMessage!,
+                    style: const TextStyle(color: Colors.redAccent),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+
+              SizedBox(height: SizeTokens.p48),
+              const Divider(),
+              SizedBox(height: SizeTokens.p16),
+              TextButton(
+                onPressed: () => _showDeactivateDialog(context, viewModel),
+                child: const Text(
+                  "Hesabı Kapat",
                   style: TextStyle(
-                    fontSize: SizeTokens.f16,
+                    color: Colors.redAccent,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            if (viewModel.errorMessage != null)
-              Padding(
-                padding: EdgeInsets.only(top: SizeTokens.p16),
-                child: Text(
-                  viewModel.errorMessage!,
-                  style: const TextStyle(color: Colors.redAccent),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            SizedBox(height: SizeTokens.p48),
-            const Divider(),
-            SizedBox(height: SizeTokens.p16),
-            TextButton(
-              onPressed: () => _showDeactivateDialog(context, viewModel),
-              child: const Text(
-                "Hesabı Kapat",
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -195,28 +271,6 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPasswordField({
-    required TextEditingController controller,
-    required String label,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: true,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: const Icon(Icons.lock_outline, color: AppColors.gray),
-        labelStyle: const TextStyle(color: AppColors.gray),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SizeTokens.r12),
-          borderSide: const BorderSide(color: AppColors.blue),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(SizeTokens.r12),
-        ),
       ),
     );
   }

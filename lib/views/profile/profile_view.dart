@@ -21,6 +21,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   String _version = "";
   String _buildNumber = "";
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +39,15 @@ class _ProfileViewState extends State<ProfileView> {
     });
   }
 
+  String _getUserInitials(String? name) {
+    if (name == null || name.isEmpty) return "M";
+    final names = name.split(" ");
+    if (names.length > 1) {
+      return "${names[0][0]}${names[names.length - 1][0]}".toUpperCase();
+    }
+    return names[0][0].toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
@@ -47,33 +57,28 @@ class _ProfileViewState extends State<ProfileView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.darkBlue,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
         title: Text(
           "Profilim",
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontWeight: FontWeight.bold,
-            fontSize: SizeTokens.f18,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
-          TextButton(
+          IconButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const EditProfileView()),
               );
             },
-            child: Text(
-              "Düzenle",
-              style: TextStyle(
-                color: AppColors.blue,
-                fontWeight: FontWeight.bold,
-                fontSize: SizeTokens.f14,
-              ),
+            icon: Icon(
+              Icons.edit_note_rounded,
+              color: Colors.white,
+              size: SizeTokens.p24,
             ),
           ),
+          SizedBox(width: SizeTokens.p8),
         ],
       ),
       body: viewModel.isLoading && user == null
@@ -84,45 +89,96 @@ class _ProfileViewState extends State<ProfileView> {
               padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
               child: Column(
                 children: [
-                  SizedBox(height: SizeTokens.p24),
+                  SizedBox(height: SizeTokens.p20),
                   // User Info Header
-                  Text(
-                    user?.name ?? "Misafir Kullanıcı",
-                    style: TextStyle(
-                      color: AppColors.darkBlue,
-                      fontSize: SizeTokens.f24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: SizeTokens.p8),
+                  // User Info Header
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.email_outlined,
-                        size: SizeTokens.p14,
-                        color: AppColors.gray,
-                      ),
-                      SizedBox(width: SizeTokens.p4),
-                      Text(
-                        user?.email ?? "",
-                        style: TextStyle(
-                          color: AppColors.gray,
-                          fontSize: SizeTokens.f13,
+                      Container(
+                        width: SizeTokens.p80,
+                        height: SizeTokens.p80,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.blue.withOpacity(0.1),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                          border: Border.all(
+                            color: AppColors.blue.withOpacity(0.2),
+                            width: 2,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _getUserInitials(user?.name),
+                            style: TextStyle(
+                              color: AppColors.blue,
+                              fontSize: SizeTokens.f32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(width: SizeTokens.p16),
-                      Icon(
-                        Icons.phone_android_outlined,
-                        size: SizeTokens.p14,
-                        color: AppColors.gray,
-                      ),
-                      SizedBox(width: SizeTokens.p4),
-                      Text(
-                        user?.phone ?? "",
-                        style: TextStyle(
-                          color: AppColors.gray,
-                          fontSize: SizeTokens.f13,
+                      SizedBox(width: SizeTokens.p20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user?.name ?? "Misafir Kullanıcı",
+                              style: TextStyle(
+                                color: AppColors.darkBlue,
+                                fontSize: SizeTokens.f24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: SizeTokens.p8),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.email_outlined,
+                                  size: SizeTokens.p14,
+                                  color: AppColors.gray,
+                                ),
+                                SizedBox(width: SizeTokens.p4),
+                                Flexible(
+                                  child: Text(
+                                    user?.email ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: AppColors.gray,
+                                      fontSize: SizeTokens.f13,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (user?.phone != null &&
+                                user!.phone.isNotEmpty) ...[
+                              SizedBox(height: SizeTokens.p4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.phone_android_outlined,
+                                    size: SizeTokens.p14,
+                                    color: AppColors.gray,
+                                  ),
+                                  SizedBox(width: SizeTokens.p4),
+                                  Text(
+                                    user.phone,
+                                    style: TextStyle(
+                                      color: AppColors.gray,
+                                      fontSize: SizeTokens.f13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ],
@@ -134,12 +190,12 @@ class _ProfileViewState extends State<ProfileView> {
 
                   SizedBox(height: SizeTokens.p32),
 
-                  // Account & Settings Section
-                  _buildSectionTitle("Hesap & Ayarlar"),
+                  // Account Section
+                  _buildSectionHeader("Hesap İşlemleri"),
                   _buildMenuCard([
                     _buildMenuItem(
-                      icon: Icons.person_rounded,
-                      title: "Hesap Bilgileri",
+                      icon: Icons.person_outline_rounded,
+                      title: "Kişisel Bilgiler",
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -147,10 +203,9 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                         );
                       },
-                      isLast: false,
                     ),
                     _buildMenuItem(
-                      icon: Icons.location_on_rounded,
+                      icon: Icons.location_on_outlined,
                       title: "Adreslerim",
                       onTap: () {
                         Navigator.of(context).push(
@@ -159,11 +214,10 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                         );
                       },
-                      isLast: false,
                     ),
                     _buildMenuItem(
-                      icon: Icons.lock_rounded,
-                      title: "Güvenlik Ayarları",
+                      icon: Icons.lock_outline_rounded,
+                      title: "Şifre İşlemleri",
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -178,19 +232,18 @@ class _ProfileViewState extends State<ProfileView> {
                   SizedBox(height: SizeTokens.p24),
 
                   // Other Section
-                  _buildSectionTitle("Diğer"),
+                  _buildSectionHeader("Uygulama"),
                   _buildMenuCard([
                     _buildMenuItem(
-                      icon: Icons.headset_mic_rounded,
-                      title: "Canlı Destek",
+                      icon: Icons.headset_mic_outlined,
+                      title: "Destek ve Yardım",
                       onTap: () {},
-                      isLast: false,
                     ),
                     _buildMenuItem(
                       icon: Icons.logout_rounded,
                       title: "Çıkış Yap",
                       titleColor: Colors.redAccent,
-                      iconColor: Colors.redAccent.withOpacity(0.1),
+                      iconColor: Colors.redAccent.withOpacity(0.08),
                       showArrow: false,
                       onTap: () {
                         _showLogoutDialog(context, viewModel);
@@ -202,14 +255,30 @@ class _ProfileViewState extends State<ProfileView> {
                   SizedBox(height: SizeTokens.p40),
 
                   // Footer
-                  Text(
-                    "Dryfix v$_version (Build $_buildNumber)",
-                    style: TextStyle(
-                      color: AppColors.gray.withOpacity(0.6),
-                      fontSize: SizeTokens.f12,
+                  Opacity(
+                    opacity: 0.5,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Dryfix QR Sistemi",
+                          style: TextStyle(
+                            color: AppColors.darkBlue,
+                            fontSize: SizeTokens.f12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: SizeTokens.p4),
+                        Text(
+                          "v$_version ($_buildNumber)",
+                          style: TextStyle(
+                            color: AppColors.gray,
+                            fontSize: SizeTokens.f11,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: SizeTokens.p24),
+                  SizedBox(height: SizeTokens.p32),
                 ],
               ),
             ),
@@ -220,12 +289,34 @@ class _ProfileViewState extends State<ProfileView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Çıkış Yap"),
-        content: const Text("Çıkış yapmak istediğinize emin misiniz?"),
+        backgroundColor: AppColors.white,
+        surfaceTintColor: AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SizeTokens.r20),
+        ),
+        title: Text(
+          "Çıkış Yap",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontWeight: FontWeight.bold,
+            fontSize: SizeTokens.f18,
+          ),
+        ),
+        content: Text(
+          "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+          style: TextStyle(color: AppColors.gray, fontSize: SizeTokens.f14),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("İptal"),
+            child: Text(
+              "Vazgeç",
+              style: TextStyle(
+                color: AppColors.gray,
+                fontWeight: FontWeight.w600,
+                fontSize: SizeTokens.f14,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -235,76 +326,12 @@ class _ProfileViewState extends State<ProfileView> {
                 (route) => false,
               );
             },
-            child: const Text("Çıkış Yap", style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBalanceCard(BuildContext context, int balance) {
-    return Container(
-      padding: EdgeInsets.all(SizeTokens.p24),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "DRYPARA BAKİYESİ",
-                style: TextStyle(
-                  color: AppColors.gray,
-                  fontSize: SizeTokens.f10,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              SizedBox(height: SizeTokens.p4),
-              Text(
-                "$balance DP",
-                style: TextStyle(
-                  color: AppColors.darkBlue,
-                  fontSize: SizeTokens.f24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Material(
-            color: const Color(0xFFE8F1FF), // Light blue background
-            borderRadius: BorderRadius.circular(SizeTokens.r12),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TransactionsView()),
-                );
-              },
-              borderRadius: BorderRadius.circular(SizeTokens.r12),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeTokens.p16,
-                  vertical: SizeTokens.p8,
-                ),
-                child: Text(
-                  "Detaylar",
-                  style: TextStyle(
-                    color: AppColors.blue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: SizeTokens.f14,
-                  ),
-                ),
+            child: Text(
+              "Çıkış Yap",
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: SizeTokens.f14,
               ),
             ),
           ),
@@ -313,16 +340,126 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: SizeTokens.p12),
+  Widget _buildBalanceCard(BuildContext context, int balance) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(SizeTokens.p24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.darkBlue, AppColors.blue],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(SizeTokens.r24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.blue.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -SizeTokens.p20,
+            bottom: -SizeTokens.p20,
+            child: Icon(
+              Icons.account_balance_wallet_rounded,
+              size: SizeTokens.p100,
+              color: AppColors.white.withOpacity(0.1),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "DryPara Bakiyesi",
+                style: TextStyle(
+                  color: AppColors.white.withOpacity(0.8),
+                  fontSize: SizeTokens.f13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: SizeTokens.p8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    balance.toString(),
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: SizeTokens.f32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: SizeTokens.p4),
+                  Text(
+                    "DP",
+                    style: TextStyle(
+                      color: AppColors.white.withOpacity(0.8),
+                      fontSize: SizeTokens.f16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: SizeTokens.p20),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const TransactionsView()),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeTokens.p16,
+                    vertical: SizeTokens.p8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(SizeTokens.r12),
+                    border: Border.all(color: AppColors.white.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "İşlem Geçmişi",
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: SizeTokens.f12,
+                        ),
+                      ),
+                      SizedBox(width: SizeTokens.p4),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        color: AppColors.white,
+                        size: SizeTokens.p14,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.only(left: SizeTokens.p4, bottom: SizeTokens.p12),
+      child: Align(
+        alignment: Alignment.centerLeft,
         child: Text(
           title,
           style: TextStyle(
             color: AppColors.darkBlue,
-            fontSize: SizeTokens.f18,
+            fontSize: SizeTokens.f16,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -337,8 +474,8 @@ class _ProfileViewState extends State<ProfileView> {
         borderRadius: BorderRadius.circular(SizeTokens.r20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
             offset: const Offset(0, 4),
           ),
         ],
@@ -362,18 +499,18 @@ class _ProfileViewState extends State<ProfileView> {
           onTap: onTap,
           dense: true,
           contentPadding: EdgeInsets.symmetric(
-            horizontal: SizeTokens.p20,
+            horizontal: SizeTokens.p16,
             vertical: SizeTokens.p4,
           ),
           leading: Container(
-            padding: EdgeInsets.all(SizeTokens.p8),
+            padding: EdgeInsets.all(SizeTokens.p10),
             decoration: BoxDecoration(
-              color: iconColor ?? const Color(0xFFF0F4FF),
+              color: iconColor ?? AppColors.background,
               borderRadius: BorderRadius.circular(SizeTokens.r12),
             ),
             child: Icon(
               icon,
-              color: titleColor ?? AppColors.blue,
+              color: titleColor ?? AppColors.darkBlue.withOpacity(0.8),
               size: SizeTokens.p20,
             ),
           ),
@@ -381,15 +518,15 @@ class _ProfileViewState extends State<ProfileView> {
             title,
             style: TextStyle(
               color: titleColor ?? AppColors.darkBlue,
-              fontSize: SizeTokens.f16,
+              fontSize: SizeTokens.f14,
               fontWeight: FontWeight.w600,
             ),
           ),
           trailing: showArrow
               ? Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: AppColors.gray.withOpacity(0.5),
-                  size: SizeTokens.p14,
+                  color: AppColors.gray.withOpacity(0.4),
+                  size: SizeTokens.p12,
                 )
               : null,
         ),
@@ -397,8 +534,8 @@ class _ProfileViewState extends State<ProfileView> {
           Divider(
             height: 1,
             indent: SizeTokens.p64,
-            endIndent: SizeTokens.p20,
-            color: AppColors.gray.withOpacity(0.1),
+            endIndent: SizeTokens.p16,
+            color: AppColors.background,
           ),
       ],
     );

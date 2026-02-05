@@ -49,24 +49,21 @@ class _ProductsViewState extends State<ProductsView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.darkBlue,
+        centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_rounded,
-            color: AppColors.darkBlue,
+            color: AppColors.white,
             size: SizeTokens.p24,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "DryPara Mağazası",
-          style: TextStyle(
-            color: AppColors.darkBlue,
-            fontSize: SizeTokens.f18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           Container(
@@ -80,14 +77,14 @@ class _ProductsViewState extends State<ProductsView> {
               children: [
                 Icon(
                   Icons.account_balance_wallet_rounded,
-                  color: AppColors.blue,
+                  color: AppColors.white,
                   size: SizeTokens.f16,
                 ),
                 SizedBox(width: SizeTokens.p8),
                 Text(
                   "${homeViewModel.user?.tokenBalance ?? 0} DP",
                   style: TextStyle(
-                    color: AppColors.blue,
+                    color: AppColors.white,
                     fontSize: SizeTokens.f13,
                     fontWeight: FontWeight.bold,
                   ),
@@ -99,36 +96,6 @@ class _ProductsViewState extends State<ProductsView> {
       ),
       body: Column(
         children: [
-          // Simplified Category Bar from image
-          Container(
-            color: AppColors.white,
-            padding: EdgeInsets.only(bottom: SizeTokens.p16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  _FilterChip(label: "Tümü", isSelected: true, onTap: () {}),
-                  SizedBox(width: SizeTokens.p12),
-                  _FilterChip(
-                    label: "İç Cephe",
-                    isSelected: false,
-                    onTap: () {},
-                  ),
-                  SizedBox(width: SizeTokens.p12),
-                  _FilterChip(
-                    label: "Dış Cephe",
-                    isSelected: false,
-                    onTap: () {},
-                  ),
-                  SizedBox(width: SizeTokens.p12),
-                  _FilterChip(label: "Astar", isSelected: false, onTap: () {}),
-                ],
-              ),
-            ),
-          ),
-
           // Product Grid
           Expanded(
             child: viewModel.isLoading
@@ -171,48 +138,6 @@ class _ProductsViewState extends State<ProductsView> {
                   ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FilterChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: SizeTokens.p20,
-          vertical: SizeTokens.p10,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.blue : AppColors.white,
-          borderRadius: BorderRadius.circular(SizeTokens.r24),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.blue
-                : AppColors.gray.withOpacity(0.1),
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.darkBlue,
-            fontSize: SizeTokens.f14,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-          ),
-        ),
       ),
     );
   }
