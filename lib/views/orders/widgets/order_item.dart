@@ -183,7 +183,7 @@ class OrderItem extends StatelessWidget {
                 ),
                 SizedBox(height: SizeTokens.p8),
                 Text(
-                  "${order.itemsCount} ürün teslim edildi",
+                  "${order.items.length} üründen ${order.items.fold(0, (sum, item) => sum + item.quantity)} adet",
                   style: TextStyle(
                     color: Colors.black87,
                     fontSize: SizeTokens.f14,

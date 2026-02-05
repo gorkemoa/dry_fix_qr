@@ -40,4 +40,15 @@ class OrderService {
       return Failure(e.toString());
     }
   }
+
+  Future<ApiResult<void>> createOrder(Map<String, dynamic> data) async {
+    try {
+      await _apiClient.post(ApiConstants.orders, data: data);
+      return Success(null);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
 }

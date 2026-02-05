@@ -5,12 +5,16 @@ import '../services/product_service.dart';
 import '../models/product_model.dart';
 import '../core/utils/logger.dart';
 
+import '../services/order_service.dart';
+
 class ProductViewModel extends ChangeNotifier {
   final ProductService _productService;
+  final OrderService _orderService;
 
-  ProductViewModel(this._productService);
+  ProductViewModel(this._productService, this._orderService);
 
   bool _isLoading = false;
+  // ... rest of the file
   bool _isLoadingMore = false;
   String? _errorMessage;
   List<ProductModel> _products = [];
@@ -117,8 +121,16 @@ class ProductViewModel extends ChangeNotifier {
   }
 
   void removeFromCart(ProductModel product) {
-    _cart.remove(product);
-    notifyListeners();
+    // Remove exactly one instance of this product (reference-based if same instance, otherwise finding first match by ID if we want that logic, but currently _cart holds instances)
+    // To support + / - behavior with grouping:
+    // If I have 3 "Product A" in list. I want to remove one.
+
+    // If users tap "minus", we find first occurrence of this product ID and remove it.
+    final index = _cart.indexWhere((element) => element.id == product.id);
+    if (index != -1) {
+      _cart.removeAt(index);
+      notifyListeners();
+    }
   }
 
   void clearCart() {
@@ -127,6 +139,57 @@ class ProductViewModel extends ChangeNotifier {
   }
 
   Future<void> refresh() => fetchProducts(isRefresh: true);
+
+  Future<bool> completeOrder({
+    required dynamic address, // Accepts Address model
+    String? notes,
+  }) async {
+    if (_cart.isEmpty) return false;
+
+    _isLoading = true;
+    notifyListeners();
+
+    final Map<int, int> quantities = {};
+    for (var product in _cart) {
+      quantities[product.id] = (quantities[product.id] ?? 0) + 1;
+    }
+
+    final List<Map<String, dynamic>> itemsPayload = quantities.entries
+        .map((e) => {"product_id": e.key, "quantity": e.value})
+        .toList();
+
+    final Map<String, dynamic> addressPayload = {
+      "full_name": address.fullName,
+      "phone": address.phone,
+      "city": address.city,
+      "district": address.district,
+      "neighborhood": address.neighborhood,
+      "address_line1": address.addressLine1,
+      "address_line2": address.addressLine2,
+      "postal_code": address.postalCode,
+    };
+
+    final Map<String, dynamic> payload = {
+      "items": itemsPayload,
+      "address": addressPayload,
+      "notes": notes,
+    };
+
+    final result = await _orderService.createOrder(payload);
+
+    _isLoading = false;
+    if (result is Success) {
+      _cart.clear();
+      notifyListeners();
+      return true;
+    } else if (result is Failure) {
+      _errorMessage = result.errorMessage;
+      notifyListeners();
+      return false;
+    }
+    notifyListeners();
+    return false;
+  }
 
   @override
   void dispose() {
