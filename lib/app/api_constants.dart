@@ -13,4 +13,8 @@ class ApiConstants {
   static const String deactivate = '$baseUrl/api/v1/auth/deactivate';
   static const String addresses = '$baseUrl/api/v1/addresses';
   static String addressDetail(int id) => '$addresses/$id';
+  static String cities({int limit = 81}) =>
+      '$baseUrl/api/v1/cities?limit=$limit';
+  static String districts(int cityId, {int limit = 200}) =>
+      '$baseUrl/api/v1/districts?city_id=$cityId&limit=$limit';
 }
