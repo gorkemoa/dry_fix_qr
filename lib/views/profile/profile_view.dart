@@ -8,6 +8,7 @@ import '../../core/responsive/size_tokens.dart';
 import '../transactions/transactions_view.dart';
 import 'edit_profile_view.dart';
 import 'update_password_view.dart';
+import 'addresses_view.dart';
 import '../login/login_view.dart';
 
 class ProfileView extends StatefulWidget {
@@ -143,6 +144,18 @@ class _ProfileViewState extends State<ProfileView> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => const EditProfileView(),
+                          ),
+                        );
+                      },
+                      isLast: false,
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.location_on_rounded,
+                      title: "Adreslerim",
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const AddressesView(),
                           ),
                         );
                       },

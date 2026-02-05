@@ -19,6 +19,8 @@ import 'viewmodels/profile_view_model.dart';
 import 'viewmodels/qr_view_model.dart';
 import 'viewmodels/order_view_model.dart';
 import 'viewmodels/product_view_model.dart';
+import 'viewmodels/address_view_model.dart';
+import 'services/address_service.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
 
@@ -81,6 +83,7 @@ class MyApp extends StatelessWidget {
     final qrService = QrService(apiClient);
     final orderService = OrderService(apiClient);
     final productService = ProductService(apiClient);
+    final addressService = AddressService(apiClient);
 
     return MultiProvider(
       providers: [
@@ -95,6 +98,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QrViewModel(qrService)),
         ChangeNotifierProvider(create: (_) => OrderViewModel(orderService)),
         ChangeNotifierProvider(create: (_) => ProductViewModel(productService)),
+        ChangeNotifierProvider(create: (_) => AddressViewModel(addressService)),
       ],
       child: MaterialApp(
         navigatorKey: NavigationService.navigatorKey,
