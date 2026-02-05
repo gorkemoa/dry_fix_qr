@@ -7,6 +7,7 @@ class AddressFormField extends StatelessWidget {
   final String label;
   final String hint;
   final TextInputType keyboardType;
+  final TextInputAction textInputAction;
   final String? Function(String?)? validator;
   final int maxLines;
   final bool isRequired;
@@ -18,6 +19,7 @@ class AddressFormField extends StatelessWidget {
     required this.label,
     required this.hint,
     this.keyboardType = TextInputType.text,
+    this.textInputAction = TextInputAction.next,
     this.validator,
     this.maxLines = 1,
     this.isRequired = true,
@@ -51,6 +53,7 @@ class AddressFormField extends StatelessWidget {
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
+          textInputAction: textInputAction,
           validator: validator,
           maxLines: maxLines,
           style: TextStyle(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../models/address_model.dart';
+import '../../models/city_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import 'widgets/address_form_field.dart';
 
@@ -52,6 +54,22 @@ class _AddAddressViewState extends State<AddAddressView> {
       text: widget.address?.postalCode,
     );
     _isDefault = widget.address?.isDefault ?? false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = context.read<AddressViewModel>();
+      viewModel.resetSelection();
+      viewModel.fetchCities().then((_) {
+        if (isEditMode && widget.address != null) {
+          final city = viewModel.cities.cast<City?>().firstWhere(
+            (c) => c?.name == widget.address!.city,
+            orElse: () => null,
+          );
+          if (city != null) {
+            viewModel.setSelectedCity(city);
+          }
+        }
+      });
+    });
   }
 
   @override
@@ -65,6 +83,172 @@ class _AddAddressViewState extends State<AddAddressView> {
     _titleController.dispose();
     _postalCodeController.dispose();
     super.dispose();
+  }
+
+  void _showIOSPicker({
+    required BuildContext context,
+    required String title,
+    required List<String> items,
+    required Function(int) onSelected,
+    int initialIndex = 0,
+  }) {
+    int selectedIndex = initialIndex;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Material(
+        type: MaterialType.transparency,
+        child: Container(
+          height: 300,
+          color: AppColors.white,
+          child: Column(
+            children: [
+              Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: SizeTokens.p16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        "İptal",
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.w600,
+                          fontSize: SizeTokens.f14,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: AppColors.darkBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: SizeTokens.f16,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        onSelected(selectedIndex);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "Tamam",
+                        style: TextStyle(
+                          color: AppColors.blue,
+                          fontWeight: FontWeight.w700,
+                          fontSize: SizeTokens.f14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CupertinoPicker(
+                  itemExtent: 40,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: initialIndex,
+                  ),
+                  onSelectedItemChanged: (index) {
+                    selectedIndex = index;
+                  },
+                  children: items
+                      .map(
+                        (item) => Center(
+                          child: Text(
+                            item,
+                            style: TextStyle(
+                              color: AppColors.darkBlue,
+                              fontSize: SizeTokens.f16,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCitySelection(BuildContext context, AddressViewModel viewModel) {
+    if (viewModel.cities.isEmpty) return;
+
+    final cityNames = viewModel.cities.map((c) => c.name).toList();
+    int initialIdx = 0;
+    if (viewModel.selectedCity != null) {
+      initialIdx = viewModel.cities.indexWhere(
+        (c) => c.id == viewModel.selectedCity!.id,
+      );
+      if (initialIdx == -1) initialIdx = 0;
+    }
+
+    _showIOSPicker(
+      context: context,
+      title: "Şehir Seçiniz",
+      items: cityNames,
+      initialIndex: initialIdx,
+      onSelected: (index) {
+        final city = viewModel.cities[index];
+        viewModel.setSelectedCity(city);
+        _cityController.text = city.name;
+        _districtController.clear();
+      },
+    );
+  }
+
+  void _showDistrictSelection(
+    BuildContext context,
+    AddressViewModel viewModel,
+  ) {
+    if (viewModel.selectedCity == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Lütfen önce bir şehir seçiniz.")),
+      );
+      return;
+    }
+
+    if (viewModel.districts.isEmpty) {
+      if (viewModel.isLoading) {
+        return; // Still loading
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Bu şehir için ilçe bulunamadı.")),
+      );
+      return;
+    }
+
+    final districtNames = viewModel.districts.map((d) => d.name).toList();
+    int initialIdx = 0;
+    if (viewModel.selectedDistrict != null) {
+      initialIdx = viewModel.districts.indexWhere(
+        (d) => d.id == viewModel.selectedDistrict!.id,
+      );
+      if (initialIdx == -1) initialIdx = 0;
+    }
+
+    _showIOSPicker(
+      context: context,
+      title: "İlçe Seçiniz",
+      items: districtNames,
+      initialIndex: initialIdx,
+      onSelected: (index) {
+        final district = viewModel.districts[index];
+        viewModel.setSelectedDistrict(district);
+        _districtController.text = district.name;
+      },
+    );
   }
 
   @override
@@ -134,20 +318,32 @@ class _AddAddressViewState extends State<AddAddressView> {
               Row(
                 children: [
                   Expanded(
-                    child: AddressFormField(
-                      controller: _cityController,
-                      label: "İl",
-                      hint: "Seçiniz",
-                      validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+                    child: GestureDetector(
+                      onTap: () => _showCitySelection(context, viewModel),
+                      child: AbsorbPointer(
+                        child: AddressFormField(
+                          controller: _cityController,
+                          label: "İl",
+                          hint: "Seçiniz",
+                          validator: (v) =>
+                              v?.isEmpty ?? true ? "Gerekli" : null,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(width: SizeTokens.p16),
                   Expanded(
-                    child: AddressFormField(
-                      controller: _districtController,
-                      label: "İlçe",
-                      hint: "Seçiniz",
-                      validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+                    child: GestureDetector(
+                      onTap: () => _showDistrictSelection(context, viewModel),
+                      child: AbsorbPointer(
+                        child: AddressFormField(
+                          controller: _districtController,
+                          label: "İlçe",
+                          hint: "Seçiniz",
+                          validator: (v) =>
+                              v?.isEmpty ?? true ? "Gerekli" : null,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -221,6 +417,7 @@ class _AddAddressViewState extends State<AddAddressView> {
                 hint: "Opsiyonel",
                 isRequired: false,
                 keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
               ),
 
               SizedBox(height: SizeTokens.p24),
