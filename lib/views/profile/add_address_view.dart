@@ -325,6 +325,10 @@ class _AddAddressViewState extends State<AddAddressView> {
                           controller: _cityController,
                           label: "İl",
                           hint: "Seçiniz",
+                          suffix: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: AppColors.gray,
+                          ),
                           validator: (v) =>
                               v?.isEmpty ?? true ? "Gerekli" : null,
                         ),
@@ -340,6 +344,10 @@ class _AddAddressViewState extends State<AddAddressView> {
                           controller: _districtController,
                           label: "İlçe",
                           hint: "Seçiniz",
+                          suffix: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: AppColors.gray,
+                          ),
                           validator: (v) =>
                               v?.isEmpty ?? true ? "Gerekli" : null,
                         ),
@@ -354,7 +362,7 @@ class _AddAddressViewState extends State<AddAddressView> {
               AddressFormField(
                 controller: _neighborhoodController,
                 label: "Mahalle",
-                hint: "Seçiniz",
+                hint: "Mahalle adını giriniz",
                 validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
               SizedBox(height: SizeTokens.p16),

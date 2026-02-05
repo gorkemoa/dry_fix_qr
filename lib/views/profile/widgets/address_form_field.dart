@@ -12,6 +12,7 @@ class AddressFormField extends StatelessWidget {
   final int maxLines;
   final bool isRequired;
   final Widget? prefix;
+  final Widget? suffix;
 
   const AddressFormField({
     super.key,
@@ -24,6 +25,7 @@ class AddressFormField extends StatelessWidget {
     this.maxLines = 1,
     this.isRequired = true,
     this.prefix,
+    this.suffix,
   });
 
   @override
@@ -69,6 +71,7 @@ class AddressFormField extends StatelessWidget {
               fontWeight: FontWeight.normal,
             ),
             prefixIcon: prefix,
+            suffixIcon: suffix,
             filled: true,
             fillColor: AppColors.background, // Light gray as in image
             contentPadding: EdgeInsets.symmetric(
