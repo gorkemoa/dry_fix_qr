@@ -1,6 +1,7 @@
 import '../core/network/api_client.dart';
 import '../core/network/api_result.dart';
 import '../core/network/api_exception.dart';
+import '../core/storage/storage_manager.dart';
 import '../app/api_constants.dart';
 import '../models/user_model.dart';
 
@@ -20,8 +21,13 @@ class AuthService {
       );
 
       final authResponse = AuthResponse.fromJson(response);
+
+      // Save token locally
+      await StorageManager.saveToken(authResponse.token);
+
       // Set token in ApiClient for future requests
       _apiClient.setToken(authResponse.token);
+
       return Success(authResponse);
     } on ApiException catch (e) {
       return Failure(e.message);
@@ -38,8 +44,13 @@ class AuthService {
       );
 
       final authResponse = AuthResponse.fromJson(response);
+
+      // Save token locally
+      await StorageManager.saveToken(authResponse.token);
+
       // Set token in ApiClient for future requests
       _apiClient.setToken(authResponse.token);
+
       return Success(authResponse);
     } on ApiException catch (e) {
       return Failure(e.message);
@@ -96,7 +107,8 @@ class AuthService {
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await StorageManager.deleteToken();
     _apiClient.clearToken();
   }
 }

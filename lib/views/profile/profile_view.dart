@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../app/app_theme.dart';
 import '../../viewmodels/profile_view_model.dart';
 import '../../core/responsive/size_config.dart';
@@ -17,11 +18,22 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  String _version = "";
+  String _buildNumber = "";
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileViewModel>().fetchProfile();
+    });
+    _getAppVersion();
+  }
+
+  Future<void> _getAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version;
+      _buildNumber = packageInfo.buildNumber;
     });
   }
 
@@ -178,7 +190,7 @@ class _ProfileViewState extends State<ProfileView> {
 
                   // Footer
                   Text(
-                    "Dryfix v2.4.1 (Build 204)",
+                    "Dryfix v$_version (Build $_buildNumber)",
                     style: TextStyle(
                       color: AppColors.gray.withOpacity(0.6),
                       fontSize: SizeTokens.f12,

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'app/app_theme.dart';
 import 'core/network/api_client.dart';
+import 'core/storage/storage_manager.dart';
+import 'core/utils/navigation_service.dart';
 import 'services/auth_service.dart';
 import 'services/history_service.dart';
 import 'services/qr_service.dart';
@@ -18,9 +20,13 @@ import 'viewmodels/qr_view_model.dart';
 import 'viewmodels/order_view_model.dart';
 import 'viewmodels/product_view_model.dart';
 import 'views/login/login_view.dart';
+import 'views/home/home_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Storage initialize
+  await StorageManager.init();
 
   // App de dönme olmasın (Lock orientation to portrait)
   await SystemChrome.setPreferredOrientations([
@@ -28,17 +34,49 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const MyApp());
+  // Dependency Injection setup for initial check
+  final apiClient = ApiClient();
+  final authService = AuthService(apiClient);
+
+  Widget initialView = const LoginView();
+
+  // Check token
+  final token = StorageManager.getToken();
+  if (token != null) {
+    apiClient.setToken(token);
+    final result = await authService.fetchMe();
+    if (result.isSuccess) {
+      initialView = const HomeView();
+    } else {
+      // Token invalid or expired
+      await StorageManager.deleteToken();
+      apiClient.clearToken();
+    }
+  }
+
+  runApp(
+    MyApp(
+      apiClient: apiClient,
+      authService: authService,
+      initialView: initialView,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ApiClient apiClient;
+  final AuthService authService;
+  final Widget initialView;
+
+  const MyApp({
+    super.key,
+    required this.apiClient,
+    required this.authService,
+    required this.initialView,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Dependency Injection
-    final apiClient = ApiClient();
-    final authService = AuthService(apiClient);
     final historyService = HistoryService(apiClient);
     final qrService = QrService(apiClient);
     final orderService = OrderService(apiClient);
@@ -59,6 +97,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductViewModel(productService)),
       ],
       child: MaterialApp(
+        navigatorKey: NavigationService.navigatorKey,
         title: 'DryFix Boyacı',
         theme: AppTheme.lightTheme,
         builder: (context, child) {
@@ -74,7 +113,7 @@ class MyApp extends StatelessWidget {
             ),
           );
         },
-        home: const LoginView(),
+        home: initialView,
       ),
     );
   }

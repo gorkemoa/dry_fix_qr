@@ -1,5 +1,7 @@
 abstract class ApiResult<T> {
   const ApiResult();
+  bool get isSuccess => this is Success<T>;
+  bool get isFailure => this is Failure<T>;
 }
 
 class Success<T> extends ApiResult<T> {
