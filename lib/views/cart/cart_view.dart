@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../viewmodels/product_view_model.dart';
+import 'checkout_view.dart';
 
 class CartView extends StatelessWidget {
   const CartView({super.key});
@@ -80,89 +81,141 @@ class CartView extends StatelessWidget {
                 ],
               ),
             )
-          : ListView.separated(
-              padding: EdgeInsets.all(SizeTokens.p16),
-              itemCount: cartItems.length,
-              separatorBuilder: (context, index) =>
-                  SizedBox(height: SizeTokens.p12),
-              itemBuilder: (context, index) {
-                final product = cartItems[index];
-                return Container(
-                  padding: EdgeInsets.all(SizeTokens.p12),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(SizeTokens.r8),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(SizeTokens.r8),
-                          border: Border.all(color: Colors.grey.shade100),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: Image.network(
-                            product.image,
-                            fit: BoxFit.contain,
-                            errorBuilder: (_, __, ___) => Icon(
-                              Icons.image_not_supported_outlined,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+          : Builder(
+              builder: (context) {
+                // Group items logic
+                final Map<int, List<dynamic>> groupedItems = {};
+                for (var item in cartItems) {
+                  if (!groupedItems.containsKey(item.id)) {
+                    groupedItems[item.id] = [];
+                  }
+                  groupedItems[item.id]!.add(item);
+                }
+
+                final uniqueItems = groupedItems.values
+                    .map((list) => list.first)
+                    .toList();
+
+                return ListView.separated(
+                  padding: EdgeInsets.all(SizeTokens.p16),
+                  itemCount: uniqueItems.length,
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: SizeTokens.p12),
+                  itemBuilder: (context, index) {
+                    final product = uniqueItems[index]; // First instance
+                    final quantity = groupedItems[product.id]!.length;
+
+                    return Container(
+                      padding: EdgeInsets.all(SizeTokens.p12),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(SizeTokens.r8),
+                        border: Border.all(color: Colors.grey.shade200),
                       ),
-                      SizedBox(width: SizeTokens.p12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: SizeTokens.f14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.darkBlue,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                SizeTokens.r8,
+                              ),
+                              border: Border.all(color: Colors.grey.shade100),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: Image.network(
+                                product.image,
+                                fit: BoxFit.contain,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.image_not_supported_outlined,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
-                            SizedBox(height: SizeTokens.p4),
-                            Row(
+                          ),
+                          SizedBox(width: SizeTokens.p12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${product.price} TL",
+                                  product.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: SizeTokens.f14,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.blue,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.darkBlue,
                                   ),
                                 ),
-                                if (product.tokenPrice > 0)
-                                  Text(
-                                    " + ${product.tokenPrice} DP",
-                                    style: TextStyle(
-                                      fontSize: SizeTokens.f12,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.darkBlue,
+                                SizedBox(height: SizeTokens.p4),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${product.price} TL",
+                                      style: TextStyle(
+                                        fontSize: SizeTokens.f14,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.blue,
+                                      ),
                                     ),
-                                  ),
+                                    if (product.tokenPrice > 0)
+                                      Text(
+                                        " + ${product.tokenPrice} DP",
+                                        style: TextStyle(
+                                          fontSize: SizeTokens.f12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.darkBlue,
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          // Quantity Controls
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.remove_circle_outline,
+                                  color: Colors.grey,
+                                  size: 24,
+                                ),
+                                onPressed: () {
+                                  viewModel.removeFromCart(product);
+                                },
+                                constraints: BoxConstraints(),
+                                padding: EdgeInsets.all(4),
+                              ),
+                              Text(
+                                "$quantity",
+                                style: TextStyle(
+                                  fontSize: SizeTokens.f16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.darkBlue,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.add_circle_outline,
+                                  color: AppColors.blue,
+                                  size: 24,
+                                ),
+                                onPressed: () {
+                                  viewModel.addToCart(product);
+                                },
+                                constraints: BoxConstraints(),
+                                padding: EdgeInsets.all(4),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: Icon(Icons.close_rounded, color: Colors.grey),
-                        onPressed: () {
-                          viewModel.removeFromCart(product);
-                        },
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -225,13 +278,10 @@ class CartView extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Proceed to checkout
-                          // For now, show a dialog or snackbar
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Sipariş verme özelliği yakında eklenecek",
-                              ),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CheckoutView(),
                             ),
                           );
                         },

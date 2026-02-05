@@ -97,7 +97,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileViewModel(authService)),
         ChangeNotifierProvider(create: (_) => QrViewModel(qrService)),
         ChangeNotifierProvider(create: (_) => OrderViewModel(orderService)),
-        ChangeNotifierProvider(create: (_) => ProductViewModel(productService)),
+        ChangeNotifierProvider(
+          create: (_) => ProductViewModel(productService, orderService),
+        ),
         ChangeNotifierProvider(create: (_) => AddressViewModel(addressService)),
       ],
       child: MaterialApp(

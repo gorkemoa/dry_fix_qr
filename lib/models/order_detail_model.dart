@@ -39,6 +39,7 @@ class OrderDetailModel {
   final String status;
   final int totalTokenSpent;
   final String totalPrice;
+  final int quantity;
   final String? notes;
   final String purchasedAt;
   final String createdAt;
@@ -48,6 +49,7 @@ class OrderDetailModel {
     required this.status,
     required this.totalTokenSpent,
     required this.totalPrice,
+    required this.quantity,
     this.notes,
     required this.purchasedAt,
     required this.createdAt,
@@ -59,6 +61,7 @@ class OrderDetailModel {
       status: json['status'] as String,
       totalTokenSpent: json['total_token_spent'] as int,
       totalPrice: json['total_price'] as String,
+      quantity: json['quantity'] as int,
       notes: json['notes'] as String?,
       purchasedAt: json['purchased_at'] as String,
       createdAt: json['created_at'] as String,
