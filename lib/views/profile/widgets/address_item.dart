@@ -17,148 +17,171 @@ class AddressItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Orange color from the design image
+
     return Container(
       margin: EdgeInsets.only(bottom: SizeTokens.p16),
-      padding: EdgeInsets.all(SizeTokens.p16),
       decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: address.isDefault
-            ? Border.all(color: AppColors.blue.withOpacity(0.3), width: 1.5)
-            : null,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: const Color.fromARGB(255, 188, 188, 188)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
+          // Header Section
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeTokens.p16,
+              vertical: SizeTokens.p12,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  address.title,
+                  style: TextStyle(
+                    color: AppColors.darkBlue.withOpacity(0.9),
+                    fontSize: SizeTokens.f16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (address.isDefault)
                   Container(
-                    padding: EdgeInsets.all(SizeTokens.p8),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: SizeTokens.p8,
+                      vertical: SizeTokens.p4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.blue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(SizeTokens.r10),
-                    ),
-                    child: Icon(
-                      _getIconForTitle(address.title),
-                      color: AppColors.blue,
-                      size: SizeTokens.p18,
-                    ),
-                  ),
-                  SizedBox(width: SizeTokens.p12),
-                  Text(
-                    address.title,
-                    style: TextStyle(
-                      color: AppColors.darkBlue,
-                      fontSize: SizeTokens.f16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (address.isDefault) ...[
-                    SizedBox(width: SizeTokens.p8),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: SizeTokens.p8,
-                        vertical: SizeTokens.p2,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: AppColors.blue.withOpacity(0.3),
                       ),
-                      decoration: BoxDecoration(
+                    ),
+                    child: Text(
+                      "Varsayılan",
+                      style: TextStyle(
                         color: AppColors.blue,
-                        borderRadius: BorderRadius.circular(SizeTokens.r20),
+                        fontSize: SizeTokens.f10,
+                        fontWeight: FontWeight.bold,
                       ),
-                      child: Text(
-                        "Varsayılan",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: SizeTokens.f10,
-                          fontWeight: FontWeight.bold,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: const Color.fromARGB(255, 188, 188, 188)),
+
+          // Body Section
+          Padding(
+            padding: EdgeInsets.all(SizeTokens.p16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  address.fullName,
+                  style: TextStyle(
+                    color: AppColors.darkBlue,
+                    fontSize: SizeTokens.f14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p6),
+                Text(
+                  address.neighborhood,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: SizeTokens.f14,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p4),
+                Text(
+                  "${address.addressLine1}${address.addressLine2 != null ? ' ${address.addressLine2}' : ''}",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: SizeTokens.f14,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p4),
+                Text(
+                  "${address.district}/${address.city}",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: SizeTokens.f14,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p4),
+                Text(
+                  address.phone,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: SizeTokens.f14,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p16),
+
+                // Footer Actions
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Delete Button
+                    InkWell(
+                      onTap: onDelete,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.grey.shade600,
+                            size: 22,
+                          ),
+                          SizedBox(width: SizeTokens.p4),
+                          Text(
+                            "Sil",
+                            style: TextStyle(
+                              color: AppColors.darkBlue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeTokens.f14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Edit Button
+                    SizedBox(
+                      height: 38,
+                      child: OutlinedButton(
+                        onPressed: onEdit,
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: AppColors.darkBlue,
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(SizeTokens.r8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: SizeTokens.p16,
+                          ),
+                        ),
+                        child: const Text(
+                          "Adresi Düzenle",
+                          style: TextStyle(
+                            color: AppColors.darkBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ),
                   ],
-                ],
-              ),
-              Row(
-                children: [
-                  if (onEdit != null)
-                    IconButton(
-                      onPressed: onEdit,
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        color: AppColors.gray,
-                        size: SizeTokens.p20,
-                      ),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  if (onDelete != null)
-                    IconButton(
-                      onPressed: onDelete,
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.redAccent,
-                        size: SizeTokens.p20,
-                      ),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: SizeTokens.p12),
-          Text(
-            address.fullName,
-            style: TextStyle(
-              color: AppColors.darkBlue,
-              fontSize: SizeTokens.f14,
-              fontWeight: FontWeight.w600,
+                ),
+              ],
             ),
           ),
-          SizedBox(height: SizeTokens.p4),
-          Text(
-            address.phone,
-            style: TextStyle(color: AppColors.gray, fontSize: SizeTokens.f13),
-          ),
-          SizedBox(height: SizeTokens.p8),
-          Text(
-            "${address.addressLine1}${address.addressLine2 != null ? ' ${address.addressLine2}' : ''}",
-            style: TextStyle(
-              color: AppColors.darkBlue.withOpacity(0.8),
-              fontSize: SizeTokens.f13,
-              height: 1.4,
-            ),
-          ),
-          Text(
-            "${address.neighborhood} ${address.district} / ${address.city}",
-            style: TextStyle(
-              color: AppColors.darkBlue.withOpacity(0.8),
-              fontSize: SizeTokens.f13,
-              height: 1.4,
-            ),
-          ),
-          if (address.postalCode.isNotEmpty)
-            Text(
-              address.postalCode,
-              style: TextStyle(color: AppColors.gray, fontSize: SizeTokens.f12),
-            ),
         ],
       ),
     );
-  }
-
-  IconData _getIconForTitle(String title) {
-    final lowerTitle = title.toLowerCase();
-    if (lowerTitle.contains("ev")) return Icons.home_rounded;
-    if (lowerTitle.contains("iş") || lowerTitle.contains("ofis")) {
-      return Icons.business_rounded;
-    }
-    return Icons.location_on_rounded;
   }
 }
