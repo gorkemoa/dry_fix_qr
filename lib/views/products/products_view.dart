@@ -123,7 +123,14 @@ class _ProductsViewState extends State<ProductsView> {
                           return ProductItem(
                             product: viewModel.products[index],
                             onTap: () {
-                              // Handle purchase or detail
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductDetailView(
+                                    product: viewModel.products[index],
+                                  ),
+                                ),
+                              );
                             },
                           );
                         } else {
