@@ -13,6 +13,8 @@ import '../../app/app_theme.dart';
 import 'widgets/home_header.dart';
 import 'widgets/home_card.dart';
 import 'widgets/history_item.dart';
+import '../../viewmodels/product_view_model.dart';
+import '../cart/cart_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -36,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
     SizeConfig.init(context);
     final viewModel = context.watch<HomeViewModel>();
     final historyViewModel = context.watch<HistoryViewModel>();
+    final productViewModel = context.watch<ProductViewModel>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -61,6 +64,12 @@ class _HomeViewState extends State<HomeView> {
                       child: HomeHeader(
                         userName: viewModel.user?.name ?? "Kullanıcı",
                         tokenBalance: viewModel.user?.tokenBalance ?? 0,
+                        cartItemCount: productViewModel.cartCount,
+                        onCartTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const CartView()),
+                          );
+                        },
                       ),
                     ),
 
