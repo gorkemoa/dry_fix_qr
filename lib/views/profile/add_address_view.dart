@@ -8,7 +8,7 @@ import '../../viewmodels/address_view_model.dart';
 import 'widgets/address_form_field.dart';
 
 class AddAddressView extends StatefulWidget {
-  final Address? address; // If null, it's Add mode. If present, it's Edit mode.
+  final Address? address;
 
   const AddAddressView({super.key, this.address});
 
@@ -19,13 +19,13 @@ class AddAddressView extends StatefulWidget {
 class _AddAddressViewState extends State<AddAddressView> {
   final _formKey = GlobalKey<FormState>();
 
-  late final TextEditingController _titleController;
   late final TextEditingController _fullNameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _cityController;
   late final TextEditingController _districtController;
   late final TextEditingController _neighborhoodController;
   late final TextEditingController _addressLine1Controller;
+  late final TextEditingController _titleController;
   late final TextEditingController _postalCodeController;
 
   bool _isDefault = false;
@@ -35,9 +35,10 @@ class _AddAddressViewState extends State<AddAddressView> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.address?.title);
     _fullNameController = TextEditingController(text: widget.address?.fullName);
-    _phoneController = TextEditingController(text: widget.address?.phone);
+    _phoneController = TextEditingController(
+      text: widget.address?.phone.replaceAll('+90', ''),
+    );
     _cityController = TextEditingController(text: widget.address?.city);
     _districtController = TextEditingController(text: widget.address?.district);
     _neighborhoodController = TextEditingController(
@@ -46,6 +47,7 @@ class _AddAddressViewState extends State<AddAddressView> {
     _addressLine1Controller = TextEditingController(
       text: widget.address?.addressLine1,
     );
+    _titleController = TextEditingController(text: widget.address?.title);
     _postalCodeController = TextEditingController(
       text: widget.address?.postalCode,
     );
@@ -54,13 +56,13 @@ class _AddAddressViewState extends State<AddAddressView> {
 
   @override
   void dispose() {
-    _titleController.dispose();
     _fullNameController.dispose();
     _phoneController.dispose();
     _cityController.dispose();
     _districtController.dispose();
     _neighborhoodController.dispose();
     _addressLine1Controller.dispose();
+    _titleController.dispose();
     _postalCodeController.dispose();
     super.dispose();
   }
@@ -73,22 +75,21 @@ class _AddAddressViewState extends State<AddAddressView> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.darkBlue,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: AppColors.darkBlue,
+            color: Colors.white,
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           isEditMode ? "Adresi Düzenle" : "Yeni Adres Ekle",
-          style: TextStyle(
-            color: AppColors.darkBlue,
+          style: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: SizeTokens.f18,
           ),
         ),
       ),
@@ -99,42 +100,45 @@ class _AddAddressViewState extends State<AddAddressView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              AddressFormField(
-                controller: _titleController,
-                label: "Adres Başlığı",
-                hint: "Örn: Ev, İş, Ofis",
-                icon: Icons.title_rounded,
-                validator: (v) =>
-                    v?.isEmpty ?? true ? "Lütfen başlık giriniz" : null,
-              ),
-              SizedBox(height: SizeTokens.p16),
+              // Ad Soyad (Combined)
               AddressFormField(
                 controller: _fullNameController,
                 label: "Ad Soyad",
-                hint: "Teslim alacak kişinin adı",
-                icon: Icons.person_outline_rounded,
-                validator: (v) =>
-                    v?.isEmpty ?? true ? "Lütfen ad soyad giriniz" : null,
+                hint: "Adınızı ve soyadınızı giriniz",
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
               SizedBox(height: SizeTokens.p16),
+
+              // Telefon
               AddressFormField(
                 controller: _phoneController,
-                label: "Telefon Numarası",
-                hint: "5XXXXXXXXX",
-                icon: Icons.phone_android_outlined,
+                label: "Telefon",
+                hint: "(___) ___ __ __",
                 keyboardType: TextInputType.phone,
-                validator: (v) =>
-                    v?.isEmpty ?? true ? "Lütfen telefon giriniz" : null,
+                prefix: Container(
+                  width: 60,
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "+90",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
               SizedBox(height: SizeTokens.p16),
+
+              // İl / İlçe
               Row(
                 children: [
                   Expanded(
                     child: AddressFormField(
                       controller: _cityController,
-                      label: "Şehir",
-                      hint: "Örn: İstanbul",
-                      validator: (v) => v?.isEmpty ?? true ? "Zorunlu" : null,
+                      label: "İl",
+                      hint: "Seçiniz",
+                      validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                     ),
                   ),
                   SizedBox(width: SizeTokens.p16),
@@ -142,80 +146,111 @@ class _AddAddressViewState extends State<AddAddressView> {
                     child: AddressFormField(
                       controller: _districtController,
                       label: "İlçe",
-                      hint: "Örn: Kadıköy",
-                      validator: (v) => v?.isEmpty ?? true ? "Zorunlu" : null,
+                      hint: "Seçiniz",
+                      validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                     ),
                   ),
                 ],
               ),
               SizedBox(height: SizeTokens.p16),
+
+              // Mahalle
               AddressFormField(
                 controller: _neighborhoodController,
                 label: "Mahalle",
-                hint: "Örn: Moda Mah.",
-                validator: (v) =>
-                    v?.isEmpty ?? true ? "Lütfen mahalle giriniz" : null,
+                hint: "Seçiniz",
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
               SizedBox(height: SizeTokens.p16),
-              AddressFormField(
-                controller: _addressLine1Controller,
-                label: "Adres",
-                hint: "Sokak, bina no, daire no...",
-                maxLines: 3,
-                validator: (v) =>
-                    v?.isEmpty ?? true ? "Lütfen adres giriniz" : null,
-              ),
-              SizedBox(height: SizeTokens.p16),
-              AddressFormField(
-                controller: _postalCodeController,
-                label: "Posta Kodu",
-                hint: "Örn: 34710",
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: SizeTokens.p24),
 
-              // Default Switch
+              // Info Box
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeTokens.p16,
-                  vertical: SizeTokens.p8,
-                ),
+                padding: EdgeInsets.all(SizeTokens.f10),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
-                  border: Border.all(color: AppColors.gray.withOpacity(0.1)),
+                  color: AppColors.darkBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(SizeTokens.r8),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      "Varsayılan Adres Yap",
-                      style: TextStyle(
-                        color: AppColors.darkBlue,
-                        fontSize: SizeTokens.f14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Icon(
+                      Icons.error_rounded,
+                      color: AppColors.darkBlue,
+                      size: SizeTokens.f20,
                     ),
-                    Switch.adaptive(
-                      value: _isDefault,
-                      onChanged: (v) => setState(() => _isDefault = v),
-                      activeColor: AppColors.blue,
+                    SizedBox(width: SizeTokens.p12),
+                    Expanded(
+                      child: Text(
+                        "Kargonuzun sorunsuz ulaşması için adres bilgilerinizi eksiksiz girin.",
+                        style: TextStyle(
+                          color: AppColors.darkBlue,
+                          fontSize: SizeTokens.f12,
+                          height: 1.4,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
+              SizedBox(height: SizeTokens.p16),
 
-              SizedBox(height: SizeTokens.p40),
+              // Adres
+              AddressFormField(
+                controller: _addressLine1Controller,
+                label: "Adres",
+                hint: "Cadde, mahalle sokak ve diğer bilgileri giriniz.",
+                maxLines: 3,
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              // Adres Başlığı
+              AddressFormField(
+                controller: _titleController,
+                label: "Adres Başlığı",
+                hint: "Adres Başlığı Giriniz",
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              // Posta Kodu
+              AddressFormField(
+                controller: _postalCodeController,
+                label: "Posta Kodu",
+                hint: "Opsiyonel",
+                isRequired: false,
+                keyboardType: TextInputType.number,
+              ),
+
+              SizedBox(height: SizeTokens.p24),
+
+              // Default Switch
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: const Text(
+                  "Varsayılan Adres Yap",
+                  style: TextStyle(
+                    color: Color(0xFF444444),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                value: _isDefault,
+                activeColor: AppColors.blue,
+                onChanged: (v) => setState(() => _isDefault = v),
+              ),
+
+              SizedBox(height: SizeTokens.p32),
 
               ElevatedButton(
                 onPressed: viewModel.isLoading ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blue,
-                  padding: EdgeInsets.symmetric(vertical: SizeTokens.p16),
+                  backgroundColor: AppColors.darkBlue,
+                  minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(SizeTokens.r16),
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
                   ),
-                  elevation: 0,
                 ),
                 child: viewModel.isLoading
                     ? const SizedBox(
@@ -228,9 +263,9 @@ class _AddAddressViewState extends State<AddAddressView> {
                       )
                     : Text(
                         isEditMode ? "Güncelle" : "Adresi Kaydet",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
-                          fontSize: SizeTokens.f16,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -245,8 +280,7 @@ class _AddAddressViewState extends State<AddAddressView> {
                     style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
-
-              SizedBox(height: SizeTokens.p24),
+              SizedBox(height: SizeTokens.p32),
             ],
           ),
         ),
@@ -258,10 +292,13 @@ class _AddAddressViewState extends State<AddAddressView> {
     if (_formKey.currentState?.validate() ?? false) {
       final viewModel = context.read<AddressViewModel>();
 
+      final fullName = _fullNameController.text.trim();
+      final phone = "+90${_phoneController.text.trim()}";
+
       final request = CreateAddressRequest(
         title: _titleController.text,
-        fullName: _fullNameController.text,
-        phone: _phoneController.text,
+        fullName: fullName,
+        phone: phone,
         city: _cityController.text,
         district: _districtController.text,
         neighborhood: _neighborhoodController.text,
@@ -280,11 +317,8 @@ class _AddAddressViewState extends State<AddAddressView> {
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              isEditMode
-                  ? "Adres başarıyla güncellendi."
-                  : "Adres başarıyla eklendi.",
-            ),
+            content: Text(isEditMode ? "Adres güncellendi." : "Adres eklendi."),
+            backgroundColor: AppColors.darkBlue,
           ),
         );
         viewModel.refresh();
