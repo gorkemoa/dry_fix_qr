@@ -44,11 +44,7 @@ class _AddressesViewState extends State<AddressesView> {
         ),
         title: Text(
           "Adreslerim",
-          style: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: SizeTokens.f18,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: viewModel.isLoading

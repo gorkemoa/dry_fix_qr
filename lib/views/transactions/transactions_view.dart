@@ -45,8 +45,22 @@ class _TransactionsViewState extends State<TransactionsView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tüm İşlemler"),
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.darkBlue,
+        centerTitle: true,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: AppColors.white,
+            size: SizeTokens.p24,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "Tüm İşlemler",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       body: viewModel.isLoading
           ? const Center(

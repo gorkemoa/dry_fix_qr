@@ -37,6 +37,7 @@ class OrderModel {
   final String? notes;
   final String purchasedAt;
   final String createdAt;
+  final List<OrderItemModel> items;
 
   OrderModel({
     required this.id,
@@ -47,6 +48,7 @@ class OrderModel {
     this.notes,
     required this.purchasedAt,
     required this.createdAt,
+    this.items = const [],
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,11 @@ class OrderModel {
       notes: json['notes'] as String?,
       purchasedAt: json['purchased_at'] as String,
       createdAt: json['created_at'] as String,
+      items: json['items'] != null
+          ? (json['items'] as List)
+                .map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
     );
   }
 
@@ -72,6 +79,85 @@ class OrderModel {
       'notes': notes,
       'purchased_at': purchasedAt,
       'created_at': createdAt,
+      'items': items.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class OrderItemModel {
+  final int id;
+  final int productId;
+  final int quantity;
+  final int tokenPriceAtPurchase;
+  final String priceAtPurchase;
+  final OrderProductModel product;
+
+  OrderItemModel({
+    required this.id,
+    required this.productId,
+    required this.quantity,
+    required this.tokenPriceAtPurchase,
+    required this.priceAtPurchase,
+    required this.product,
+  });
+
+  factory OrderItemModel.fromJson(Map<String, dynamic> json) {
+    return OrderItemModel(
+      id: json['id'] as int,
+      productId: json['product_id'] as int,
+      quantity: json['quantity'] as int,
+      tokenPriceAtPurchase: json['token_price_at_purchase'] as int,
+      priceAtPurchase: json['price_at_purchase'] as String,
+      product: OrderProductModel.fromJson(
+        json['product'] as Map<String, dynamic>,
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'product_id': productId,
+      'quantity': quantity,
+      'token_price_at_purchase': tokenPriceAtPurchase,
+      'price_at_purchase': priceAtPurchase,
+      'product': product.toJson(),
+    };
+  }
+}
+
+class OrderProductModel {
+  final int id;
+  final String name;
+  final String image;
+  final int tokenPrice;
+  final String price;
+
+  OrderProductModel({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.tokenPrice,
+    required this.price,
+  });
+
+  factory OrderProductModel.fromJson(Map<String, dynamic> json) {
+    return OrderProductModel(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      image: json['image'] as String,
+      tokenPrice: json['token_price'] as int,
+      price: json['price'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'image': image,
+      'token_price': tokenPrice,
+      'price': price,
     };
   }
 }

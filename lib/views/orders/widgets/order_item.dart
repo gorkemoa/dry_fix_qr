@@ -38,136 +38,144 @@ class OrderItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => OrderDetailView(orderId: order.id)),
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: SizeTokens.p16),
-        padding: EdgeInsets.all(SizeTokens.p20),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(SizeTokens.r12),
-          // ignore: deprecated_member_use
-          border: Border.all(color: AppColors.darkBlue.withOpacity(0.08)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Container(
+      margin: EdgeInsets.only(bottom: SizeTokens.p16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
+        border: Border.all(color: const Color.fromARGB(255, 188, 188, 188)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Section
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeTokens.p16,
+              vertical: SizeTokens.p12,
+            ),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Sipariş Kodu  #${order.id}",
+                  "Sipariş #${order.id}",
                   style: TextStyle(
+                    color: AppColors.darkBlue.withOpacity(0.9),
                     fontSize: SizeTokens.f16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.darkBlue,
-                    letterSpacing: -0.5,
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: SizeTokens.p12,
+                    horizontal: SizeTokens.p8,
                     vertical: SizeTokens.p4,
                   ),
                   decoration: BoxDecoration(
-                    // ignore: deprecated_member_use
-                    color: _getStatusColor().withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(SizeTokens.r20),
+                    color: _getStatusColor().withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      // ignore: deprecated_member_use
-                      color: _getStatusColor().withOpacity(0.2),
+                      color: _getStatusColor().withOpacity(0.3),
                     ),
                   ),
                   child: Text(
                     _getStatusText(),
                     style: TextStyle(
-                      fontSize: SizeTokens.f12,
-                      fontWeight: FontWeight.w600,
                       color: _getStatusColor(),
+                      fontSize: SizeTokens.f10,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: SizeTokens.p16),
-            Row(
+          ),
+          Divider(height: 1, color: const Color.fromARGB(255, 188, 188, 188)),
+
+          // Body Section
+          Padding(
+            padding: EdgeInsets.all(SizeTokens.p16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoItem(
-                  Icons.inventory_2_outlined,
-                  "${order.itemsCount} Ürün",
-                ),
-                SizedBox(width: SizeTokens.p24),
-                _buildInfoItem(
-                  Icons.account_balance_wallet_outlined,
-                  "${order.totalTokenSpent} DryPara",
-                ),
-              ],
-            ),
-            if (order.notes != null && order.notes!.isNotEmpty) ...[
-              SizedBox(height: SizeTokens.p16),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(SizeTokens.p12),
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.circular(SizeTokens.r8),
-                ),
-                child: Text(
-                  order.notes!,
-                  style: TextStyle(
-                    fontSize: SizeTokens.f13,
-                    color: AppColors.gray,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-            ],
-            SizedBox(height: SizeTokens.p16),
-            const Divider(height: 1),
-            SizedBox(height: SizeTokens.p16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
+                _buildInfoRow(
+                  "Tarih:",
                   DateFormatter.toTurkish(order.purchasedAt),
-                  style: TextStyle(
-                    fontSize: SizeTokens.f12,
-                    color: AppColors.gray,
-                  ),
                 ),
-                Text(
-                  "${order.totalPrice} TL",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.darkBlue,
+                SizedBox(height: SizeTokens.p4),
+                _buildInfoRow("Ürün Adeti:", "${order.itemsCount} Adet"),
+                SizedBox(height: SizeTokens.p4),
+                _buildInfoRow("Toplam Tutar:", "${order.totalPrice} TL"),
+                if (order.totalTokenSpent > 0) ...[
+                  SizedBox(height: SizeTokens.p4),
+                  _buildInfoRow(
+                    "Harcanan Token:",
+                    "${order.totalTokenSpent} DryPara",
                   ),
+                ],
+
+                SizedBox(height: SizeTokens.p16),
+
+                // Footer Actions
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      height: 38,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  OrderDetailView(orderId: order.id),
+                            ),
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: AppColors.darkBlue,
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(SizeTokens.r8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: SizeTokens.p16,
+                          ),
+                        ),
+                        child: const Text(
+                          "Detayları Gör",
+                          style: TextStyle(
+                            color: AppColors.darkBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String label) {
+  Widget _buildInfoRow(String label, String value) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: AppColors.gray),
-        SizedBox(width: SizeTokens.p6),
         Text(
-          label,
+          "$label ",
           style: TextStyle(
-            fontSize: SizeTokens.f13,
-            color: AppColors.gray,
-            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
+            fontSize: SizeTokens.f14,
           ),
+        ),
+        Text(
+          value,
+          style: TextStyle(color: Colors.black87, fontSize: SizeTokens.f14),
         ),
       ],
     );
