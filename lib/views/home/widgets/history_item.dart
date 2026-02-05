@@ -110,16 +110,28 @@ class _HistoryItemState extends State<HistoryItem> {
                 children: [
                   const Divider(height: 1),
                   SizedBox(height: SizeTokens.p16),
+                  _buildDetailRow("İşlem No", "#${widget.item.id}"),
+                  SizedBox(height: SizeTokens.p12),
+                  _buildDetailRow(
+                    "Tam Tarih",
+                    DateFormatter.toTurkish(widget.item.createdAt),
+                  ),
+                  SizedBox(height: SizeTokens.p12),
+                  _buildDetailRow(
+                    "İşlem Tipi",
+                    isCredit ? "Yükleme (Kazanç)" : "Harcama",
+                  ),
+                  SizedBox(height: SizeTokens.p12),
+                  _buildDetailRow(
+                    "İşlem Nedeni",
+                    _getReasonText(widget.item.reason),
+                  ),
+                  SizedBox(height: SizeTokens.p12),
                   _buildDetailRow(
                     "Miktar",
                     "${isCredit ? '+' : '-'}${widget.item.tokenAmount} DP",
                     isValueColored: true,
                     isCredit: isCredit,
-                  ),
-                  SizedBox(height: SizeTokens.p12),
-                  _buildDetailRow(
-                    "İşlem Tipi",
-                    isCredit ? "Yükleme" : "Harcama",
                   ),
                   SizedBox(height: SizeTokens.p12),
                   _buildDetailRow("Açıklama", widget.item.note),
@@ -141,8 +153,12 @@ class _HistoryItemState extends State<HistoryItem> {
                             width: SizeTokens.p50,
                             height: SizeTokens.p50,
                             decoration: BoxDecoration(
+                              color: AppColors.white,
                               borderRadius: BorderRadius.circular(
                                 SizeTokens.r8,
+                              ),
+                              border: Border.all(
+                                color: AppColors.gray.withOpacity(0.1),
                               ),
                               image: DecorationImage(
                                 image: NetworkImage(
@@ -166,7 +182,7 @@ class _HistoryItemState extends State<HistoryItem> {
                                   ),
                                 ),
                                 Text(
-                                  "Kod: ${widget.item.qr!.code}",
+                                  "Ürün Kodu: ${widget.item.qr!.code}",
                                   style: TextStyle(
                                     fontSize: SizeTokens.f11,
                                     color: AppColors.gray,
@@ -224,5 +240,17 @@ class _HistoryItemState extends State<HistoryItem> {
         ),
       ],
     );
+  }
+
+  String _getReasonText(String reason) {
+    switch (reason) {
+      case 'qr_scan':
+        return 'QR Okuma';
+      case 'purchase':
+        return 'Satın Alma';
+      default:
+        if (reason.isEmpty) return 'Belirtilmedi';
+        return reason[0].toUpperCase() + reason.substring(1);
+    }
   }
 }

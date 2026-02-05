@@ -23,6 +23,7 @@ class SizeTokens {
 
   // Radius
   static double get r8 => getProportionateScreenWidth(8);
+  static double get r10 => getProportionateScreenWidth(10);
   static double get r12 => getProportionateScreenWidth(12);
   static double get r16 => getProportionateScreenWidth(16);
   static double get r20 => getProportionateScreenWidth(20);
