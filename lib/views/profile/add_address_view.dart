@@ -204,6 +204,13 @@ class _AddAddressViewState extends State<AddAddressView> {
         viewModel.setSelectedCity(city);
         _cityController.text = city.name;
         _districtController.clear();
+
+        // Auto-open district selection after city is selected
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            _showDistrictSelection(context, viewModel);
+          }
+        });
       },
     );
   }

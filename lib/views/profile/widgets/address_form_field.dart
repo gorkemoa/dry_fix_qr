@@ -8,6 +8,7 @@ class AddressFormField extends StatelessWidget {
   final String hint;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
+  final TextCapitalization textCapitalization;
   final String? Function(String?)? validator;
   final int maxLines;
   final bool isRequired;
@@ -21,6 +22,7 @@ class AddressFormField extends StatelessWidget {
     required this.hint,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
+    this.textCapitalization = TextCapitalization.words,
     this.validator,
     this.maxLines = 1,
     this.isRequired = true,
@@ -56,6 +58,7 @@ class AddressFormField extends StatelessWidget {
           controller: controller,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
+          textCapitalization: textCapitalization,
           validator: validator,
           maxLines: maxLines,
           style: TextStyle(
@@ -73,7 +76,7 @@ class AddressFormField extends StatelessWidget {
             prefixIcon: prefix,
             suffixIcon: suffix,
             filled: true,
-            fillColor: AppColors.background, // Light gray as in image
+            fillColor: AppColors.white, // Light gray as in image
             contentPadding: EdgeInsets.symmetric(
               horizontal: SizeTokens.p16,
               vertical: maxLines > 1 ? SizeTokens.p12 : 0,
