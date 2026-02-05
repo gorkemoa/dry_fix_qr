@@ -119,6 +119,14 @@ class AddressItem extends StatelessWidget {
                     fontSize: SizeTokens.f14,
                   ),
                 ),
+                SizedBox(height: SizeTokens.p4),
+                Text(
+                  address.postalCode.toString(),
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: SizeTokens.f14,
+                  ),
+                ),
                 SizedBox(height: SizeTokens.p16),
 
                 // Footer Actions
