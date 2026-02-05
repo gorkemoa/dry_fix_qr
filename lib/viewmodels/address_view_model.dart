@@ -63,6 +63,55 @@ class AddressViewModel extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> updateAddress(int id, CreateAddressRequest request) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final result = await _addressService.updateAddress(id, request);
+
+    if (result is Success<Address>) {
+      Logger.info("Address updated successfully: ${result.data.title}");
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } else if (result is Failure<Address>) {
+      _errorMessage = result.errorMessage;
+      Logger.error("Address update failed", _errorMessage ?? "Unknown error");
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
+  Future<bool> deleteAddress(int id) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final result = await _addressService.deleteAddress(id);
+
+    if (result is Success<bool>) {
+      Logger.info("Address deleted successfully: ID $id");
+      await fetchAddresses(); // Refresh list after delete
+      return true;
+    } else if (result is Failure<bool>) {
+      _errorMessage = result.errorMessage;
+      Logger.error("Address deletion failed", _errorMessage ?? "Unknown error");
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
   void refresh() {
     fetchAddresses();
   }

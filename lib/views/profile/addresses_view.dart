@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../models/address_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import 'widgets/address_item.dart';
+import 'add_address_view.dart';
 
 class AddressesView extends StatefulWidget {
   const AddressesView({super.key});
@@ -60,9 +62,9 @@ class _AddressesViewState extends State<AddressesView> {
           : _buildAddressList(viewModel),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Implement Add Address
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Adres ekleme yakında eklenecektir.")),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddAddressView()),
           );
         },
         backgroundColor: AppColors.blue,
@@ -152,13 +154,53 @@ class _AddressesViewState extends State<AddressesView> {
         return AddressItem(
           address: address,
           onEdit: () {
-            // TODO: Implement Edit
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AddAddressView(address: address),
+              ),
+            );
           },
           onDelete: () {
-            // TODO: Implement Delete
+            _showDeleteConfirmation(context, viewModel, address);
           },
         );
       },
+    );
+  }
+
+  void _showDeleteConfirmation(
+    BuildContext context,
+    AddressViewModel viewModel,
+    Address address,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Adresi Sil"),
+        content: const Text("Bu adresi silmek istediğinize emin misiniz?"),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SizeTokens.r16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("İptal", style: TextStyle(color: AppColors.gray)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog
+              final success = await viewModel.deleteAddress(address.id);
+              if (success && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Adres başarıyla silindi.")),
+                );
+              }
+            },
+            child: const Text("Sil", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
     );
   }
 }

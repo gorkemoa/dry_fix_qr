@@ -98,6 +98,19 @@ class ApiClient {
     }
   }
 
+  Future<dynamic> delete(String path, {dynamic data}) async {
+    Logger.request('DELETE', path, data);
+    try {
+      final response = await _dio.delete(path, data: data);
+      Logger.response(path, response.data);
+      return response.data;
+    } on DioException catch (e) {
+      final error = _handleDioError(e);
+      Logger.error('DELETE FAILED: $path', error.message, e.stackTrace);
+      throw error;
+    }
+  }
+
   ApiException _handleDioError(DioException error) {
     if (error.response != null) {
       String message = 'Unknown error';

@@ -12,4 +12,5 @@ class ApiConstants {
   static const String products = '$baseUrl/api/v1/products';
   static const String deactivate = '$baseUrl/api/v1/auth/deactivate';
   static const String addresses = '$baseUrl/api/v1/addresses';
+  static String addressDetail(int id) => '$addresses/$id';
 }

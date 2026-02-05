@@ -35,4 +35,33 @@ class AddressService {
       return Failure(e.toString());
     }
   }
+
+  Future<ApiResult<Address>> updateAddress(
+    int id,
+    CreateAddressRequest request,
+  ) async {
+    try {
+      final response = await _apiClient.put(
+        ApiConstants.addressDetail(id),
+        data: request.toJson(),
+      );
+      final updateAddressResponse = CreateAddressResponse.fromJson(response);
+      return Success(updateAddressResponse.address);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<bool>> deleteAddress(int id) async {
+    try {
+      await _apiClient.delete(ApiConstants.addressDetail(id));
+      return const Success(true);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
 }
