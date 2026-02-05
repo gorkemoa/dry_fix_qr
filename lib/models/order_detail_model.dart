@@ -61,7 +61,7 @@ class OrderDetailModel {
       status: json['status'] as String,
       totalTokenSpent: json['total_token_spent'] as int,
       totalPrice: json['total_price'] as String,
-      quantity: json['quantity'] as int,
+      quantity: json['quantity'] as int? ?? json['items_count'] as int? ?? 0,
       notes: json['notes'] as String?,
       purchasedAt: json['purchased_at'] as String,
       createdAt: json['created_at'] as String,
