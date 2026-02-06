@@ -4,6 +4,7 @@ import '../../app/app_theme.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../models/product_model.dart';
 import '../../viewmodels/product_view_model.dart';
+import '../cart/checkout_view.dart';
 
 class ProductDetailView extends StatelessWidget {
   final ProductModel product;
@@ -14,213 +15,331 @@ class ProductDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.darkBlue,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Ürün Detayı",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(SizeTokens.p16),
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Product Image Card
-            Container(
-              padding: EdgeInsets.all(SizeTokens.p16),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(SizeTokens.r8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(SizeTokens.r8),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.network(
-                    product.image,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Icon(
-                      Icons.image_not_supported_outlined,
-                      color: Colors.grey,
-                      size: SizeTokens.p64,
+      body: Stack(
+        children: [
+          // Scrollable Content
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              SizeTokens.p24,
+              MediaQuery.of(context).padding.top + SizeTokens.p16,
+              SizeTokens.p24,
+              SizeTokens.p100 + SizeTokens.p24, // Space for bottom bar
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Hero Image with Rounded Corners
+                Container(
+                  height: 350, // Fixed height for hero image look
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(SizeTokens.r24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(SizeTokens.r24),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          product.image,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: Colors.grey[200],
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              color: Colors.grey,
+                              size: SizeTokens.p64,
+                            ),
+                          ),
+                        ),
+                        // Dark gradient overlay for better text contrast if we put text on image,
+                        // but here we just want the image clean.
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: SizeTokens.p16),
+                SizedBox(height: SizeTokens.p24),
 
-            // Product Info Card
-            Container(
-              padding: EdgeInsets.all(SizeTokens.p16),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(SizeTokens.r8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
+                // Title
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: SizeTokens.f24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p8),
+
+                // Price Section (Placed near title for emphasis)
+                Row(
+                  children: [
+                    Text(
+                      "${product.price} TL",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: SizeTokens.f20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.blue,
+                      ),
+                    ),
+                    if (product.tokenPrice > 0) ...[
+                      SizedBox(width: SizeTokens.p8),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: SizeTokens.p8,
+                          vertical: SizeTokens.p4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.darkBlue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(SizeTokens.r8),
+                        ),
                         child: Text(
-                          product.name,
+                          "+${product.tokenPrice} DP",
                           style: TextStyle(
-                            fontSize: SizeTokens.f20,
-                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Inter',
+                            fontSize: SizeTokens.f12,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.darkBlue,
                           ),
                         ),
                       ),
-                      if (!product.isActive || product.stock <= 0)
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: SizeTokens.p8,
-                            vertical: SizeTokens.p4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: Colors.red.withOpacity(0.3),
-                            ),
-                          ),
-                          child: Text(
-                            "Tükendi",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
                     ],
-                  ),
-                  SizedBox(height: SizeTokens.p16),
+                  ],
+                ),
+                SizedBox(height: SizeTokens.p24),
 
-                  // Description
-                  Text(
-                    "Ürün Açıklaması",
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.darkBlue,
+                // Description Title
+                Text(
+                  "Açıklama", // "Description"
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: SizeTokens.f18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p12),
+
+                // Description Text
+                Text(
+                  product.description,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: SizeTokens.f14,
+                    color: AppColors.gray,
+                    height: 1.6,
+                  ),
+                ),
+
+                // Gallery Section Placeholder (mimicking the style)
+                SizedBox(height: SizeTokens.p24),
+                Text(
+                  "Galeri",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: SizeTokens.f18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p12),
+                Row(
+                  children: [
+                    // Just showing the main image as a thumbnail to mimic the gallery view
+                    _buildGalleryThumb(product.image),
+                    SizedBox(width: SizeTokens.p12),
+                    _buildGalleryThumb(product.image, opacity: 0.5),
+                    SizedBox(width: SizeTokens.p12),
+                    _buildGalleryThumb(
+                      product.image,
+                      opacity: 0.5,
+                      showPlus: true,
                     ),
-                  ),
-                  SizedBox(height: SizeTokens.p8),
-                  Text(
-                    product.description,
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      color: Colors.grey.shade700,
-                      height: 1.5,
-                    ),
-                  ),
-
-                  SizedBox(height: SizeTokens.p24),
-                  Divider(height: 1, color: Colors.grey.shade200),
-                  SizedBox(height: SizeTokens.p16),
-
-                  // Price Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Fiyat",
-                        style: TextStyle(
-                          fontSize: SizeTokens.f16,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "${product.price} TL",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f20,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.blue,
-                            ),
-                          ),
-                          if (product.tokenPrice > 0)
-                            Text(
-                              "+ ${product.tokenPrice} DP",
-                              style: TextStyle(
-                                fontSize: SizeTokens.f14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.darkBlue,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // Floating Top Bar Buttons
+          Positioned(
+            top: MediaQuery.of(context).padding.top + SizeTokens.p24,
+            left: SizeTokens.p32, // Indent inside the image area
+            right: SizeTokens.p32,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildCircularButton(
+                  icon: Icons.arrow_back_ios_new_rounded,
+                  onTap: () => Navigator.pop(context),
+                ),
+                _buildCircularButton(
+                  icon: Icons.share_outlined,
+                  onTap: () {
+                    // Placeholder for share functionality
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.all(SizeTokens.p16),
+        padding: EdgeInsets.all(SizeTokens.p24),
         decoration: BoxDecoration(
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              blurRadius: 20,
               offset: const Offset(0, -5),
             ),
           ],
         ),
         child: SafeArea(
-          child: SizedBox(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: product.canBuy && product.stock > 0
-                  ? () {
-                      final viewModel = context.read<ProductViewModel>();
-                      viewModel.addToCart(product);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Ürün sepete eklendi"),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    }
-                  : null, // Disable if cannot buy
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.darkBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+          child: Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: product.canBuy && product.stock > 0
+                        ? () {
+                            final viewModel = context.read<ProductViewModel>();
+                            viewModel.addToCart(product);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Ürün sepete eklendi"),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.blue, // Secondary Color
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(SizeTokens.r16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "Sepete Ekle",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: SizeTokens.f16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
-                elevation: 0,
               ),
-              child: Text(
-                product.stock <= 0 ? "Stokta Yok" : "Satın Al",
-                style: TextStyle(
-                  fontSize: SizeTokens.f16,
-                  fontWeight: FontWeight.bold,
+              SizedBox(width: SizeTokens.p16),
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: product.canBuy && product.stock > 0
+                        ? () {
+                            final viewModel = context.read<ProductViewModel>();
+                            viewModel.addToCart(product);
+                            // Navigate to checkout
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CheckoutView(),
+                              ),
+                            );
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkBlue, // Primary Color
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(SizeTokens.r16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      product.stock <= 0 ? "Stokta Yok" : "Hemen Al",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: SizeTokens.f16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCircularButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.4), // Semi-transparent grey
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 20),
+      ),
+    );
+  }
+
+  Widget _buildGalleryThumb(
+    String imageUrl, {
+    double opacity = 1.0,
+    bool showPlus = false,
+  }) {
+    return Container(
+      width: 70,
+      height: 70,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(SizeTokens.r16),
+        image: DecorationImage(
+          image: NetworkImage(imageUrl),
+          fit: BoxFit.cover,
+          colorFilter: opacity < 1.0
+              ? ColorFilter.mode(
+                  Colors.white.withOpacity(0.6),
+                  BlendMode.lighten,
+                )
+              : null,
+        ),
+      ),
+      child: showPlus
+          ? Center(
+              child: Text(
+                "+5",
+                style: TextStyle(
+                  color: AppColors.darkBlue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: SizeTokens.f16,
+                ),
+              ),
+            )
+          : null,
     );
   }
 }

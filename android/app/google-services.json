@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "291237777308",
+    "project_id": "dryfixqr",
+    "storage_bucket": "dryfixqr.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291237777308:android:b99f585092480f6b7d0259",
+        "android_client_info": {
+          "package_name": "com.smartmetrics.dryfixqr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBjut0XW8R3kufsd1uzPxqMBmukDuY4ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
