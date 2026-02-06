@@ -51,17 +51,15 @@ class _LoginViewState extends State<LoginView> {
           children: [
             // Top Section with Mascot (Changes based on state)
             Container(
-              height: getProportionateScreenHeight(400),
+              height: getProportionateScreenHeight(300),
               width: double.infinity,
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + SizeTokens.p20,
-              ),
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: Image.asset(
                   _isLogin
-                      ? 'assets/Adsız tasarım (12).png'
-                      : 'assets/Adsız tasarım (13).png',
+                      ? 'assets/login_mascot.png'
+                      : 'assets/register_mascot.png',
                   key: ValueKey(_isLogin),
                   fit: BoxFit.contain,
                 ),
@@ -73,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
               width: double.infinity,
               constraints: BoxConstraints(
                 minHeight:
-                    SizeConfig.screenHeight - getProportionateScreenHeight(400),
+                    SizeConfig.screenHeight - getProportionateScreenHeight(200),
               ),
               decoration: BoxDecoration(
                 color: AppColors.white,

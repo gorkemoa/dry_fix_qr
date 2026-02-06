@@ -17,6 +17,7 @@ class SizeTokens {
   static double get p40 => getProportionateScreenWidth(40);
   static double get p48 => getProportionateScreenWidth(48);
   static double get p50 => getProportionateScreenWidth(50);
+  static double get p56 => getProportionateScreenWidth(56);
   static double get p64 => getProportionateScreenWidth(64);
   static double get p68 => getProportionateScreenWidth(68);
   static double get p80 => getProportionateScreenWidth(80);
