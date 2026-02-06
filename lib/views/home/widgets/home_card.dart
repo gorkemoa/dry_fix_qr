@@ -24,12 +24,11 @@ class HomeCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(SizeTokens.r24),
-        border: Border.all(color: AppColors.darkBlue, width: 0.3),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -39,36 +38,30 @@ class HomeCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(SizeTokens.r24),
           child: Padding(
-            padding: EdgeInsets.all(SizeTokens.p20),
+            padding: EdgeInsets.all(SizeTokens.p16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(icon, color: iconColor, size: SizeTokens.p32),
-                SizedBox(height: SizeTokens.p16),
-                Column(
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: SizeTokens.f16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.darkBlue,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    SizedBox(height: SizeTokens.p4),
-                    Text(
-                      subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: SizeTokens.f12,
-                        color: AppColors.gray,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                SizedBox(height: SizeTokens.p12),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p4),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: SizeTokens.f11,
+                    color: AppColors.gray,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),
