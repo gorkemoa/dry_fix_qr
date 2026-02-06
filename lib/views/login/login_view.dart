@@ -47,143 +47,157 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       backgroundColor: AppColors.darkBlue,
       body: SingleChildScrollView(
-        child: Column(
+        child: Stack(
+          alignment: Alignment.topCenter,
           children: [
-            // Top Section with Mascot (Changes based on state)
-            Container(
-              height: getProportionateScreenHeight(300),
-              width: double.infinity,
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: Image.asset(
-                  _isLogin
-                      ? 'assets/login_mascot.png'
-                      : 'assets/register_mascot.png',
-                  key: ValueKey(_isLogin),
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-
-            // White Container for Form
-            Container(
-              width: double.infinity,
-              constraints: BoxConstraints(
-                minHeight:
-                    SizeConfig.screenHeight - getProportionateScreenHeight(200),
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(SizeTokens.r40),
-                  topRight: Radius.circular(SizeTokens.r40),
-                ),
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: SizeTokens.p32,
-                vertical: SizeTokens.p40,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Custom Tabs (Giriş / Üye ol)
-                  Container(
-                    height: SizeTokens.p64,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8ECF5),
-                      borderRadius: BorderRadius.circular(SizeTokens.r32),
-                    ),
-                    padding: EdgeInsets.all(SizeTokens.p4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _isLogin = true),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              decoration: BoxDecoration(
-                                color: _isLogin
-                                    ? AppColors.white
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(
-                                  SizeTokens.r32,
-                                ),
-                                boxShadow: _isLogin
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ]
-                                    : [],
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Giriş",
-                                style: TextStyle(
-                                  color: _isLogin
-                                      ? AppColors.darkBlue
-                                      : AppColors.gray,
-                                  fontWeight: _isLogin
-                                      ? FontWeight.bold
-                                      : FontWeight.w500,
-                                  fontSize: SizeTokens.f14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _isLogin = false),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              decoration: BoxDecoration(
-                                color: !_isLogin
-                                    ? AppColors.white
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(
-                                  SizeTokens.r32,
-                                ),
-                                boxShadow: !_isLogin
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ]
-                                    : [],
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Üye Ol",
-                                style: TextStyle(
-                                  color: !_isLogin
-                                      ? AppColors.darkBlue
-                                      : AppColors.gray,
-                                  fontWeight: !_isLogin
-                                      ? FontWeight.bold
-                                      : FontWeight.w500,
-                                  fontSize: SizeTokens.f14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+            // White Container (Content)
+            Column(
+              children: [
+                SizedBox(height: getProportionateScreenHeight(300)),
+                Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(
+                    minHeight:
+                        SizeConfig.screenHeight -
+                        getProportionateScreenHeight(300),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(SizeTokens.r40),
+                      topRight: Radius.circular(SizeTokens.r40),
                     ),
                   ),
-                  SizedBox(height: SizeTokens.p32),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeTokens.p32,
+                    vertical: SizeTokens.p40,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Custom Tabs (Giriş / Üye ol)
+                      Container(
+                        height: SizeTokens.p64,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8ECF5),
+                          borderRadius: BorderRadius.circular(SizeTokens.r32),
+                        ),
+                        padding: EdgeInsets.all(SizeTokens.p4),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _isLogin = true),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  decoration: BoxDecoration(
+                                    color: _isLogin
+                                        ? AppColors.white
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(
+                                      SizeTokens.r32,
+                                    ),
+                                    boxShadow: _isLogin
+                                        ? [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.05,
+                                              ),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Giriş",
+                                    style: TextStyle(
+                                      color: _isLogin
+                                          ? AppColors.darkBlue
+                                          : AppColors.gray,
+                                      fontWeight: _isLogin
+                                          ? FontWeight.bold
+                                          : FontWeight.w500,
+                                      fontSize: SizeTokens.f14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _isLogin = false),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  decoration: BoxDecoration(
+                                    color: !_isLogin
+                                        ? AppColors.white
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(
+                                      SizeTokens.r32,
+                                    ),
+                                    boxShadow: !_isLogin
+                                        ? [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.05,
+                                              ),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Üye Ol",
+                                    style: TextStyle(
+                                      color: !_isLogin
+                                          ? AppColors.darkBlue
+                                          : AppColors.gray,
+                                      fontWeight: !_isLogin
+                                          ? FontWeight.bold
+                                          : FontWeight.w500,
+                                      fontSize: SizeTokens.f14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: SizeTokens.p32),
 
-                  // Form Content
-                  if (_isLogin)
-                    _buildLoginForm(loginViewModel)
-                  else
-                    _buildRegisterForm(registerViewModel),
-                ],
+                      // Form Content
+                      if (_isLogin)
+                        _buildLoginForm(loginViewModel)
+                      else
+                        _buildRegisterForm(registerViewModel),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // Mascot (Top Layer)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + SizeTokens.p10,
+              child: IgnorePointer(
+                child: SizedBox(
+                  height: getProportionateScreenHeight(300),
+                  width: SizeConfig.screenWidth,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Image.asset(
+                      _isLogin
+                          ? 'assets/login_mascot.png'
+                          : 'assets/register_mascot.png',
+                      key: ValueKey(_isLogin),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
