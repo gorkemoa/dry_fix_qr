@@ -5,6 +5,7 @@ import '../../core/responsive/size_tokens.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import '../../models/address_model.dart';
+import '../profile/add_address_view.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({super.key});
@@ -174,10 +175,14 @@ class _CheckoutViewState extends State<CheckoutView> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to add new address
-                    // For now, simple view
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddAddressView(),
+                      ),
+                    );
                   },
-                  child: Text("Adres Ekle"),
+                  child: const Text("Adres Ekle"),
                 ),
               ],
             ),

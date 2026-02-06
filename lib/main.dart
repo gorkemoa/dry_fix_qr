@@ -1,6 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+import 'services/notification_service.dart';
 import 'app/app_theme.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/storage_manager.dart';
@@ -23,12 +29,23 @@ import 'viewmodels/address_view_model.dart';
 import 'services/address_service.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
+import 'views/qr_scanner/qr_share_process_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Storage initialize
   await StorageManager.init();
+
+  // Firebase initialize
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await NotificationService().init();
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
 
   // App de dönme olmasın (Lock orientation to portrait)
   await SystemChrome.setPreferredOrientations([
@@ -39,6 +56,14 @@ void main() async {
   // Dependency Injection setup for initial check
   final apiClient = ApiClient();
   final authService = AuthService(apiClient);
+
+  // Check shared files (Intent)
+  List<SharedMediaFile> sharedFiles = [];
+  try {
+    sharedFiles = await ReceiveSharingIntent.instance.getInitialMedia();
+  } catch (e) {
+    debugPrint("Shared intent error: $e");
+  }
 
   Widget initialView = const LoginView();
 
@@ -56,6 +81,11 @@ void main() async {
     }
   }
 
+  // Eğer paylaşım ile gelindiyse, initialView'ı override et
+  if (sharedFiles.isNotEmpty) {
+    initialView = QrShareProcessView(sharedFiles: sharedFiles);
+  }
+
   runApp(
     MyApp(
       apiClient: apiClient,
@@ -65,7 +95,7 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final ApiClient apiClient;
   final AuthService authService;
   final Widget initialView;
@@ -78,23 +108,67 @@ class MyApp extends StatelessWidget {
   });
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late StreamSubscription _intentDataStreamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // Uygulama hafıdayken (background/active) gelen paylaşımları dinle
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance
+        .getMediaStream()
+        .listen(
+          (List<SharedMediaFile> value) {
+            if (value.isNotEmpty) {
+              // NavigationService ile yönlendir
+              NavigationService.navigatorKey.currentState?.push(
+                MaterialPageRoute(
+                  builder: (_) => QrShareProcessView(sharedFiles: value),
+                ),
+              );
+            }
+          },
+          onError: (err) {
+            debugPrint("getIntentDataStream error: $err");
+          },
+        );
+  }
+
+  @override
+  void dispose() {
+    _intentDataStreamSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final historyService = HistoryService(apiClient);
-    final qrService = QrService(apiClient);
-    final orderService = OrderService(apiClient);
-    final productService = ProductService(apiClient);
-    final addressService = AddressService(apiClient);
+    final historyService = HistoryService(widget.apiClient);
+    final qrService = QrService(widget.apiClient);
+    final orderService = OrderService(widget.apiClient);
+    final productService = ProductService(widget.apiClient);
+    final addressService = AddressService(widget.apiClient);
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LoginViewModel(authService)),
-        ChangeNotifierProvider(create: (_) => RegisterViewModel(authService)),
-        ChangeNotifierProvider(create: (_) => HomeViewModel(authService)),
+        ChangeNotifierProvider(
+          create: (_) => LoginViewModel(widget.authService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RegisterViewModel(widget.authService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => HomeViewModel(widget.authService),
+        ),
         ChangeNotifierProvider(create: (_) => HistoryViewModel(historyService)),
         ChangeNotifierProvider(
-          create: (_) => UpdatePasswordViewModel(authService),
+          create: (_) => UpdatePasswordViewModel(widget.authService),
         ),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel(authService)),
+        ChangeNotifierProvider(
+          create: (_) => ProfileViewModel(widget.authService),
+        ),
         ChangeNotifierProvider(create: (_) => QrViewModel(qrService)),
         ChangeNotifierProvider(create: (_) => OrderViewModel(orderService)),
         ChangeNotifierProvider(
@@ -119,7 +193,7 @@ class MyApp extends StatelessWidget {
             ),
           );
         },
-        home: initialView,
+        home: widget.initialView,
       ),
     );
   }
