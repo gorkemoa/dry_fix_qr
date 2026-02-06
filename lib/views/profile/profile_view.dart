@@ -114,7 +114,7 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                         child: ClipOval(
                           child: Image.asset(
-                            'assets/Adsız tasarım (9).png',
+                            'assets/Adsız tasarım (11).png',
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) =>
                                 Center(

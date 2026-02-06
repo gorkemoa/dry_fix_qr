@@ -72,6 +72,9 @@ flutter:
     - assets/dry_fix.svg
     - assets/Adsız tasarım (9).png
     - assets/Adsız tasarım (10).png
+    - assets/Adsız tasarım (11).png
+    - assets/Adsız tasarım (12).png
+    - assets/Adsız tasarım (13).png
     - assets/mascot.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
