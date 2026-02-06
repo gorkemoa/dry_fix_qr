@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
-
 class HomeHeader extends StatelessWidget {
   final String userName;
   final int tokenBalance;
@@ -18,181 +16,133 @@ class HomeHeader extends StatelessWidget {
     this.onCartTap,
   });
 
+  String get _greeting {
+    final hour = DateTime.now().hour;
+    if (hour >= 5 && hour < 12) {
+      return "Günaydın";
+    } else if (hour >= 12 && hour < 18) {
+      return "İyi Günler";
+    } else if (hour >= 18 && hour < 22) {
+      return "İyi Akşamlar";
+    } else {
+      return "İyi Geceler";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        SizeTokens.p24,
-        SizeTokens.p24,
-        SizeTokens.p24,
-        SizeTokens.p24,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      width: double.infinity,
+      color: AppColors.blue,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  SvgPicture.asset(
-                    'assets/dry_fix.svg',
-                    height: SizeTokens.p32,
-                    width: SizeTokens.p32,
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(right: SizeTokens.p12),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              SizeTokens.p24,
+              SizeTokens.p32,
+              SizeTokens.p24,
+              SizeTokens.p80,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.shopping_cart_outlined,
-                            color: AppColors.darkBlue,
+                        Text(
+                          "Merhaba",
+                          style: TextStyle(
+                            fontSize: SizeTokens.f24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: -0.5,
                           ),
-                          onPressed: onCartTap,
                         ),
-                        if (cartItemCount > 0)
-                          Positioned(
-                            right: 8,
-                            top: 8,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 14,
-                                minHeight: 14,
-                              ),
-                              child: Text(
-                                '$cartItemCount',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
+                        Text(
+                          userName.split(' ').first,
+                          style: TextStyle(
+                            fontSize: SizeTokens.f24 + 4,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: -0.5,
                           ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                        ),
+                        Text(
+                          _greeting,
+                          style: TextStyle(
+                            fontSize: SizeTokens.f14,
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ],
                     ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: AppColors.darkBlue,
+                    Container(
+                      height: SizeTokens.p48,
+                      width: SizeTokens.p48,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        shape: BoxShape.circle,
                       ),
-                      onPressed: () {},
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.notifications_none_rounded,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                        onPressed: () {},
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: SizeTokens.p24),
-          // Balance Card
-          Container(
-            padding: EdgeInsets.all(SizeTokens.p24),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF001A3D), Color(0xFF002452)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(SizeTokens.r12),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.darkBlue.withOpacity(0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  ],
                 ),
               ],
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(SizeTokens.p12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(SizeTokens.r12),
+          ),
+          Positioned(
+            right: 0,
+            left: 0,
+            bottom: -SizeTokens.p97,
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/mascot.png',
+                    height: SizeTokens.p280,
+                    fit: BoxFit.contain,
                   ),
-                  child: Icon(
-                    Icons.account_balance_wallet_outlined,
-                    color: Colors.white,
-                    size: SizeTokens.f24,
-                  ),
-                ),
-                SizedBox(width: SizeTokens.p16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${userName.toUpperCase()} DRYPARA BAKİYESİ",
-                        style: TextStyle(
-                          fontSize: SizeTokens.f12,
-                          color: Colors.white.withOpacity(0.6),
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
+                  Positioned(
+                    top: SizeTokens.p145, // Aligned with the dark blue board
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "$tokenBalance",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: SizeTokens.f24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
                         ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            "$tokenBalance",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f32,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        SizedBox(width: SizeTokens.p4),
+                        Text(
+                          "DryPara",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: SizeTokens.f12,
+                            fontWeight: FontWeight.bold,
                           ),
-                          SizedBox(width: SizeTokens.p4),
-                          Text(
-                            "DryPara",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f16,
-                              color: Colors.white.withOpacity(0.8),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

@@ -112,14 +112,21 @@ class _ProfileViewState extends State<ProfileView> {
                             width: 2,
                           ),
                         ),
-                        child: Center(
-                          child: Text(
-                            _getUserInitials(user?.name),
-                            style: TextStyle(
-                              color: AppColors.blue,
-                              fontSize: SizeTokens.f32,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/Adsız tasarım (9).png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Center(
+                                  child: Text(
+                                    _getUserInitials(user?.name),
+                                    style: TextStyle(
+                                      color: AppColors.blue,
+                                      fontSize: SizeTokens.f32,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                           ),
                         ),
                       ),

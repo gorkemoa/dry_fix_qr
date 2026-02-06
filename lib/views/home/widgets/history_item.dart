@@ -56,15 +56,19 @@ class _HistoryItemState extends State<HistoryItem> {
               Container(
                 padding: EdgeInsets.all(SizeTokens.p10),
                 decoration: BoxDecoration(
-                  color: (isCredit ? Colors.green : Colors.red).withOpacity(
-                    0.08,
-                  ),
+                  color: widget.item.reason == 'purchase'
+                      ? const Color(0xFFFE8B6D).withOpacity(0.15)
+                      : const Color(0xFF6DB6FE).withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isCredit ? Icons.add_rounded : Icons.remove_rounded,
-                  color: isCredit ? Colors.green : Colors.red,
-                  size: SizeTokens.p20,
+                  widget.item.reason == 'purchase'
+                      ? Icons.shopping_bag_rounded
+                      : Icons.qr_code_2_rounded,
+                  color: widget.item.reason == 'purchase'
+                      ? const Color(0xFFFE8B6D)
+                      : const Color(0xFF6DB6FE),
+                  size: SizeTokens.p24,
                 ),
               ),
               SizedBox(width: SizeTokens.p16),
@@ -76,20 +80,21 @@ class _HistoryItemState extends State<HistoryItem> {
                       widget.item.note.toLowerCase().contains(
                             'qr okuma kazancı',
                           )
-                          ? 'QR Okuma Kazancı'
+                          ? 'QR Tarama'
                           : widget.item.note,
                       style: TextStyle(
-                        fontSize: SizeTokens.f14,
+                        fontSize: SizeTokens.f16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.darkBlue,
                       ),
                     ),
-                    SizedBox(height: SizeTokens.p4),
+                    SizedBox(height: SizeTokens.p2),
                     Text(
                       DateFormatter.toTurkish(widget.item.createdAt),
                       style: TextStyle(
                         fontSize: SizeTokens.f12,
-                        color: AppColors.gray,
+                        color: AppColors.blue,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
