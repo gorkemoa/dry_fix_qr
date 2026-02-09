@@ -75,6 +75,14 @@ class _LoginViewState extends State<LoginView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // App Logo
+                      Center(
+                        child: Image.asset(
+                          'assets/image.png',
+                          height: SizeTokens.p80,
+                        ),
+                      ),
+                      SizedBox(height: SizeTokens.p24),
                       // Custom Tabs (Giriş / Üye ol)
                       Container(
                         height: SizeTokens.p64,
