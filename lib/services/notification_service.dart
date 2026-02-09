@@ -33,7 +33,50 @@ class NotificationService {
       return;
     }
 
-    // Get Token
+    // iOS Foreground Notification Settings
+    await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    // Subscribe to General Topic
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      debugPrint("iOS detected, waiting for APNS token...");
+      int retryCount = 0;
+      String? apnsToken;
+      while (retryCount < 10 && apnsToken == null) {
+        try {
+          apnsToken = await _firebaseMessaging.getAPNSToken();
+        } catch (e) {
+          debugPrint("Error fetching APNS token: $e");
+        }
+
+        if (apnsToken == null) {
+          debugPrint(
+            "Waiting for APNS token... (Attempt ${retryCount + 1}/10)",
+          );
+          await Future.delayed(const Duration(seconds: 2));
+          retryCount++;
+        }
+      }
+
+      if (apnsToken != null) {
+        debugPrint("APNS Token Received: $apnsToken");
+      } else {
+        debugPrint(
+          "Could not receive APNS token after 20 seconds. Messaging might fail.",
+        );
+      }
+    }
+
+    try {
+      await subscribeToTopic('dryfix_all');
+    } catch (e) {
+      debugPrint("Initial topic subscription failed: $e");
+    }
+
+    // Get FCM Token
     try {
       final fcmToken = await _firebaseMessaging.getToken();
       debugPrint("FCM Token: $fcmToken");
@@ -49,12 +92,30 @@ class NotificationService {
 
       if (message.notification != null) {
         debugPrint(
-          'Message also contained a notification: ${message.notification}',
+          'Message also contained a notification: ${message.notification?.title} - ${message.notification?.body}',
         );
       }
     });
 
     // Background Message Handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+
+  Future<void> subscribeToTopic(String topic) async {
+    try {
+      await _firebaseMessaging.subscribeToTopic(topic);
+      debugPrint("Subscribed to topic: $topic");
+    } catch (e) {
+      debugPrint("Error subscribing to topic $topic: $e");
+    }
+  }
+
+  Future<void> unsubscribeFromTopic(String topic) async {
+    try {
+      await _firebaseMessaging.unsubscribeFromTopic(topic);
+      debugPrint("Unsubscribed from topic: $topic");
+    } catch (e) {
+      debugPrint("Error unsubscribing from topic $topic: $e");
+    }
   }
 }

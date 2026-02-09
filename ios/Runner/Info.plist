@@ -45,6 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>QR kodları tarayabilmek için kamera erişimine ihtiyaç duyulmaktadır.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
