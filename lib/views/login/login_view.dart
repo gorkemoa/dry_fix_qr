@@ -7,6 +7,7 @@ import '../../models/user_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -53,13 +54,13 @@ class _LoginViewState extends State<LoginView> {
             // White Container (Content)
             Column(
               children: [
-                SizedBox(height: getProportionateScreenHeight(300)),
+                SizedBox(height: getProportionateScreenHeight(250)),
                 Container(
                   width: double.infinity,
                   constraints: BoxConstraints(
                     minHeight:
                         SizeConfig.screenHeight -
-                        getProportionateScreenHeight(300),
+                        getProportionateScreenHeight(250),
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.white,
@@ -75,11 +76,10 @@ class _LoginViewState extends State<LoginView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // App Logo
                       Center(
-                        child: Image.asset(
-                          'assets/image.png',
-                          height: SizeTokens.p80,
+                        child: SvgPicture.asset(
+                          'assets/dry_fix.svg',
+                          height: SizeTokens.p40,
                         ),
                       ),
                       SizedBox(height: SizeTokens.p24),
@@ -190,10 +190,10 @@ class _LoginViewState extends State<LoginView> {
             ),
             // Mascot (Top Layer)
             Positioned(
-              top: MediaQuery.of(context).padding.top + SizeTokens.p10,
+              top: MediaQuery.of(context).padding.top,
               child: IgnorePointer(
                 child: SizedBox(
-                  height: getProportionateScreenHeight(300),
+                  height: getProportionateScreenHeight(250),
                   width: SizeConfig.screenWidth,
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
