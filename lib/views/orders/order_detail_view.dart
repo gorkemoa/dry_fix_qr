@@ -64,6 +64,11 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                       children: [
                         _buildStatusSection(viewModel.orderDetail!.order),
                         SizedBox(height: SizeTokens.p16),
+                        _buildSectionTitle(
+                          viewModel.orderDetail!.items.length > 1
+                              ? "Sipariş Edilen Ürünler"
+                              : "Sipariş Edilen Ürün",
+                        ),
 
                         // items list
                         ...viewModel.orderDetail!.items.map(
