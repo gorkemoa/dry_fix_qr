@@ -1,6 +1,8 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 
 /// Top-level function to handle background messages
 @pragma('vm:entry-point')
@@ -15,6 +17,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class NotificationService {
   static final FirebaseMessaging _firebaseMessaging =
       FirebaseMessaging.instance;
+
+  // Android tarafındaki native bildirim köprüsü (Notification Service Extension mantığı)
+  static const MethodChannel _platform = MethodChannel(
+    'com.smartmetrics.dryfixqr/notification',
+  );
 
   Future<void> init() async {
     try {
@@ -63,10 +70,21 @@ class NotificationService {
       // Handle Notification Taps (Background State)
       FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageNavigation);
 
-      // Foreground Message - Sadece Loglama
+      // Foreground Message
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         developer.log('📨 Foreground message received', name: 'FCM');
         developer.log('Payload data: ${message.data}', name: 'FCM');
+
+        // Android tarafında bildirim geldiğinde native taraftaki göstericiyi tetikle
+        if (Platform.isAndroid && message.notification != null) {
+          final imageUrl =
+              message.notification?.android?.imageUrl ?? message.data['image'];
+          _showAndroidNotification(
+            message.notification?.title,
+            message.notification?.body,
+            imageUrl,
+          );
+        }
       });
 
       // Background Message Handler
@@ -86,6 +104,27 @@ class NotificationService {
         name: 'FCM',
         error: e,
         stackTrace: stackTrace,
+      );
+    }
+  }
+
+  // Native (Android) tarafta bildirimi gösteren metod
+  static Future<void> _showAndroidNotification(
+    String? title,
+    String? body,
+    String? image,
+  ) async {
+    try {
+      await _platform.invokeMethod('showNotification', {
+        'title': title,
+        'body': body,
+        'image': image,
+      });
+    } catch (e) {
+      developer.log(
+        '❌ Error showing native notification',
+        name: 'FCM',
+        error: e,
       );
     }
   }
