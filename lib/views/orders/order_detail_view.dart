@@ -6,6 +6,8 @@ import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/utils/date_utils.dart';
 import '../../models/order_detail_model.dart';
+import '../../models/product_model.dart';
+import '../products/product_detail_view.dart';
 
 class OrderDetailView extends StatefulWidget {
   final int orderId;
@@ -233,77 +235,106 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   }
 
   Widget _buildProductItem(OrderItemModel item) {
-    return Container(
-      margin: EdgeInsets.only(bottom: SizeTokens.p12),
-      padding: EdgeInsets.all(SizeTokens.p12),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(SizeTokens.r12),
-        border: Border.all(color: Colors.grey.shade100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE0E0E0),
-              borderRadius: BorderRadius.circular(SizeTokens.r12),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(SizeTokens.r12),
-              child: Image.network(
-                item.product.image,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Center(
-                  child: Icon(Icons.image_not_supported, color: Colors.grey),
-                ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailView(
+              product: ProductModel(
+                id: item.product.id,
+                name: item.product.name,
+                description: "", // Not in OrderProductModel
+                image: item.product.image,
+                price: item.product.price,
+                tokenPrice: item.product.tokenPrice,
+                stock: 0, // Not in OrderProductModel
+                isActive: true,
+                canBuy: true,
+                createdAt: "",
+                updatedAt: "",
               ),
             ),
           ),
-          SizedBox(width: SizeTokens.p16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.product.name,
-                  style: TextStyle(
-                    fontSize: SizeTokens.f16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: SizeTokens.p4),
-                Text(
-                  "${item.quantity} Adet",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f12,
-                    color: Colors.grey.shade500,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: SizeTokens.p4),
-                Text(
-                  "${item.tokenPriceAtPurchase} DryPara",
-                  style: TextStyle(
-                    fontSize: SizeTokens.f14,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF00B4D8),
-                  ),
-                ),
-              ],
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: SizeTokens.p12),
+        padding: EdgeInsets.all(SizeTokens.p12),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(SizeTokens.r12),
+          border: Border.all(color: Colors.grey.shade100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE0E0E0),
+                borderRadius: BorderRadius.circular(SizeTokens.r12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(SizeTokens.r12),
+                child: Image.network(
+                  item.product.image,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Center(
+                    child: Icon(Icons.image_not_supported, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: SizeTokens.p16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.product.name,
+                    style: TextStyle(
+                      fontSize: SizeTokens.f16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: SizeTokens.p4),
+                  Text(
+                    "${item.quantity} Adet",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f12,
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: SizeTokens.p4),
+                  Text(
+                    "${item.tokenPriceAtPurchase} DryPara",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f14,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF00B4D8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: SizeTokens.p16,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
       ),
     );
   }
