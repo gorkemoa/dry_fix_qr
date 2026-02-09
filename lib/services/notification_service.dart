@@ -1,221 +1,126 @@
+import 'dart:developer' as developer;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import '../core/utils/navigation_service.dart';
 
+/// Top-level function to handle background messages
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  debugPrint("Handling a background message: ${message.messageId}");
+  developer.log(
+    '📬 Background message received: ${message.messageId}',
+    name: 'FCM',
+  );
 }
 
 class NotificationService {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  static final FirebaseMessaging _firebaseMessaging =
+      FirebaseMessaging.instance;
 
   Future<void> init() async {
-    // Request Permission
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    try {
+      developer.log('🚀 Initializing Notification Service', name: 'FCM');
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      debugPrint('User granted permission');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      debugPrint('User granted provisional permission');
-    } else {
-      debugPrint('User declined or has not accepted permission');
-      return;
-    }
-
-    // iOS Foreground Notification Settings
-    await _firebaseMessaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    // Subscribe to General Topic
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      debugPrint("iOS detected, waiting for APNS token...");
-      int retryCount = 0;
-      String? apnsToken;
-      while (retryCount < 10 && apnsToken == null) {
-        try {
-          apnsToken = await _firebaseMessaging.getAPNSToken();
-        } catch (e) {
-          debugPrint("Error fetching APNS token: $e");
-        }
-
-        if (apnsToken == null) {
-          debugPrint(
-            "Waiting for APNS token... (Attempt ${retryCount + 1}/10)",
+      // Permission Request
+      NotificationSettings settings = await _firebaseMessaging
+          .requestPermission(
+            alert: true,
+            announcement: false,
+            badge: true,
+            carPlay: false,
+            criticalAlert: false,
+            provisional: false,
+            sound: true,
           );
-          await Future.delayed(const Duration(seconds: 2));
-          retryCount++;
-        }
+
+      developer.log(
+        '📱 Permission status: ${settings.authorizationStatus}',
+        name: 'FCM',
+      );
+
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        developer.log('⚠️ User declined notification permissions', name: 'FCM');
+        return;
       }
 
-      if (apnsToken != null) {
-        debugPrint("APNS Token Received: $apnsToken");
-      } else {
-        debugPrint(
-          "Could not receive APNS token after 20 seconds. Messaging might fail.",
+      // iOS Foreground Notification Settings
+      await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      // Handle Initial Message (Terminated State)
+      RemoteMessage? initialMessage = await _firebaseMessaging
+          .getInitialMessage();
+      if (initialMessage != null) {
+        developer.log(
+          '🔔 App opened from terminated state via FCM',
+          name: 'FCM',
         );
+        _handleMessageNavigation(initialMessage);
       }
-    }
 
-    try {
+      // Handle Notification Taps (Background State)
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageNavigation);
+
+      // Foreground Message - Sadece Loglama
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        developer.log('📨 Foreground message received', name: 'FCM');
+        developer.log('Payload data: ${message.data}', name: 'FCM');
+      });
+
+      // Background Message Handler
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
+
+      // Topic Subscription
       await subscribeToTopic('dryfix_all');
-    } catch (e) {
-      debugPrint("Initial topic subscription failed: $e");
-    }
 
-    // Get FCM Token
-    try {
+      // Get FCM Token
       final fcmToken = await _firebaseMessaging.getToken();
-      debugPrint("FCM Token: $fcmToken");
-      // TODO: Send this token to backend if needed
-    } catch (e) {
-      debugPrint("Error getting FCM token: $e");
+      developer.log('🔑 FCM Token: $fcmToken', name: 'FCM');
+    } catch (e, stackTrace) {
+      developer.log(
+        '❌ Error initializing FCM',
+        name: 'FCM',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
-
-    // Foreground Message
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Got a message whilst in the foreground!');
-      debugPrint('Message data: ${message.data}');
-
-      if (message.notification != null || message.data.isNotEmpty) {
-        _showInAppNotification(message);
-      }
-    });
-
-    // Background Message Handler
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  void _showInAppNotification(RemoteMessage message) {
-    final context = NavigationService.navigatorKey.currentContext;
-    if (context == null) return;
-
-    final title = message.notification?.title ?? "Yeni Bildirim";
-    final body = message.notification?.body ?? "";
-    final imageUrl = message.data['image'];
-
-    OverlayEntry? overlayEntry;
-    overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top + 10,
-        left: 15,
-        right: 15,
-        child: Material(
-          color: Colors.transparent,
-          child: Dismissible(
-            key: UniqueKey(),
-            direction: DismissDirection.up,
-            onDismissed: (_) => overlayEntry?.remove(),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-                border: Border.all(color: Colors.blue.shade50, width: 1),
-              ),
-              child: Row(
-                children: [
-                  if (imageUrl != null)
-                    Container(
-                      width: 60,
-                      height: 60,
-                      margin: const EdgeInsets.only(right: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        if (body.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              body,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.black54,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 20, color: Colors.grey),
-                    onPressed: () => overlayEntry?.remove(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+  void _handleMessageNavigation(RemoteMessage message) {
+    developer.log(
+      '🚀 Processing Navigation Data: ${message.data}',
+      name: 'FCM',
     );
+    final data = message.data;
+    if (data.isEmpty) return;
 
-    Overlay.of(context).insert(overlayEntry);
+    final type = data['type']?.toString();
+    final id = data['id']?.toString();
 
-    // 5 saniye sonra otomatik kapat
-    Future.delayed(const Duration(seconds: 5), () {
-      if (overlayEntry != null && overlayEntry.mounted) {
-        overlayEntry.remove();
-      }
-    });
+    if (type != null) {
+      developer.log('📍 Navigation Target: $type - ID: $id', name: 'FCM');
+    }
   }
 
-  Future<void> subscribeToTopic(String topic) async {
+  static Future<void> subscribeToTopic(String topic) async {
     try {
       await _firebaseMessaging.subscribeToTopic(topic);
-      debugPrint("Subscribed to topic: $topic");
+      developer.log('📌 Subscribed to topic: $topic', name: 'FCM');
     } catch (e) {
-      debugPrint("Error subscribing to topic $topic: $e");
+      developer.log('❌ Error subscribing to topic $topic: $e', name: 'FCM');
     }
   }
 
-  Future<void> unsubscribeFromTopic(String topic) async {
+  static Future<void> unsubscribeFromTopic(String topic) async {
     try {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
-      debugPrint("Unsubscribed from topic: $topic");
+      developer.log('📌 Unsubscribed from topic: $topic', name: 'FCM');
     } catch (e) {
-      debugPrint("Error unsubscribing from topic $topic: $e");
+      developer.log('❌ Error unsubscribing from topic $topic: $e', name: 'FCM');
     }
   }
 }

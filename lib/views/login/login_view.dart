@@ -54,13 +54,13 @@ class _LoginViewState extends State<LoginView> {
             // White Container (Content)
             Column(
               children: [
-                SizedBox(height: getProportionateScreenHeight(250)),
+                SizedBox(height: getProportionateScreenHeight(300)),
                 Container(
                   width: double.infinity,
                   constraints: BoxConstraints(
                     minHeight:
                         SizeConfig.screenHeight -
-                        getProportionateScreenHeight(250),
+                        getProportionateScreenHeight(300),
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.white,
@@ -85,7 +85,7 @@ class _LoginViewState extends State<LoginView> {
                       SizedBox(height: SizeTokens.p24),
                       // Custom Tabs (Giriş / Üye ol)
                       Container(
-                        height: SizeTokens.p64,
+                        height: SizeTokens.p48,
                         decoration: BoxDecoration(
                           color: const Color(0xFFE8ECF5),
                           borderRadius: BorderRadius.circular(SizeTokens.r32),
@@ -103,7 +103,7 @@ class _LoginViewState extends State<LoginView> {
                                         ? AppColors.white
                                         : Colors.transparent,
                                     borderRadius: BorderRadius.circular(
-                                      SizeTokens.r32,
+                                      SizeTokens.r24,
                                     ),
                                     boxShadow: _isLogin
                                         ? [
