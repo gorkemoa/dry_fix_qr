@@ -6,6 +6,8 @@ import '../../viewmodels/product_view_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import '../../models/address_model.dart';
 import '../profile/add_address_view.dart';
+import '../orders/order_success_view.dart';
+import '../../models/product_model.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({super.key});
@@ -285,6 +287,9 @@ class _CheckoutViewState extends State<CheckoutView> {
                       final address = _selectedAddress!;
                       final notes = _noteController.text;
 
+                      final orderedItems = List<ProductModel>.from(
+                        viewModel.cart,
+                      );
                       final success = await viewModel.completeOrder(
                         address: address,
                         notes: notes,
@@ -293,16 +298,14 @@ class _CheckoutViewState extends State<CheckoutView> {
                       if (!context.mounted) return;
 
                       if (success) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Siparişiniz başarıyla alındı."),
-                            backgroundColor: Colors.green,
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                OrderSuccessView(items: orderedItems),
                           ),
+                          (route) => route.isFirst,
                         );
-                        // Pop CheckoutView
-                        Navigator.pop(context);
-                        // Pop CartView
-                        Navigator.pop(context);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
