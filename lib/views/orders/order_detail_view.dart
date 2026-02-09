@@ -334,24 +334,20 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 ),
               ),
               SizedBox(height: SizeTokens.p8),
-              Row(
-                children: [
-                  Text(
-                    address.phone,
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  SizedBox(width: SizeTokens.p16),
-                  Text(
-                    "${address.district}/${address.city}",
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
+              Text(
+                address.phone,
+                style: TextStyle(
+                  fontSize: SizeTokens.f14,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              SizedBox(height: SizeTokens.p4),
+              Text(
+                "${address.district}/${address.city}",
+                style: TextStyle(
+                  fontSize: SizeTokens.f14,
+                  color: Colors.grey.shade600,
+                ),
               ),
               SizedBox(height: SizeTokens.p16),
               SizedBox(
@@ -417,44 +413,75 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   }
 
   Widget _buildPaymentSummary(OrderDetailModel order) {
-    return Column(
-      children: [
-        _buildPaymentRow(
-          "Alış Tarihi",
-          DateFormatter.toTurkish(order.purchasedAt),
-        ),
-        const Divider(height: 24),
-        _buildPaymentRow("Toplam Tutar", "${order.totalPrice} ₺"),
-        const Divider(height: 24),
-        _buildPaymentRow("Harcanan Puan", "${order.totalTokenSpent} ₺"),
-        const Divider(height: 24),
-        _buildPaymentRow("İndirim", "0.00 ₺"), // Assume 0 if not in model
-        const Divider(height: 24),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Toplam",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              Text(
-                "${order.totalPrice} ₺",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ],
+    return Container(
+      padding: EdgeInsets.all(SizeTokens.p16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(SizeTokens.r12),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-      ],
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildPaymentRow(
+            "Alış Tarihi",
+            DateFormatter.toTurkish(order.purchasedAt),
+          ),
+          Divider(height: SizeTokens.p24, color: Colors.grey.shade100),
+          _buildPaymentRow("Toplam Tutar", "${order.totalPrice} ₺"),
+          Divider(height: SizeTokens.p24, color: Colors.grey.shade100),
+          _buildPaymentRow("Harcanan Puan", "${order.totalTokenSpent} DryPara"),
+          SizedBox(height: SizeTokens.p16),
+          Container(
+            padding: EdgeInsets.all(SizeTokens.p12),
+            decoration: BoxDecoration(
+              color: AppColors.darkBlue.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(SizeTokens.r8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Toplam",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${order.totalPrice} ₺",
+                      style: TextStyle(
+                        fontSize: SizeTokens.f18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.darkBlue,
+                      ),
+                    ),
+                    if (order.totalTokenSpent > 0)
+                      Text(
+                        "+ ${order.totalTokenSpent} DryPara",
+                        style: TextStyle(
+                          fontSize: SizeTokens.f12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.darkBlue.withOpacity(0.7),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -465,17 +492,17 @@ class _OrderDetailViewState extends State<OrderDetailView> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade500,
+            fontSize: SizeTokens.f14,
+            color: Colors.grey.shade600,
             fontWeight: FontWeight.w500,
           ),
         ),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: SizeTokens.f14,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.black87,
           ),
         ),
       ],
