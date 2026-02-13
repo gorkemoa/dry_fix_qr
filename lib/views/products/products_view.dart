@@ -63,8 +63,8 @@ class _ProductsViewState extends State<ProductsView> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          "DryPara Mağazası",
+        title: const Text(
+          "Mağaza",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [

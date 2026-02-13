@@ -83,37 +83,25 @@ class ProductDetailView extends StatelessWidget {
                 // Price Section (Placed near title for emphasis)
                 Row(
                   children: [
-                    Text(
-                      "${product.price} TL",
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: SizeTokens.f20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.blue,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SizeTokens.p8,
+                        vertical: SizeTokens.p4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(SizeTokens.r8),
+                      ),
+                      child: Text(
+                        "${product.tokenPrice} DP",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: SizeTokens.f20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.blue,
+                        ),
                       ),
                     ),
-                    if (product.tokenPrice > 0) ...[
-                      SizedBox(width: SizeTokens.p8),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p8,
-                          vertical: SizeTokens.p4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.darkBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(SizeTokens.r8),
-                        ),
-                        child: Text(
-                          "+${product.tokenPrice} DP",
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: SizeTokens.f12,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.darkBlue,
-                          ),
-                        ),
-                      ),
-                    ],
                   ],
                 ),
                 SizedBox(height: SizeTokens.p24),
@@ -182,12 +170,6 @@ class ProductDetailView extends StatelessWidget {
                 _buildCircularButton(
                   icon: Icons.arrow_back_ios_new_rounded,
                   onTap: () => Navigator.pop(context),
-                ),
-                _buildCircularButton(
-                  icon: Icons.share_outlined,
-                  onTap: () {
-                    // Placeholder for share functionality
-                  },
                 ),
               ],
             ),

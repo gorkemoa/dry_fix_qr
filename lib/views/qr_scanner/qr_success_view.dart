@@ -82,7 +82,7 @@ class QrSuccessView extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            "Kazanılan DryPara",
+                            "Kazanılan DP",
                             style: TextStyle(
                               fontSize: SizeTokens.f16,
                               color: AppColors.gray,

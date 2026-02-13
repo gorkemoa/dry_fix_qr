@@ -112,7 +112,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                             ),
                           ),
                           Text(
-                            "${item.price} TL",
+                            "${item.price} DP",
                             style: TextStyle(
                               fontSize: SizeTokens.f14,
                               fontWeight: FontWeight.w600,
@@ -137,7 +137,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "${viewModel.cartTotalPrice.toStringAsFixed(2)} TL",
+                            "${viewModel.cartTotalPrice.toStringAsFixed(2)} DP",
                             style: TextStyle(
                               fontSize: SizeTokens.f16,
                               fontWeight: FontWeight.bold,

@@ -131,7 +131,7 @@ class HomeHeader extends StatelessWidget {
                         ),
                         SizedBox(width: SizeTokens.p4),
                         Text(
-                          "DryPara",
+                          "DP",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: SizeTokens.f12,

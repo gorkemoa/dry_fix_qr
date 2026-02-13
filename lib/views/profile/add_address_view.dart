@@ -29,6 +29,11 @@ class _AddAddressViewState extends State<AddAddressView> {
   late final TextEditingController _addressLine1Controller;
   late final TextEditingController _titleController;
   late final TextEditingController _postalCodeController;
+  late final TextEditingController _companyTitleController;
+  late final TextEditingController _companyAddressController;
+  late final TextEditingController _taxOfficeController;
+  late final TextEditingController _taxNumberController;
+  late final TextEditingController _companyEmailController;
 
   bool _isDefault = false;
 
@@ -52,6 +57,21 @@ class _AddAddressViewState extends State<AddAddressView> {
     _titleController = TextEditingController(text: widget.address?.title);
     _postalCodeController = TextEditingController(
       text: widget.address?.postalCode,
+    );
+    _companyTitleController = TextEditingController(
+      text: widget.address?.companyTitle,
+    );
+    _companyAddressController = TextEditingController(
+      text: widget.address?.companyAddress,
+    );
+    _taxOfficeController = TextEditingController(
+      text: widget.address?.taxOffice,
+    );
+    _taxNumberController = TextEditingController(
+      text: widget.address?.taxNumber,
+    );
+    _companyEmailController = TextEditingController(
+      text: widget.address?.companyEmail,
     );
     _isDefault = widget.address?.isDefault ?? false;
 
@@ -82,6 +102,11 @@ class _AddAddressViewState extends State<AddAddressView> {
     _addressLine1Controller.dispose();
     _titleController.dispose();
     _postalCodeController.dispose();
+    _companyTitleController.dispose();
+    _companyAddressController.dispose();
+    _taxOfficeController.dispose();
+    _taxNumberController.dispose();
+    _companyEmailController.dispose();
     super.dispose();
   }
 
@@ -436,6 +461,66 @@ class _AddAddressViewState extends State<AddAddressView> {
               ),
 
               SizedBox(height: SizeTokens.p24),
+              const Text(
+                "Kurumsal Bilgiler",
+                style: TextStyle(
+                  color: AppColors.darkBlue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              AddressFormField(
+                controller: _companyTitleController,
+                label: "Şirket Adı",
+                hint: "Şirket adını giriniz",
+                isRequired: false,
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              AddressFormField(
+                controller: _companyAddressController,
+                label: "Şirket Adresi",
+                hint: "Şirket adresini giriniz",
+                isRequired: false,
+                maxLines: 2,
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: AddressFormField(
+                      controller: _taxOfficeController,
+                      label: "Vergi Dairesi",
+                      hint: "Vergi dairesi",
+                      isRequired: false,
+                    ),
+                  ),
+                  SizedBox(width: SizeTokens.p16),
+                  Expanded(
+                    child: AddressFormField(
+                      controller: _taxNumberController,
+                      label: "Vergi Numarası",
+                      hint: "Vergi numarası",
+                      isRequired: false,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: SizeTokens.p16),
+
+              AddressFormField(
+                controller: _companyEmailController,
+                label: "Şirket E-postası",
+                hint: "Şirket e-posta adresini giriniz",
+                isRequired: false,
+                keyboardType: TextInputType.emailAddress,
+              ),
+
+              SizedBox(height: SizeTokens.p24),
 
               // Default Switch
               SwitchListTile.adaptive(
@@ -517,6 +602,21 @@ class _AddAddressViewState extends State<AddAddressView> {
         addressLine1: _addressLine1Controller.text,
         postalCode: _postalCodeController.text,
         isDefault: _isDefault,
+        companyTitle: _companyTitleController.text.trim().isEmpty
+            ? null
+            : _companyTitleController.text.trim(),
+        companyAddress: _companyAddressController.text.trim().isEmpty
+            ? null
+            : _companyAddressController.text.trim(),
+        taxOffice: _taxOfficeController.text.trim().isEmpty
+            ? null
+            : _taxOfficeController.text.trim(),
+        taxNumber: _taxNumberController.text.trim().isEmpty
+            ? null
+            : _taxNumberController.text.trim(),
+        companyEmail: _companyEmailController.text.trim().isEmpty
+            ? null
+            : _companyEmailController.text.trim(),
       );
 
       final bool success;

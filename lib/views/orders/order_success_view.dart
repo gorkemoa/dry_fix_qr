@@ -199,7 +199,7 @@ class OrderSuccessView extends StatelessWidget {
                                                   ),
                                                   const SizedBox(height: 2),
                                                   Text(
-                                                    "${item.tokenPrice * quantity} DryPara",
+                                                    "${item.tokenPrice * quantity} DP",
                                                     style: TextStyle(
                                                       color: const Color(
                                                         0xFF00C2FF,

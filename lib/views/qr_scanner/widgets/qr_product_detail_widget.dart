@@ -107,7 +107,7 @@ class QrProductDetailWidget extends StatelessWidget {
                   ),
                   SizedBox(height: SizeTokens.p8),
                   Text(
-                    "Bu ürün DryFix kalitesiyle üretilmiştir. QR kodunuzu okutarak kazandığınız DryParalar ile bu ürüne sahip olabilirsiniz.",
+                    "Bu ürün DryFix kalitesiyle üretilmiştir. QR kodunuzu okutarak kazandığınız Dry Puanlar ile bu ürüne sahip olabilirsiniz.",
                     style: TextStyle(
                       fontSize: SizeTokens.f16,
                       color: AppColors.gray,
@@ -122,7 +122,7 @@ class QrProductDetailWidget extends StatelessWidget {
                       onPressed: () {
                         // Handle Purchase
                       },
-                      child: const Text("Hemen Satın Al"),
+                      child: const Text("Hemen Puan kullan"),
                     ),
                   ),
                 ],

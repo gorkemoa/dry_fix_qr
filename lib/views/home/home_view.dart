@@ -113,7 +113,7 @@ class _HomeViewState extends State<HomeView> {
                                     },
                                   ),
                                   HomeCard(
-                                    title: "Siparişlerim",
+                                    title: "Kazandıklarım",
                                     subtitle: "Durum Takibi",
                                     icon: Icons.shopping_bag_outlined,
                                     iconColor: AppColors.darkBlue,

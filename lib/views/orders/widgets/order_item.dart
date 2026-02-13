@@ -98,7 +98,7 @@ class OrderItem extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: "${order.totalPrice} TL",
+                            text: "${order.totalPrice} DP",
                             style: TextStyle(
                               color: AppColors.blue,
                               fontWeight: FontWeight.bold,

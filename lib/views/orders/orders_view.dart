@@ -57,7 +57,7 @@ class _OrdersViewState extends State<OrdersView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Siparişlerim",
+          "Kazandıklarım",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),

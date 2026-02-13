@@ -154,7 +154,7 @@ class CartView extends StatelessWidget {
                                 Row(
                                   children: [
                                     Text(
-                                      "${product.price} TL",
+                                      "${product.price} DP",
                                       style: TextStyle(
                                         fontSize: SizeTokens.f14,
                                         fontWeight: FontWeight.bold,
@@ -240,19 +240,11 @@ class CartView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Toplam Tutar",
-                          style: TextStyle(
-                            fontSize: SizeTokens.f14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              "${viewModel.cartTotalPrice.toStringAsFixed(2)} TL",
+                              "${viewModel.cartTotalPrice.toStringAsFixed(2)} DP",
                               style: TextStyle(
                                 fontSize: SizeTokens.f18,
                                 fontWeight: FontWeight.bold,

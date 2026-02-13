@@ -318,7 +318,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                   ),
                   SizedBox(height: SizeTokens.p4),
                   Text(
-                    "${item.tokenPriceAtPurchase} DryPara",
+                    "${item.tokenPriceAtPurchase} DP",
                     style: TextStyle(
                       fontSize: SizeTokens.f14,
                       fontWeight: FontWeight.bold,
@@ -470,9 +470,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             DateFormatter.toTurkish(order.purchasedAt),
           ),
           Divider(height: SizeTokens.p24, color: Colors.grey.shade100),
-          _buildPaymentRow("Toplam Tutar", "${order.totalPrice} ₺"),
-          Divider(height: SizeTokens.p24, color: Colors.grey.shade100),
-          _buildPaymentRow("Harcanan Puan", "${order.totalTokenSpent} DryPara"),
+          _buildPaymentRow("Harcanan Puan", "${order.totalTokenSpent} DP"),
           SizedBox(height: SizeTokens.p16),
           Container(
             padding: EdgeInsets.all(SizeTokens.p12),
@@ -495,22 +493,13 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "${order.totalPrice} ₺",
+                      " ${order.totalTokenSpent} DP",
                       style: TextStyle(
-                        fontSize: SizeTokens.f18,
+                        fontSize: SizeTokens.f20,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.darkBlue,
+                        color: AppColors.darkBlue.withOpacity(0.7),
                       ),
                     ),
-                    if (order.totalTokenSpent > 0)
-                      Text(
-                        "+ ${order.totalTokenSpent} DryPara",
-                        style: TextStyle(
-                          fontSize: SizeTokens.f12,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.darkBlue.withOpacity(0.7),
-                        ),
-                      ),
                   ],
                 ),
               ],

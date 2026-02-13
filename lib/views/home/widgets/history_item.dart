@@ -252,7 +252,7 @@ class _HistoryItemState extends State<HistoryItem> {
       case 'qr_scan':
         return 'QR Okuma';
       case 'purchase':
-        return 'Satın Alma';
+        return 'Kazandıklarım';
       default:
         if (reason.isEmpty) return 'Belirtilmedi';
         return reason[0].toUpperCase() + reason.substring(1);

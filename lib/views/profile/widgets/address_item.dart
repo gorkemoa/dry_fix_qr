@@ -127,6 +127,54 @@ class AddressItem extends StatelessWidget {
                     fontSize: SizeTokens.f14,
                   ),
                 ),
+                if (address.companyTitle != null &&
+                    address.companyTitle!.isNotEmpty) ...[
+                  SizedBox(height: SizeTokens.p12),
+                  Container(
+                    padding: EdgeInsets.all(SizeTokens.p12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(SizeTokens.r8),
+                      border: Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.business_rounded,
+                              size: 16,
+                              color: AppColors.darkBlue,
+                            ),
+                            SizedBox(width: SizeTokens.p8),
+                            Expanded(
+                              child: Text(
+                                address.companyTitle!,
+                                style: TextStyle(
+                                  color: AppColors.darkBlue,
+                                  fontSize: SizeTokens.f13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (address.taxOffice != null ||
+                            address.taxNumber != null) ...[
+                          SizedBox(height: SizeTokens.p4),
+                          Text(
+                            "${address.taxOffice ?? ''} / ${address.taxNumber ?? ''}",
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: SizeTokens.f12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
                 SizedBox(height: SizeTokens.p16),
 
                 // Footer Actions
