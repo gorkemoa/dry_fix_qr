@@ -47,13 +47,13 @@ class NotificationDetailView extends StatelessWidget {
     if (item.imageUrl == null) {
       return Container(
         width: double.infinity,
-        height: SizeTokens.p100,
+        height: SizeTokens.p120,
         decoration: const BoxDecoration(color: AppColors.darkBlue),
         child: Center(
           child: SvgPicture.asset(
             'assets/dry_fix.svg',
             width: SizeTokens.p100,
-            height: SizeTokens.p100,
+            height: SizeTokens.p280,
           ),
         ),
       );
