@@ -27,6 +27,8 @@ import 'viewmodels/order_view_model.dart';
 import 'viewmodels/product_view_model.dart';
 import 'viewmodels/address_view_model.dart';
 import 'services/address_service.dart';
+import 'services/notification_api_service.dart';
+import 'viewmodels/notifications_view_model.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
 import 'views/qr_scanner/qr_share_process_view.dart';
@@ -150,6 +152,7 @@ class _MyAppState extends State<MyApp> {
     final orderService = OrderService(widget.apiClient);
     final productService = ProductService(widget.apiClient);
     final addressService = AddressService(widget.apiClient);
+    final notificationApiService = NotificationApiService(widget.apiClient);
 
     return MultiProvider(
       providers: [
@@ -175,6 +178,9 @@ class _MyAppState extends State<MyApp> {
           create: (_) => ProductViewModel(productService, orderService),
         ),
         ChangeNotifierProvider(create: (_) => AddressViewModel(addressService)),
+        ChangeNotifierProvider(
+          create: (_) => NotificationsViewModel(notificationApiService),
+        ),
       ],
       child: MaterialApp(
         navigatorKey: NavigationService.navigatorKey,

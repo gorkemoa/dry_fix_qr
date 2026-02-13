@@ -17,4 +17,7 @@ class ApiConstants {
       '$baseUrl/api/v1/cities?limit=$limit';
   static String districts(int cityId, {int limit = 200}) =>
       '$baseUrl/api/v1/districts?city_id=$cityId&limit=$limit';
+
+  static const String notifications = '$baseUrl/api/v1/notifications';
+  static String notificationDetail(int id) => '$notifications/$id';
 }
