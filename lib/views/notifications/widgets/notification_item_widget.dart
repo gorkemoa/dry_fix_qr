@@ -93,12 +93,13 @@ class NotificationItemWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SizeTokens.p10),
       decoration: BoxDecoration(
-        color: AppColors.blue.withOpacity(0.1),
-        shape: BoxShape.circle,
+        color: AppColors.blue.withOpacity(0.9),
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(SizeTokens.r8),
       ),
       child: Icon(
         Icons.notifications_outlined,
-        color: AppColors.blue,
+        color: AppColors.white,
         size: SizeTokens.p24,
       ),
     );

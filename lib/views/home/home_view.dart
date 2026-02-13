@@ -15,6 +15,7 @@ import 'widgets/home_card.dart';
 import 'widgets/history_item.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../cart/cart_view.dart';
+import '../notifications/notifications_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -69,6 +70,13 @@ class _HomeViewState extends State<HomeView> {
                         onCartTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const CartView()),
+                          );
+                        },
+                        onNotificationTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const NotificationsView(),
+                            ),
                           );
                         },
                       ),

@@ -7,6 +7,7 @@ class HomeHeader extends StatelessWidget {
   final int tokenBalance;
   final int cartItemCount;
   final VoidCallback? onCartTap;
+  final VoidCallback? onNotificationTap;
 
   const HomeHeader({
     super.key,
@@ -14,6 +15,7 @@ class HomeHeader extends StatelessWidget {
     required this.tokenBalance,
     this.cartItemCount = 0,
     this.onCartTap,
+    this.onNotificationTap,
   });
 
   String get _greeting {
@@ -94,7 +96,7 @@ class HomeHeader extends StatelessWidget {
                           color: Colors.white,
                           size: 28,
                         ),
-                        onPressed: () {},
+                        onPressed: onNotificationTap,
                       ),
                     ),
                   ],

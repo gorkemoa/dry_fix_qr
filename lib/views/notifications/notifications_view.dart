@@ -4,6 +4,7 @@ import '../../viewmodels/notifications_view_model.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../app/app_theme.dart';
 import 'widgets/notification_item_widget.dart';
+import 'notification_detail_view.dart';
 
 class NotificationsView extends StatefulWidget {
   const NotificationsView({super.key});
@@ -42,6 +43,7 @@ class _NotificationsViewState extends State<NotificationsView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bildirimler'),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
@@ -111,7 +113,12 @@ class _NotificationsViewState extends State<NotificationsView> {
                   return NotificationItemWidget(
                     item: item,
                     onTap: () {
-                      // Navigate to detail if needed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NotificationDetailView(item: item),
+                        ),
+                      );
                     },
                   );
                 } else {
