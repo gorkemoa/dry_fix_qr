@@ -142,7 +142,10 @@ class _HistoryItemState extends State<HistoryItem> {
                   _buildDetailRow("Açıklama", widget.item.note),
                   if (widget.item.orderId != null) ...[
                     SizedBox(height: SizeTokens.p12),
-                    _buildDetailRow("Sipariş No", "#${widget.item.orderId}"),
+                    _buildDetailRow(
+                      "Kazandıklarım No",
+                      "#${widget.item.orderId}",
+                    ),
                   ],
                   if (widget.item.qr != null) ...[
                     SizedBox(height: SizeTokens.p16),

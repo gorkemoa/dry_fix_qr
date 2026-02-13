@@ -43,7 +43,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Sipariş Detayı",
+          "Kazandıklarım Detayı",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -54,7 +54,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
           : viewModel.errorMessage != null
           ? _buildErrorView(viewModel.errorMessage!)
           : viewModel.orderDetail == null
-          ? const Center(child: Text("Sipariş bulunamadı."))
+          ? const Center(child: Text("Kazandıklarım bulunamadı."))
           : Column(
               children: [
                 Expanded(
@@ -194,7 +194,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
               ),
               SizedBox(height: SizeTokens.p4),
               Text(
-                "Sipariş No: #${order.id}",
+                "Kazanım No: #${order.id}",
                 style: TextStyle(
                   fontSize: SizeTokens.f12,
                   color: Colors.grey.shade500,

@@ -174,7 +174,7 @@ class _OrdersViewState extends State<OrdersView> {
             ),
             SizedBox(height: SizeTokens.p32),
             Text(
-              "Sipariş Bulunamadı",
+              "Kazandıklarım Bulunamadı",
               style: TextStyle(
                 color: AppColors.darkBlue,
                 fontSize: SizeTokens.f20,

@@ -80,7 +80,7 @@ class OrderItem extends StatelessWidget {
                     ),
                     SizedBox(height: SizeTokens.p4),
                     Text(
-                      "Sipariş No: #${order.id}",
+                      "Kazandıklarım No: #${order.id}",
                       style: TextStyle(
                         fontSize: SizeTokens.f12,
                         color: Colors.grey.shade600,
