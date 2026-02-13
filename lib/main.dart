@@ -29,6 +29,7 @@ import 'viewmodels/address_view_model.dart';
 import 'services/address_service.dart';
 import 'services/notification_api_service.dart';
 import 'viewmodels/notifications_view_model.dart';
+import 'package:upgrader/upgrader.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
 import 'views/qr_scanner/qr_share_process_view.dart';
@@ -184,7 +185,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         navigatorKey: NavigationService.navigatorKey,
-        title: 'DryFix Boyacı',
+        title: 'DryFix',
         theme: AppTheme.lightTheme,
         builder: (context, child) {
           return GestureDetector(
@@ -199,7 +200,20 @@ class _MyAppState extends State<MyApp> {
             ),
           );
         },
-        home: widget.initialView,
+        home: UpgradeAlert(
+          navigatorKey: NavigationService.navigatorKey,
+          upgrader: Upgrader(
+            languageCode: 'tr',
+            messages: UpgraderMessages(code: 'tr'),
+            countryCode: 'tr',
+            durationUntilAlertAgain: const Duration(days: 1),
+          ),
+          dialogStyle: UpgradeDialogStyle.material,
+          showIgnore: false,
+          showLater: true,
+          barrierDismissible: false,
+          child: widget.initialView,
+        ),
       ),
     );
   }
