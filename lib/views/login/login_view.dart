@@ -21,12 +21,8 @@ class _LoginViewState extends State<LoginView> {
   bool _isLogin = true;
 
   // Login Controllers
-  final TextEditingController _emailController = TextEditingController(
-    text: 'testuser@example.com',
-  );
-  final TextEditingController _passwordController = TextEditingController(
-    text: '12341234',
-  );
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false;
 
   // Register Controllers
@@ -222,6 +218,7 @@ class _LoginViewState extends State<LoginView> {
           controller: _emailController,
           hint: "E-mail",
           icon: Icons.mail_outline,
+          textInputAction: TextInputAction.next,
         ),
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
@@ -229,6 +226,7 @@ class _LoginViewState extends State<LoginView> {
           hint: "Password",
           icon: Icons.lock_outline,
           isPassword: true,
+          textInputAction: TextInputAction.done,
         ),
         SizedBox(height: SizeTokens.p16),
         Row(
@@ -305,6 +303,8 @@ class _LoginViewState extends State<LoginView> {
           controller: _regNameController,
           hint: "Ad Soyad",
           icon: Icons.person_outline,
+          textCapitalization: TextCapitalization.words,
+          textInputAction: TextInputAction.next,
         ),
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
@@ -312,6 +312,7 @@ class _LoginViewState extends State<LoginView> {
           hint: "Email",
           icon: Icons.mail_outline,
           keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
         ),
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
@@ -319,6 +320,7 @@ class _LoginViewState extends State<LoginView> {
           hint: "Şifre",
           icon: Icons.lock_outline,
           isPassword: true,
+          textInputAction: TextInputAction.next,
         ),
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
@@ -326,6 +328,7 @@ class _LoginViewState extends State<LoginView> {
           hint: "Şifre Tekrar",
           icon: Icons.lock_outline,
           isPassword: true,
+          textInputAction: TextInputAction.next,
         ),
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
@@ -333,6 +336,7 @@ class _LoginViewState extends State<LoginView> {
           hint: "Phone No.",
           icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.done,
         ),
         SizedBox(height: SizeTokens.p32),
         _buildActionButton(
@@ -367,11 +371,15 @@ class _LoginViewState extends State<LoginView> {
     required IconData icon,
     bool isPassword = false,
     TextInputType keyboardType = TextInputType.text,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    TextInputAction? textInputAction,
   }) {
     return TextField(
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
+      textCapitalization: textCapitalization,
+      textInputAction: textInputAction,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(
