@@ -22,6 +22,10 @@ class NotificationService: UNNotificationServiceExtension {
                       let url = fcmOptions["image"] as? String {
                 imageURLString = url
             }
+            // 3. Bildirim içeriğindeki görsel (eğer varsa)
+            else if let url = bestAttemptContent.userInfo["gorsel"] as? String {
+                imageURLString = url
+            }
             
             // Eğer bir URL bulunduysa indir
             if let urlString = imageURLString, let imageURL = URL(string: urlString) {
@@ -37,6 +41,7 @@ class NotificationService: UNNotificationServiceExtension {
             }
         }
     }
+
     private func downloadImage(from url: URL, completion: @escaping (UNNotificationAttachment?) -> Void) {
         let task = URLSession.shared.downloadTask(with: url) { (location, response, error) in
             guard let location = location else {
@@ -44,15 +49,24 @@ class NotificationService: UNNotificationServiceExtension {
                 return
             }
             
-            let tmpDirectory = NSTemporaryDirectory()
-            let tmpFile = "file://".appending(tmpDirectory).appending(url.lastPathComponent)
-            let tmpUrl = URL(string: tmpFile)!
+            // Rastgele bir isim ve .jpg uzantısı ile geçici dosya oluştur
+            // Bu, URL'de dosya uzantısı olmasa bile iOS'un bunu görsel olarak tanımasını sağlar
+            let tmpDirectory = FileManager.default.temporaryDirectory
+            let fileName = UUID().uuidString + ".jpg"
+            let tmpUrl = tmpDirectory.appendingPathComponent(fileName)
             
-            try? FileManager.default.moveItem(at: location, to: tmpUrl)
-            
-            if let attachment = try? UNNotificationAttachment(identifier: "", url: tmpUrl, options: nil) {
+            do {
+                // Eğer hedefte dosya varsa (ki rastgele isimle imkansız) temizle
+                if FileManager.default.fileExists(atPath: tmpUrl.path) {
+                    try FileManager.default.removeItem(at: tmpUrl)
+                }
+                
+                try FileManager.default.moveItem(at: location, to: tmpUrl)
+                
+                // Attachment oluştur
+                let attachment = try UNNotificationAttachment(identifier: fileName, url: tmpUrl, options: nil)
                 completion(attachment)
-            } else {
+            } catch {
                 completion(nil)
             }
         }
@@ -65,3 +79,4 @@ class NotificationService: UNNotificationServiceExtension {
         }
     }
 }
+
