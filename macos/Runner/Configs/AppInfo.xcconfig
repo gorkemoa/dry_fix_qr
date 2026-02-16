@@ -11,4 +11,4 @@ PRODUCT_NAME = dry_fix_qr
 PRODUCT_BUNDLE_IDENTIFIER = com.smartmetrics.dryfixqr
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.smartmetrics.dryfixqr. All rights reserved.

@@ -54,13 +54,13 @@ class _LoginViewState extends State<LoginView> {
             // White Container (Content)
             Column(
               children: [
-                SizedBox(height: getProportionateScreenHeight(300)),
+                SizedBox(height: getProportionateScreenHeight(240)),
                 Container(
                   width: double.infinity,
                   constraints: BoxConstraints(
                     minHeight:
                         SizeConfig.screenHeight -
-                        getProportionateScreenHeight(300),
+                        getProportionateScreenHeight(240),
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.white,
