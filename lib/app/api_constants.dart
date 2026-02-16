@@ -20,4 +20,6 @@ class ApiConstants {
 
   static const String notifications = '$baseUrl/api/v1/notifications';
   static String notificationDetail(int id) => '$notifications/$id';
+
+  static const String mobileLogs = '$baseUrl/api/v1/mobile-logs';
 }

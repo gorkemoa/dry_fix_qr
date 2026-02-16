@@ -28,6 +28,7 @@ import 'viewmodels/product_view_model.dart';
 import 'viewmodels/address_view_model.dart';
 import 'services/address_service.dart';
 import 'services/notification_api_service.dart';
+import 'services/mobile_log_service.dart';
 import 'viewmodels/notifications_view_model.dart';
 import 'package:upgrader/upgrader.dart';
 import 'views/login/login_view.dart';
@@ -154,6 +155,7 @@ class _MyAppState extends State<MyApp> {
     final productService = ProductService(widget.apiClient);
     final addressService = AddressService(widget.apiClient);
     final notificationApiService = NotificationApiService(widget.apiClient);
+    final mobileLogService = MobileLogService(widget.apiClient);
 
     return MultiProvider(
       providers: [
@@ -161,7 +163,8 @@ class _MyAppState extends State<MyApp> {
           create: (_) => LoginViewModel(widget.authService),
         ),
         ChangeNotifierProvider(
-          create: (_) => RegisterViewModel(widget.authService),
+          create: (_) =>
+              RegisterViewModel(widget.authService, mobileLogService),
         ),
         ChangeNotifierProvider(
           create: (_) => HomeViewModel(widget.authService),
