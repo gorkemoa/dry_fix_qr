@@ -8,6 +8,8 @@ import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../app/agreement_constants.dart';
+import 'package:flutter/gestures.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -32,6 +34,7 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _regPassController = TextEditingController();
   final TextEditingController _regPassConfirmController =
       TextEditingController();
+  bool _isAccepted = false;
 
   static const Color brandBlue = Color(0xFF3B71F3);
 
@@ -338,11 +341,71 @@ class _LoginViewState extends State<LoginView> {
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.done,
         ),
+        SizedBox(height: SizeTokens.p16),
+        Row(
+          children: [
+            Transform.scale(
+              scale: 0.9,
+              child: Checkbox(
+                value: _isAccepted,
+                onChanged: (val) {
+                  setState(() {
+                    _isAccepted = val ?? false;
+                  });
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                side: const BorderSide(color: brandBlue),
+                activeColor: brandBlue,
+              ),
+            ),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  text: "",
+                  children: [
+                    TextSpan(
+                      text: "Üyelik Sözleşmesi",
+                      style: const TextStyle(
+                        color: brandBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          AgreementConstants.showMembershipAgreementDialog(
+                            context,
+                          );
+                        },
+                    ),
+                    TextSpan(
+                      text: " okudum ve kabul ediyorum.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.darkBlue.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
         SizedBox(height: SizeTokens.p32),
         _buildActionButton(
           text: "Kayıt Ol",
           isLoading: viewModel.isLoading,
           onPressed: () async {
+            if (!_isAccepted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Lütfen üyelik sözleşmesini onaylayın."),
+                ),
+              );
+              return;
+            }
             final request = RegisterRequest(
               name: _regNameController.text,
               email: _regEmailController.text,

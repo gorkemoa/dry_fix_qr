@@ -7,6 +7,8 @@ import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../app/agreement_constants.dart';
+import 'package:flutter/gestures.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -22,6 +24,7 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmController =
       TextEditingController();
+  bool _isAccepted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +127,58 @@ class _RegisterViewState extends State<RegisterView> {
               icon: Icons.lock_outline_rounded,
               obscureText: true,
             ),
-
+            SizedBox(height: SizeTokens.p16),
+            Row(
+              children: [
+                Transform.scale(
+                  scale: 0.9,
+                  child: Checkbox(
+                    value: _isAccepted,
+                    onChanged: (val) {
+                      setState(() {
+                        _isAccepted = val ?? false;
+                      });
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    side: const BorderSide(color: AppColors.darkBlue),
+                    activeColor: AppColors.darkBlue,
+                  ),
+                ),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: "",
+                      children: [
+                        TextSpan(
+                          text: "Üyelik Sözleşmesi",
+                          style: const TextStyle(
+                            color: AppColors.darkBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              AgreementConstants.showMembershipAgreementDialog(
+                                context,
+                              );
+                            },
+                        ),
+                        TextSpan(
+                          text: " okudum ve kabul ediyorum.",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.darkBlue.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: SizeTokens.p32),
 
             if (viewModel.isLoading)
@@ -136,6 +190,16 @@ class _RegisterViewState extends State<RegisterView> {
                 height: SizeTokens.p48,
                 child: ElevatedButton(
                   onPressed: () async {
+                    if (!_isAccepted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Lütfen üyelik sözleşmesini onaylayın.",
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     final request = RegisterRequest(
                       name: _nameController.text,
                       email: _emailController.text,

@@ -26,6 +26,7 @@ import 'viewmodels/qr_view_model.dart';
 import 'viewmodels/order_view_model.dart';
 import 'viewmodels/product_view_model.dart';
 import 'viewmodels/address_view_model.dart';
+import 'viewmodels/splash_view_model.dart';
 import 'services/address_service.dart';
 import 'services/notification_api_service.dart';
 import 'services/mobile_log_service.dart';
@@ -34,6 +35,7 @@ import 'package:upgrader/upgrader.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
 import 'views/qr_scanner/qr_share_process_view.dart';
+import 'views/splash/splash_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -185,6 +187,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => NotificationsViewModel(notificationApiService),
         ),
+        ChangeNotifierProvider(create: (_) => SplashViewModel()),
       ],
       child: MaterialApp(
         navigatorKey: NavigationService.navigatorKey,
@@ -215,7 +218,7 @@ class _MyAppState extends State<MyApp> {
           showIgnore: false,
           showLater: true,
           barrierDismissible: false,
-          child: widget.initialView,
+          child: SplashView(destination: widget.initialView),
         ),
       ),
     );

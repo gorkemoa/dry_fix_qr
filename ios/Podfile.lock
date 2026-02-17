@@ -84,6 +84,9 @@ PODS:
     - FlutterMacOS
   - url_launcher_ios (0.0.1):
     - Flutter
+  - video_player_avfoundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
@@ -97,6 +100,7 @@ DEPENDENCIES:
   - receive_sharing_intent (from `.symlinks/plugins/receive_sharing_intent/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -133,6 +137,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  video_player_avfoundation:
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
   device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
@@ -155,6 +161,7 @@ SPEC CHECKSUMS:
   receive_sharing_intent: 79c848f5b045674ad60b9fea3bafea59962ad2c1
   shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
   url_launcher_ios: bb13df5870e8c4234ca12609d04010a21be43dfa
+  video_player_avfoundation: 7993f492ae0bd77edaea24d9dc051d8bb2cd7c86
 
 PODFILE CHECKSUM: 3328e122111a9bdef76f063755973f11910d7f9c
 
