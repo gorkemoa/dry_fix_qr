@@ -5,6 +5,7 @@ import '../../models/qr_verify_response.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import '../../viewmodels/home_view_model.dart';
 import '../../viewmodels/history_view_model.dart';
 import '../products/product_detail_view.dart';
@@ -53,7 +54,7 @@ class QrSuccessView extends StatelessWidget {
 
                     // Subtitle
                     Text(
-                      "QR doğrulandı, token yüklendi",
+                      "QR doğrulandı, DryPara yüklendi",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: SizeTokens.f16,
@@ -81,24 +82,37 @@ class QrSuccessView extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Text(
-                            "Kazanılan DP",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f16,
-                              color: AppColors.gray,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Kazanılan DryPara",
+                                style: TextStyle(
+                                  fontSize: SizeTokens.f16,
+                                  color: AppColors.gray,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(height: SizeTokens.p8),
-                          Text(
-                            "+$earnedValue",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f32 * 2,
-                              fontWeight: FontWeight.w800,
-                              color: const Color(
-                                0xFF22C55E,
-                              ), // Professional green
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "+$earnedValue",
+                                style: TextStyle(
+                                  fontSize: SizeTokens.f32 * 2,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFF22C55E),
+                                ),
+                              ),
+                              SizedBox(width: SizeTokens.p8),
+                              DpSymbol(
+                                size: SizeTokens.p48,
+                                color: AppColors.darkBlue,
+                              ),
+                            ],
                           ),
                           SizedBox(height: SizeTokens.p20),
 

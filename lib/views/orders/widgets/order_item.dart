@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
+import '../../../core/widgets/dp_symbol.dart';
 import '../../../models/order_model.dart';
 import '../order_detail_view.dart';
 import '../../../core/utils/date_utils.dart';
@@ -98,24 +99,21 @@ class OrderItem extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: "${order.totalPrice} DP",
+                            text: "${order.totalTokenSpent} ",
                             style: TextStyle(
-                              color: AppColors.blue,
+                              color: AppColors.darkBlue,
                               fontWeight: FontWeight.bold,
                               fontSize: SizeTokens.f14,
                               fontFamily: 'Inter',
                             ),
                           ),
-                          if (order.totalTokenSpent > 0)
-                            TextSpan(
-                              text: " + ${order.totalTokenSpent} DP",
-                              style: TextStyle(
-                                color: AppColors.darkBlue,
-                                fontWeight: FontWeight.bold,
-                                fontSize: SizeTokens.f14,
-                                fontFamily: 'Inter',
-                              ),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: DpSymbol(
+                              size: SizeTokens.p14,
+                              color: AppColors.darkBlue,
                             ),
+                          ),
                         ],
                       ),
                     ),
@@ -197,9 +195,11 @@ class OrderItem extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.all(SizeTokens.p8),
                     decoration: BoxDecoration(
+                      // ignore: deprecated_member_use
                       color: Colors.orange.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
+                        // ignore: deprecated_member_use
                         color: Colors.orange.withOpacity(0.2),
                         width: 1,
                       ),

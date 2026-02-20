@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
+import '../../../core/widgets/dp_symbol.dart';
 import '../../../models/history_model.dart' as model;
 import '../../../core/utils/date_utils.dart';
 
@@ -132,11 +133,25 @@ class _HistoryItemState extends State<HistoryItem> {
                     _getReasonText(widget.item.reason),
                   ),
                   SizedBox(height: SizeTokens.p12),
-                  _buildDetailRow(
+                  _buildDetailRowWidget(
                     "Miktar",
-                    "${isCredit ? '+' : '-'}${widget.item.tokenAmount} DP",
-                    isValueColored: true,
-                    isCredit: isCredit,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "${isCredit ? '+' : '-'}${widget.item.tokenAmount} ",
+                          style: TextStyle(
+                            fontSize: SizeTokens.f12,
+                            color: isCredit ? Colors.green : Colors.red,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        DpSymbol(
+                          size: SizeTokens.p20,
+                          color: isCredit ? Colors.green : Colors.red,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: SizeTokens.p12),
                   _buildDetailRow("Açıklama", widget.item.note),
@@ -212,12 +227,7 @@ class _HistoryItemState extends State<HistoryItem> {
     );
   }
 
-  Widget _buildDetailRow(
-    String label,
-    String value, {
-    bool isValueColored = false,
-    bool isCredit = false,
-  }) {
+  Widget _buildDetailRowWidget(String label, Widget valueWidget) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -234,19 +244,31 @@ class _HistoryItemState extends State<HistoryItem> {
         ),
         Expanded(
           flex: 4,
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: TextStyle(
-              fontSize: SizeTokens.f12,
-              color: isValueColored
-                  ? (isCredit ? Colors.green : Colors.red)
-                  : AppColors.darkBlue,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: Align(alignment: Alignment.centerRight, child: valueWidget),
         ),
       ],
+    );
+  }
+
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    bool isValueColored = false,
+    bool isCredit = false,
+  }) {
+    return _buildDetailRowWidget(
+      label,
+      Text(
+        value,
+        textAlign: TextAlign.end,
+        style: TextStyle(
+          fontSize: SizeTokens.f12,
+          color: isValueColored
+              ? (isCredit ? Colors.green : Colors.red)
+              : AppColors.darkBlue,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 

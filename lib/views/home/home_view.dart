@@ -16,6 +16,8 @@ import 'widgets/history_item.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../cart/cart_view.dart';
 import '../notifications/notifications_view.dart';
+import '../../core/storage/storage_manager.dart';
+import 'widgets/onboarding_dialog.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -31,7 +33,19 @@ class _HomeViewState extends State<HomeView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().init();
       context.read<HistoryViewModel>().fetchHistory();
+      _checkOnboarding();
     });
+  }
+
+  void _checkOnboarding() {
+    if (!StorageManager.isOnboardingShown()) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const OnboardingDialog(),
+      );
+      StorageManager.setOnboardingShown();
+    }
   }
 
   @override

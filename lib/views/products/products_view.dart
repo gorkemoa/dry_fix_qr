@@ -5,6 +5,7 @@ import '../../viewmodels/product_view_model.dart';
 import '../../viewmodels/home_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import 'widgets/product_item.dart';
 import 'product_detail_view.dart';
 import '../cart/cart_view.dart';
@@ -84,13 +85,14 @@ class _ProductsViewState extends State<ProductsView> {
                 ),
                 SizedBox(width: SizeTokens.p8),
                 Text(
-                  "${homeViewModel.user?.tokenBalance ?? 0} DP",
+                  "${homeViewModel.user?.tokenBalance ?? 0} ",
                   style: TextStyle(
                     color: AppColors.white,
                     fontSize: SizeTokens.f13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                DpSymbol(size: SizeTokens.p24, color: AppColors.white),
               ],
             ),
           ),

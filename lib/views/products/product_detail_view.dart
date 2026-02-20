@@ -2,14 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import '../../models/product_model.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../cart/checkout_view.dart';
 
-class ProductDetailView extends StatelessWidget {
+class ProductDetailView extends StatefulWidget {
   final ProductModel product;
 
   const ProductDetailView({super.key, required this.product});
+
+  @override
+  State<ProductDetailView> createState() => _ProductDetailViewState();
+}
+
+class _ProductDetailViewState extends State<ProductDetailView> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,48 +44,84 @@ class ProductDetailView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Hero Image with Rounded Corners
-                Container(
-                  height: 350, // Fixed height for hero image look
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(SizeTokens.r24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                // Hero Image Slider
+                Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Container(
+                      height: 400, // Slightly taller for slider
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(SizeTokens.r24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(SizeTokens.r24),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(
-                          product.image,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey[200],
-                            child: Icon(
-                              Icons.image_not_supported_outlined,
-                              color: Colors.grey,
-                              size: SizeTokens.p64,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(SizeTokens.r24),
+                        child: PageView.builder(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
+                          itemCount: widget.product.images.length,
+                          itemBuilder: (context, index) {
+                            return InteractiveViewer(
+                              minScale: 1.0,
+                              maxScale: 4.0,
+                              child: Image.network(
+                                widget.product.images[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  color: Colors.grey[200],
+                                  child: Icon(
+                                    Icons.image_not_supported_outlined,
+                                    color: Colors.grey,
+                                    size: SizeTokens.p64,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    // Image Indicators
+                    if (widget.product.images.length > 1)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: SizeTokens.p16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            widget.product.images.length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: EdgeInsets.symmetric(horizontal: 4),
+                              height: 8,
+                              width: _currentPage == index ? 24 : 8,
+                              decoration: BoxDecoration(
+                                color: _currentPage == index
+                                    ? AppColors.blue
+                                    : Colors.white.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
                           ),
                         ),
-                        // Dark gradient overlay for better text contrast if we put text on image,
-                        // but here we just want the image clean.
-                      ],
-                    ),
-                  ),
+                      ),
+                  ],
                 ),
                 SizedBox(height: SizeTokens.p24),
 
                 // Title
                 Text(
-                  product.name,
+                  widget.product.name,
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: SizeTokens.f24,
@@ -80,7 +131,7 @@ class ProductDetailView extends StatelessWidget {
                 ),
                 SizedBox(height: SizeTokens.p8),
 
-                // Price Section (Placed near title for emphasis)
+                // Price Section
                 Row(
                   children: [
                     Container(
@@ -92,14 +143,20 @@ class ProductDetailView extends StatelessWidget {
                         color: AppColors.blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(SizeTokens.r8),
                       ),
-                      child: Text(
-                        "${product.tokenPrice} DP",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: SizeTokens.f20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.blue,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "${widget.product.tokenPrice} ",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: SizeTokens.f20,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.blue,
+                            ),
+                          ),
+                          DpSymbol(size: SizeTokens.p32, color: AppColors.blue),
+                        ],
                       ),
                     ),
                   ],
@@ -108,7 +165,7 @@ class ProductDetailView extends StatelessWidget {
 
                 // Description Title
                 Text(
-                  "Açıklama", // "Description"
+                  "Açıklama",
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: SizeTokens.f18,
@@ -120,7 +177,7 @@ class ProductDetailView extends StatelessWidget {
 
                 // Description Text
                 Text(
-                  product.description,
+                  widget.product.description,
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: SizeTokens.f14,
@@ -129,7 +186,7 @@ class ProductDetailView extends StatelessWidget {
                   ),
                 ),
 
-                // Gallery Section Placeholder (mimicking the style)
+                // Gallery Section
                 SizedBox(height: SizeTokens.p24),
                 Text(
                   "Galeri",
@@ -141,19 +198,29 @@ class ProductDetailView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: SizeTokens.p12),
-                Row(
-                  children: [
-                    // Just showing the main image as a thumbnail to mimic the gallery view
-                    _buildGalleryThumb(product.image),
-                    SizedBox(width: SizeTokens.p12),
-                    _buildGalleryThumb(product.image, opacity: 0.5),
-                    SizedBox(width: SizeTokens.p12),
-                    _buildGalleryThumb(
-                      product.image,
-                      opacity: 0.5,
-                      showPlus: true,
-                    ),
-                  ],
+                SizedBox(
+                  height: 80,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: widget.product.images.length,
+                    separatorBuilder: (_, __) =>
+                        SizedBox(width: SizeTokens.p12),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          _pageController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: _buildGalleryThumb(
+                          widget.product.images[index],
+                          isActive: _currentPage == index,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
@@ -162,7 +229,7 @@ class ProductDetailView extends StatelessWidget {
           // Floating Top Bar Buttons
           Positioned(
             top: MediaQuery.of(context).padding.top + SizeTokens.p24,
-            left: SizeTokens.p32, // Indent inside the image area
+            left: SizeTokens.p32,
             right: SizeTokens.p32,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -195,10 +262,10 @@ class ProductDetailView extends StatelessWidget {
                 child: SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: product.canBuy && product.stock > 0
+                    onPressed: widget.product.canBuy && widget.product.stock > 0
                         ? () {
                             final viewModel = context.read<ProductViewModel>();
-                            viewModel.addToCart(product);
+                            viewModel.addToCart(widget.product);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("Ürün sepete eklendi"),
@@ -209,7 +276,7 @@ class ProductDetailView extends StatelessWidget {
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blue, // Secondary Color
+                      backgroundColor: AppColors.blue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(SizeTokens.r16),
                       ),
@@ -232,11 +299,10 @@ class ProductDetailView extends StatelessWidget {
                 child: SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: product.canBuy && product.stock > 0
+                    onPressed: widget.product.canBuy && widget.product.stock > 0
                         ? () {
                             final viewModel = context.read<ProductViewModel>();
-                            viewModel.addToCart(product);
-                            // Navigate to checkout
+                            viewModel.addToCart(widget.product);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -246,14 +312,14 @@ class ProductDetailView extends StatelessWidget {
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkBlue, // Primary Color
+                      backgroundColor: AppColors.darkBlue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(SizeTokens.r16),
                       ),
                       elevation: 0,
                     ),
                     child: Text(
-                      product.stock <= 0 ? "Stokta Yok" : "Hemen Al",
+                      widget.product.stock <= 0 ? "Stokta Yok" : "Hemen Al",
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: SizeTokens.f16,
@@ -281,7 +347,7 @@ class ProductDetailView extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.4), // Semi-transparent grey
+          color: Colors.black.withOpacity(0.2),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: Colors.white, size: 20),
@@ -289,39 +355,22 @@ class ProductDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildGalleryThumb(
-    String imageUrl, {
-    double opacity = 1.0,
-    bool showPlus = false,
-  }) {
-    return Container(
+  Widget _buildGalleryThumb(String imageUrl, {bool isActive = false}) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       width: 70,
       height: 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(SizeTokens.r16),
+        border: Border.all(
+          color: isActive ? AppColors.blue : Colors.transparent,
+          width: 2,
+        ),
         image: DecorationImage(
           image: NetworkImage(imageUrl),
           fit: BoxFit.cover,
-          colorFilter: opacity < 1.0
-              ? ColorFilter.mode(
-                  Colors.white.withOpacity(0.6),
-                  BlendMode.lighten,
-                )
-              : null,
         ),
       ),
-      child: showPlus
-          ? Center(
-              child: Text(
-                "+5",
-                style: TextStyle(
-                  color: AppColors.darkBlue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: SizeTokens.f16,
-                ),
-              ),
-            )
-          : null,
     );
   }
 }

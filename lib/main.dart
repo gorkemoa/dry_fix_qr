@@ -31,6 +31,8 @@ import 'services/address_service.dart';
 import 'services/notification_api_service.dart';
 import 'services/mobile_log_service.dart';
 import 'viewmodels/notifications_view_model.dart';
+import 'viewmodels/support_view_model.dart';
+import 'services/support_service.dart';
 import 'package:upgrader/upgrader.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
@@ -158,6 +160,7 @@ class _MyAppState extends State<MyApp> {
     final addressService = AddressService(widget.apiClient);
     final notificationApiService = NotificationApiService(widget.apiClient);
     final mobileLogService = MobileLogService(widget.apiClient);
+    final supportService = SupportService(widget.apiClient);
 
     return MultiProvider(
       providers: [
@@ -187,11 +190,13 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => NotificationsViewModel(notificationApiService),
         ),
+        ChangeNotifierProvider(create: (_) => SupportViewModel(supportService)),
         ChangeNotifierProvider(create: (_) => SplashViewModel()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         navigatorKey: NavigationService.navigatorKey,
-        title: 'DryFix',
+        title: 'DryUsta',
         theme: AppTheme.lightTheme,
         builder: (context, child) {
           return GestureDetector(

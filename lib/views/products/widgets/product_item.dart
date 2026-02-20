@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
+import '../../../core/widgets/dp_symbol.dart';
 import '../../../models/product_model.dart';
 
 class ProductItem extends StatelessWidget {
@@ -148,24 +149,31 @@ class ProductItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          "${product.tokenPrice} DP",
+                          "${product.tokenPrice}",
                           style: TextStyle(
                             fontSize: SizeTokens.f14,
                             fontWeight: FontWeight.bold,
                             color: AppColors.blue,
                           ),
                         ),
+                        SizedBox(width: SizeTokens.p4),
+                        DpSymbol(size: SizeTokens.p20, color: AppColors.blue),
                         if (product.price != "0.00" &&
                             double.parse(product.price) >
                                 product.tokenPrice) ...[
                           SizedBox(width: SizeTokens.p8),
                           Text(
-                            "${product.price} DP",
+                            "${product.price}",
                             style: TextStyle(
                               fontSize: SizeTokens.f11,
                               color: AppColors.gray.withOpacity(0.6),
                               decoration: TextDecoration.lineThrough,
                             ),
+                          ),
+                          SizedBox(width: SizeTokens.p2),
+                          DpSymbol(
+                            size: SizeTokens.p16,
+                            color: AppColors.gray.withOpacity(0.6),
                           ),
                         ],
                       ],

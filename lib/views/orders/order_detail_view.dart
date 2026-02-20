@@ -4,6 +4,7 @@ import '../../app/app_theme.dart';
 import '../../viewmodels/order_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import '../../core/utils/date_utils.dart';
 import '../../models/order_detail_model.dart';
 import '../../models/product_model.dart';
@@ -317,13 +318,21 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                     ),
                   ),
                   SizedBox(height: SizeTokens.p4),
-                  Text(
-                    "${item.tokenPriceAtPurchase} DP",
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF00B4D8),
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "${item.tokenPriceAtPurchase} ",
+                        style: TextStyle(
+                          fontSize: SizeTokens.f14,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF00B4D8),
+                        ),
+                      ),
+                      DpSymbol(
+                        size: SizeTokens.p24,
+                        color: const Color(0xFF00B4D8),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -470,7 +479,23 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             DateFormatter.toTurkish(order.purchasedAt),
           ),
           Divider(height: SizeTokens.p24, color: Colors.grey.shade100),
-          _buildPaymentRow("Harcanan Puan", "${order.totalTokenSpent} DP"),
+          _buildPaymentRowWidget(
+            "Harcanan Puan",
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "${order.totalTokenSpent} ",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                DpSymbol(size: SizeTokens.p24, color: Colors.black87),
+              ],
+            ),
+          ),
           SizedBox(height: SizeTokens.p16),
           Container(
             padding: EdgeInsets.all(SizeTokens.p12),
@@ -492,13 +517,22 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      " ${order.totalTokenSpent} DP",
-                      style: TextStyle(
-                        fontSize: SizeTokens.f20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.darkBlue.withOpacity(0.7),
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          " ${order.totalTokenSpent} ",
+                          style: TextStyle(
+                            fontSize: SizeTokens.f20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.darkBlue.withOpacity(0.7),
+                          ),
+                        ),
+                        DpSymbol(
+                          size: SizeTokens.p32,
+                          color: AppColors.darkBlue.withOpacity(0.7),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -510,7 +544,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     );
   }
 
-  Widget _buildPaymentRow(String label, String value) {
+  Widget _buildPaymentRowWidget(String label, Widget valueWidget) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -522,15 +556,22 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: SizeTokens.f14,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
+        valueWidget,
       ],
+    );
+  }
+
+  Widget _buildPaymentRow(String label, String value) {
+    return _buildPaymentRowWidget(
+      label,
+      Text(
+        value,
+        style: TextStyle(
+          fontSize: SizeTokens.f14,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
     );
   }
 }

@@ -37,4 +37,15 @@ class StorageManager {
   static Future<void> deleteToken() async {
     await remove(_tokenKey);
   }
+
+  // Onboarding specific
+  static const String _onboardingKey = 'onboarding_shown';
+
+  static bool isOnboardingShown() {
+    return _prefs.getBool(_onboardingKey) ?? false;
+  }
+
+  static Future<void> setOnboardingShown() async {
+    await _prefs.setBool(_onboardingKey, true);
+  }
 }

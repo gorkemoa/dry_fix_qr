@@ -38,6 +38,7 @@ class ProductModel {
   final bool canBuy;
   final String createdAt;
   final String updatedAt;
+  final List<String> images;
 
   ProductModel({
     required this.id,
@@ -51,14 +52,18 @@ class ProductModel {
     required this.canBuy,
     required this.createdAt,
     required this.updatedAt,
-  });
+    List<String>? images,
+  }) : images = images ?? [image];
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    final mainImage = json['image'] as String;
+    final jsonImages = json['images'] as List?;
+
     return ProductModel(
       id: json['id'] as int,
       name: json['name'] as String,
       description: json['description'] as String,
-      image: json['image'] as String,
+      image: mainImage,
       price: json['price'] as String,
       tokenPrice: json['token_price'] as int,
       stock: json['stock'] as int,
@@ -66,6 +71,13 @@ class ProductModel {
       canBuy: json['can_buy'] as bool,
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
+      images: jsonImages != null
+          ? jsonImages.map((e) => e as String).toList()
+          : [
+              mainImage,
+              mainImage,
+              mainImage,
+            ], // Mocking 3 images for UI testing
     );
   }
 
@@ -82,6 +94,7 @@ class ProductModel {
       'can_buy': canBuy,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'images': images,
     };
   }
 }

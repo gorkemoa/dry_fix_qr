@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import '../../models/address_model.dart';
@@ -111,12 +112,20 @@ class _CheckoutViewState extends State<CheckoutView> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Text(
-                            "${item.price} DP",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                "${item.price} ",
+                                style: TextStyle(
+                                  fontSize: SizeTokens.f14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              DpSymbol(
+                                size: SizeTokens.p24,
+                                color: AppColors.darkBlue,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -136,22 +145,40 @@ class _CheckoutViewState extends State<CheckoutView> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            "${viewModel.cartTotalPrice.toStringAsFixed(2)} DP",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.blue,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "${viewModel.cartTotalPrice.toStringAsFixed(2)} ",
+                                style: TextStyle(
+                                  fontSize: SizeTokens.f16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.blue,
+                                ),
+                              ),
+                              DpSymbol(
+                                size: SizeTokens.p24,
+                                color: AppColors.blue,
+                              ),
+                            ],
                           ),
                           if (viewModel.cartTotalTokenPrice > 0)
-                            Text(
-                              "+ ${viewModel.cartTotalTokenPrice} DP",
-                              style: TextStyle(
-                                fontSize: SizeTokens.f12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.darkBlue,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "+ ${viewModel.cartTotalTokenPrice} ",
+                                  style: TextStyle(
+                                    fontSize: SizeTokens.f12,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.darkBlue,
+                                  ),
+                                ),
+                                DpSymbol(
+                                  size: SizeTokens.p20,
+                                  color: AppColors.darkBlue,
+                                ),
+                              ],
                             ),
                         ],
                       ),

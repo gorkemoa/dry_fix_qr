@@ -263,17 +263,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ],
             ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                "Şifremi Unuttum",
-                style: TextStyle(
-                  fontSize: SizeTokens.f12,
-                  color: brandBlue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
           ],
         ),
         SizedBox(height: SizeTokens.p24),

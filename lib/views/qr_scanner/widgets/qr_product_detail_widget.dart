@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../models/qr_verify_response.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
+import '../../../core/widgets/dp_symbol.dart';
 
 class QrProductDetailWidget extends StatelessWidget {
   final ProductVerifyDetail product;
@@ -86,12 +87,18 @@ class QrProductDetailWidget extends StatelessWidget {
                           color: AppColors.blue.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(SizeTokens.r20),
                         ),
-                        child: Text(
-                          "${product.tokenPrice} DP",
-                          style: const TextStyle(
-                            color: AppColors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "${product.tokenPrice} ",
+                              style: const TextStyle(
+                                color: AppColors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const DpSymbol(size: 24, color: AppColors.blue),
+                          ],
                         ),
                       ),
                     ],

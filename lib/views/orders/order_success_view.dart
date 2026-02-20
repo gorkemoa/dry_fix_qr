@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import '../../models/product_model.dart';
 import '../../viewmodels/home_view_model.dart';
 import '../../viewmodels/history_view_model.dart';
@@ -198,16 +199,27 @@ class OrderSuccessView extends StatelessWidget {
                                                     ),
                                                   ),
                                                   const SizedBox(height: 2),
-                                                  Text(
-                                                    "${item.tokenPrice * quantity} DP",
-                                                    style: TextStyle(
-                                                      color: const Color(
-                                                        0xFF00C2FF,
-                                                      ), // Vibrant cyan from shot
-                                                      fontWeight:
-                                                          FontWeight.w900,
-                                                      fontSize: SizeTokens.f14,
-                                                    ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "${item.tokenPrice * quantity} ",
+                                                        style: TextStyle(
+                                                          color: const Color(
+                                                            0xFF00C2FF,
+                                                          ), // Vibrant cyan from shot
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize:
+                                                              SizeTokens.f14,
+                                                        ),
+                                                      ),
+                                                      DpSymbol(
+                                                        size: SizeTokens.p24,
+                                                        color: const Color(
+                                                          0xFF00C2FF,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),

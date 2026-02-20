@@ -7,11 +7,13 @@ import '../../viewmodels/address_view_model.dart';
 import '../../models/address_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/widgets/dp_symbol.dart';
 import '../transactions/transactions_view.dart';
 import 'edit_profile_view.dart';
 import 'update_password_view.dart';
 import 'addresses_view.dart';
 import 'add_address_view.dart';
+import 'support_list_view.dart';
 import '../login/login_view.dart';
 
 class ProfileView extends StatefulWidget {
@@ -22,9 +24,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  String _version = "";
-  String _buildNumber = "";
-
   @override
   void initState() {
     super.initState();
@@ -36,11 +35,8 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> _getAppVersion() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    setState(() {
-      _version = packageInfo.version;
-      _buildNumber = packageInfo.buildNumber;
-    });
+    await PackageInfo.fromPlatform();
+    setState(() {});
   }
 
   String _getUserInitials(String? name) {
@@ -283,7 +279,13 @@ class _ProfileViewState extends State<ProfileView> {
                     _buildMenuItem(
                       icon: Icons.headset_mic_outlined,
                       title: "Destek ve Yardım",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const SupportListView(),
+                          ),
+                        );
+                      },
                     ),
                     _buildMenuItem(
                       icon: Icons.logout_rounded,
@@ -306,19 +308,11 @@ class _ProfileViewState extends State<ProfileView> {
                     child: Column(
                       children: [
                         Text(
-                          "Dryfix QR Sistemi",
+                          "DryUsta",
                           style: TextStyle(
                             color: AppColors.darkBlue,
                             fontSize: SizeTokens.f12,
                             fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: SizeTokens.p4),
-                        Text(
-                          "v$_version ($_buildNumber)",
-                          style: TextStyle(
-                            color: AppColors.gray,
-                            fontSize: SizeTokens.f11,
                           ),
                         ),
                       ],
@@ -419,13 +413,22 @@ class _ProfileViewState extends State<ProfileView> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "DP Bakiyesi",
-                style: TextStyle(
-                  color: AppColors.white.withOpacity(0.8),
-                  fontSize: SizeTokens.f13,
-                  fontWeight: FontWeight.w500,
-                ),
+              Row(
+                children: [
+                  DpSymbol(
+                    size: SizeTokens.p24,
+                    color: AppColors.white.withOpacity(0.8),
+                  ),
+                  SizedBox(width: SizeTokens.p4),
+                  Text(
+                    "Bakiyesi",
+                    style: TextStyle(
+                      color: AppColors.white.withOpacity(0.8),
+                      fontSize: SizeTokens.f13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: SizeTokens.p8),
               Row(
@@ -441,13 +444,9 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                   ),
                   SizedBox(width: SizeTokens.p4),
-                  Text(
-                    "DP",
-                    style: TextStyle(
-                      color: AppColors.white.withOpacity(0.8),
-                      fontSize: SizeTokens.f16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  DpSymbol(
+                    size: SizeTokens.p32,
+                    color: AppColors.white.withOpacity(0.8),
                   ),
                 ],
               ),

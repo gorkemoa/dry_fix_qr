@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
+import '../../../core/widgets/dp_symbol.dart';
 
 class HomeHeader extends StatelessWidget {
   final String userName;
@@ -132,14 +133,7 @@ class HomeHeader extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: SizeTokens.p4),
-                        Text(
-                          "DP",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: SizeTokens.f12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        DpSymbol(size: SizeTokens.p24, color: Colors.white),
                       ],
                     ),
                   ),
