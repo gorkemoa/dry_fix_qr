@@ -20,7 +20,7 @@ class NotificationService {
 
   // Android tarafındaki native bildirim köprüsü (Notification Service Extension mantığı)
   static const MethodChannel _platform = MethodChannel(
-    'com.smartmetrics.dryfixqr/notification',
+    'com.izersan.dryfix/notification',
   );
 
   Future<void> init() async {

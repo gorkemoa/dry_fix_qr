@@ -56,36 +56,7 @@ class ProductItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (isStokta)
-                      Positioned(
-                        top: SizeTokens.p16,
-                        right: SizeTokens.p16,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: SizeTokens.p8,
-                            vertical: SizeTokens.p4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(SizeTokens.p4),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: Text(
-                            "STOKTA",
-                            style: TextStyle(
-                              fontSize: SizeTokens.f10,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.darkBlue,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
+                    if (!isStokta)
                       Positioned.fill(
                         child: Container(
                           margin: EdgeInsets.all(SizeTokens.p8),
@@ -106,7 +77,7 @@ class ProductItem extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                "TÜKENDİ",
+                                "STOKTA YOK",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: SizeTokens.f10,

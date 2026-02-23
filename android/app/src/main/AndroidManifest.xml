@@ -3,11 +3,11 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <application
-        android:label="DryFix Qr"
-        android:name="com.smartmetrics.dryfixqr.MainApplication"
+        android:label="DryUsta"
+        android:name="com.izersan.dryfix.MainApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name="com.smartmetrics.dryfixqr.MainActivity"
+            android:name="com.izersan.dryfix.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""

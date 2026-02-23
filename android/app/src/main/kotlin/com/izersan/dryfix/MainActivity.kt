@@ -1,4 +1,4 @@
-package com.smartmetrics.dryfixqr
+package com.izersan.dryfix
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -20,7 +20,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL_ID = "high_importance_channel"
-    private val METHOD_CHANNEL = "com.smartmetrics.dryfixqr/notification"
+    private val METHOD_CHANNEL = "com.izersan.dryfix/notification"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -43,7 +43,7 @@ class OnboardingDialog extends StatelessWidget {
                     ),
                     SizedBox(height: SizeTokens.p16),
                     Text(
-                      "DryFix dünyasına adım attın. İşte bilmen gerekenler:",
+                      "DryUsta dünyasına adım attın. İşte bilmen gerekenler:",
                       style: TextStyle(
                         fontSize: SizeTokens.f14,
                         color: AppColors.gray,

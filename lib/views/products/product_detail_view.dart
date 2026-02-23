@@ -17,15 +17,6 @@ class ProductDetailView extends StatefulWidget {
 }
 
 class _ProductDetailViewState extends State<ProductDetailView> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,78 +35,39 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Hero Image Slider
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Container(
-                      height: 400, // Slightly taller for slider
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(SizeTokens.r24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
+                // Hero Image
+                Container(
+                  height: 400,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(SizeTokens.r24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(SizeTokens.r24),
-                        child: PageView.builder(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                          },
-                          itemCount: widget.product.images.length,
-                          itemBuilder: (context, index) {
-                            return InteractiveViewer(
-                              minScale: 1.0,
-                              maxScale: 4.0,
-                              child: Image.network(
-                                widget.product.images[index],
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  color: Colors.grey[200],
-                                  child: Icon(
-                                    Icons.image_not_supported_outlined,
-                                    color: Colors.grey,
-                                    size: SizeTokens.p64,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(SizeTokens.r24),
+                    child: InteractiveViewer(
+                      minScale: 1.0,
+                      maxScale: 4.0,
+                      child: Image.network(
+                        widget.product.image,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.grey[200],
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.grey,
+                            size: SizeTokens.p64,
+                          ),
                         ),
                       ),
                     ),
-                    // Image Indicators
-                    if (widget.product.images.length > 1)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: SizeTokens.p16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            widget.product.images.length,
-                            (index) => AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: EdgeInsets.symmetric(horizontal: 4),
-                              height: 8,
-                              width: _currentPage == index ? 24 : 8,
-                              decoration: BoxDecoration(
-                                color: _currentPage == index
-                                    ? AppColors.blue
-                                    : Colors.white.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
                 SizedBox(height: SizeTokens.p24),
 
@@ -183,43 +135,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                     fontSize: SizeTokens.f14,
                     color: AppColors.gray,
                     height: 1.6,
-                  ),
-                ),
-
-                // Gallery Section
-                SizedBox(height: SizeTokens.p24),
-                Text(
-                  "Galeri",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: SizeTokens.f18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.darkBlue,
-                  ),
-                ),
-                SizedBox(height: SizeTokens.p12),
-                SizedBox(
-                  height: 80,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: widget.product.images.length,
-                    separatorBuilder: (_, __) =>
-                        SizedBox(width: SizeTokens.p12),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          _pageController.animateToPage(
-                            index,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                        child: _buildGalleryThumb(
-                          widget.product.images[index],
-                          isActive: _currentPage == index,
-                        ),
-                      );
-                    },
                   ),
                 ),
               ],
@@ -351,25 +266,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: Colors.white, size: 20),
-      ),
-    );
-  }
-
-  Widget _buildGalleryThumb(String imageUrl, {bool isActive = false}) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: 70,
-      height: 70,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(SizeTokens.r16),
-        border: Border.all(
-          color: isActive ? AppColors.blue : Colors.transparent,
-          width: 2,
-        ),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }

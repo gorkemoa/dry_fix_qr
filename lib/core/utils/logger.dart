@@ -30,6 +30,6 @@ class Logger {
   }
 
   static void _log(String message) {
-    dev.log(message, name: 'DryFixApp', time: DateTime.now());
+    dev.log(message, name: 'DryUstaApp', time: DateTime.now());
   }
 }

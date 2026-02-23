@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'https://dry-qr.getsmarty.dev';
+  static const String baseUrl = 'https://usta-d.dryfix.com.tr';
   static const String login = '$baseUrl/api/v1/auth/login';
   static const String register = '$baseUrl/api/v1/auth/register';
   static const String history = '$baseUrl/api/v1/history';

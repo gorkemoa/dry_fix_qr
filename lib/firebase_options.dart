@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '291237777308',
     projectId: 'dryfixqr',
     storageBucket: 'dryfixqr.firebasestorage.app',
-    iosBundleId: 'com.smartmetrics.dryfixqr',
+    iosBundleId: 'com.izersan.dryfix',
   );
 }
