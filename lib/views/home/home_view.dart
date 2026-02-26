@@ -191,7 +191,7 @@ class _HomeViewState extends State<HomeView> {
                                   onBannerTap: (banner) async {
                                     final product = await context
                                         .read<BannerViewModel>()
-                                        .fetchProductById(banner.productId);
+                                        .onBannerTapped(banner);
                                     if (product != null && context.mounted) {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(

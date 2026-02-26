@@ -183,7 +183,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => ProfileViewModel(widget.authService),
         ),
-        ChangeNotifierProvider(create: (_) => QrViewModel(qrService)),
+        ChangeNotifierProvider(create: (_) => QrViewModel(qrService, mobileLogService)),
         ChangeNotifierProvider(create: (_) => OrderViewModel(orderService)),
         ChangeNotifierProvider(
           create: (_) => ProductViewModel(productService, orderService),

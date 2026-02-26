@@ -41,6 +41,13 @@ class BannerViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Banner'a tıklanınca: click isteği atar (fire-and-forget) + ürünü çeker.
+  Future<ProductModel?> onBannerTapped(BannerModel banner) async {
+    // Click sayacı — yanıt beklenmez, ürün fetch'i geciktirmez
+    _bannerService.clickBanner(banner.id);
+    return fetchProductById(banner.productId);
+  }
+
   Future<ProductModel?> fetchProductById(int productId) async {
     Logger.info('BannerViewModel: Fetching product id=$productId...');
     final result = await _productService.fetchProductById(productId);

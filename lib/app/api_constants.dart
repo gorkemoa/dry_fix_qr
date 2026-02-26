@@ -28,4 +28,5 @@ class ApiConstants {
   static String supportMessageDetail(int id) => '$supportMessages/$id';
 
   static const String banners = '$baseUrl/api/v1/banners';
+  static String bannerClick(int id) => '$banners/$id/click';
 }

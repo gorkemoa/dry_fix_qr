@@ -32,7 +32,7 @@ class _BannerSliderState extends State<BannerSlider> {
 
   void _startAutoScroll() {
     if (widget.banners.length <= 1) return;
-    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       if (!mounted) return;
       final nextPage = (_currentPage + 1) % widget.banners.length;
       _pageController.animateToPage(
