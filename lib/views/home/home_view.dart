@@ -10,9 +10,12 @@ import '../products/products_view.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../app/app_theme.dart';
+import '../products/product_detail_view.dart';
 import 'widgets/home_header.dart';
 import 'widgets/home_card.dart';
 import 'widgets/history_item.dart';
+import 'widgets/banner_slider.dart';
+import '../../viewmodels/banner_view_model.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../cart/cart_view.dart';
 import '../notifications/notifications_view.dart';
@@ -33,6 +36,7 @@ class _HomeViewState extends State<HomeView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().init();
       context.read<HistoryViewModel>().fetchHistory();
+      context.read<BannerViewModel>().init();
       _checkOnboarding();
     });
   }
@@ -54,6 +58,7 @@ class _HomeViewState extends State<HomeView> {
     final viewModel = context.watch<HomeViewModel>();
     final historyViewModel = context.watch<HistoryViewModel>();
     final productViewModel = context.watch<ProductViewModel>();
+    final bannerViewModel = context.watch<BannerViewModel>();
 
     return Scaffold(
       backgroundColor: AppColors.blue,
@@ -65,6 +70,7 @@ class _HomeViewState extends State<HomeView> {
             await Future.wait([
               context.read<HomeViewModel>().init(),
               context.read<HistoryViewModel>().fetchHistory(),
+              context.read<BannerViewModel>().refresh(),
             ]);
           },
           child: viewModel.isLoading && viewModel.user == null
@@ -177,6 +183,27 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             ),
 
+                            // Banner Slider Section
+                            if (bannerViewModel.banners.isNotEmpty) ...
+                              [
+                                BannerSlider(
+                                  banners: bannerViewModel.banners,
+                                  onBannerTap: (banner) async {
+                                    final product = await context
+                                        .read<BannerViewModel>()
+                                        .fetchProductById(banner.productId);
+                                    if (product != null && context.mounted) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              ProductDetailView(product: product),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+
                             // History Section Header
                             Padding(
                               padding: EdgeInsets.symmetric(
@@ -218,7 +245,7 @@ class _HomeViewState extends State<HomeView> {
 
                             // History List
                             Padding(
-                              padding: EdgeInsets.all(SizeTokens.p24),
+                              padding: EdgeInsets.fromLTRB(SizeTokens.p24, SizeTokens.p10, SizeTokens.p24, SizeTokens.p10),
                               child: historyViewModel.isLoading
                                   ? const Center(
                                       child: CircularProgressIndicator(

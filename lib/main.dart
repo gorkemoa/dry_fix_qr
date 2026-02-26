@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
 import 'services/notification_service.dart';
 import 'app/app_theme.dart';
 import 'core/network/api_client.dart';
@@ -33,6 +32,8 @@ import 'services/mobile_log_service.dart';
 import 'viewmodels/notifications_view_model.dart';
 import 'viewmodels/support_view_model.dart';
 import 'services/support_service.dart';
+import 'services/banner_service.dart';
+import 'viewmodels/banner_view_model.dart';
 import 'package:upgrader/upgrader.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
@@ -161,6 +162,7 @@ class _MyAppState extends State<MyApp> {
     final notificationApiService = NotificationApiService(widget.apiClient);
     final mobileLogService = MobileLogService(widget.apiClient);
     final supportService = SupportService(widget.apiClient);
+    final bannerService = BannerService(widget.apiClient);
 
     return MultiProvider(
       providers: [
@@ -191,6 +193,9 @@ class _MyAppState extends State<MyApp> {
           create: (_) => NotificationsViewModel(notificationApiService),
         ),
         ChangeNotifierProvider(create: (_) => SupportViewModel(supportService)),
+        ChangeNotifierProvider(
+          create: (_) => BannerViewModel(bannerService, productService),
+        ),
         ChangeNotifierProvider(create: (_) => SplashViewModel()),
       ],
       child: MaterialApp(

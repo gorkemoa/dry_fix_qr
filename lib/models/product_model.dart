@@ -1,3 +1,24 @@
+class ProductSingleResponse {
+  final bool success;
+  final ProductModel data;
+
+  ProductSingleResponse({required this.success, required this.data});
+
+  factory ProductSingleResponse.fromJson(Map<String, dynamic> json) {
+    return ProductSingleResponse(
+      success: json['success'] as bool,
+      data: ProductModel.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'data': data.toJson(),
+    };
+  }
+}
+
 class ProductResponse {
   final bool success;
   final List<ProductModel> data;

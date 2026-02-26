@@ -10,6 +10,7 @@ class ApiConstants {
   static const String orders = '$baseUrl/api/v1/orders';
   static String orderDetail(int id) => '$orders/$id';
   static const String products = '$baseUrl/api/v1/products';
+  static String productById(int id) => '$products/$id';
   static const String deactivate = '$baseUrl/api/v1/auth/deactivate';
   static const String addresses = '$baseUrl/api/v1/addresses';
   static String addressDetail(int id) => '$addresses/$id';
@@ -25,4 +26,6 @@ class ApiConstants {
 
   static const String supportMessages = '$baseUrl/api/v1/support-messages';
   static String supportMessageDetail(int id) => '$supportMessages/$id';
+
+  static const String banners = '$baseUrl/api/v1/banners';
 }

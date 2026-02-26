@@ -42,4 +42,16 @@ class ProductService {
       return Failure(e.toString());
     }
   }
+
+  Future<ApiResult<ProductSingleResponse>> fetchProductById(int id) async {
+    try {
+      final response = await _apiClient.get(ApiConstants.productById(id));
+      final singleResponse = ProductSingleResponse.fromJson(response);
+      return Success(singleResponse);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
 }
