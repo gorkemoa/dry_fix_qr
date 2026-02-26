@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
@@ -21,6 +22,16 @@ class _EditProfileViewState extends State<EditProfileView> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
+  DateTime? _selectedBirthDate;
+
+  static const List<String> _turkishMonths = [
+    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
+  ];
+
+  String _formatBirthDate(DateTime date) {
+    return '${date.day} ${_turkishMonths[date.month - 1]} ${date.year}';
+  }
 
   @override
   void initState() {
@@ -39,6 +50,20 @@ class _EditProfileViewState extends State<EditProfileView> {
           phone = phone.substring(3);
         }
         _phoneController.text = phone;
+        if (viewModel.user!.birthDate != null) {
+          try {
+            final parts = viewModel.user!.birthDate!.split('-');
+            if (parts.length == 3) {
+              setState(() {
+                _selectedBirthDate = DateTime(
+                  int.parse(parts[0]),
+                  int.parse(parts[1]),
+                  int.parse(parts[2]),
+                );
+              });
+            }
+          } catch (_) {}
+        }
       }
     });
   }
@@ -49,6 +74,69 @@ class _EditProfileViewState extends State<EditProfileView> {
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
+  }
+
+  void _showBirthDatePicker() {
+    final initial = _selectedBirthDate ?? DateTime(1990, 1, 1);
+    DateTime tempDate = initial;
+
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (ctx) => Container(
+        height: 320,
+        color: CupertinoColors.systemBackground.resolveFrom(ctx),
+        child: Column(
+          children: [
+            Container(
+              color: const Color(0xFFF8F9FE),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    child: const Text(
+                      'İptal',
+                      style: TextStyle(color: Color(0xFF969AB0)),
+                    ),
+                    onPressed: () => Navigator.of(ctx).pop(),
+                  ),
+                  const Text(
+                    'Doğum Tarihi',
+                    style: TextStyle(
+                      color: Color(0xFF002452),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  CupertinoButton(
+                    child: const Text(
+                      'Tamam',
+                      style: TextStyle(
+                        color: Color(0xFF002452),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() => _selectedBirthDate = tempDate);
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                dateOrder: DatePickerDateOrder.dmy,
+                initialDateTime: initial,
+                minimumYear: 1920,
+                maximumYear: DateTime.now().year - 10,
+                onDateTimeChanged: (dt) => tempDate = dt,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -119,6 +207,68 @@ class _EditProfileViewState extends State<EditProfileView> {
                       ),
                       validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                     ),
+                    SizedBox(height: SizeTokens.p16),
+
+                    // Doğum Tarihi – iOS tarzı seçici
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Doğum Tarihi',
+                          style: TextStyle(
+                            fontSize: SizeTokens.f14,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF002452),
+                          ),
+                        ),
+                        SizedBox(height: SizeTokens.p6),
+                        GestureDetector(
+                          onTap: _showBirthDatePicker,
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: SizeTokens.p16,
+                              vertical: SizeTokens.p16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(SizeTokens.r8),
+                              border: Border.all(
+                                color: const Color(0xFFDCE1F0),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  CupertinoIcons.calendar,
+                                  size: SizeTokens.p20,
+                                  color: const Color(0xFF969AB0),
+                                ),
+                                SizedBox(width: SizeTokens.p8),
+                                Text(
+                                  _selectedBirthDate != null
+                                      ? _formatBirthDate(_selectedBirthDate!)
+                                      : 'Gün / Ay / Yıl',
+                                  style: TextStyle(
+                                    fontSize: SizeTokens.f14,
+                                    color: _selectedBirthDate != null
+                                        ? const Color(0xFF002452)
+                                        : const Color(0xFF969AB0),
+                                  ),
+                                ),
+                                const Spacer(),
+                                Icon(
+                                  CupertinoIcons.chevron_down,
+                                  size: SizeTokens.p16,
+                                  color: const Color(0xFF969AB0),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: SizeTokens.p32),
 
                     ElevatedButton(
@@ -126,10 +276,16 @@ class _EditProfileViewState extends State<EditProfileView> {
                           ? null
                           : () async {
                               if (_formKey.currentState?.validate() ?? false) {
+                                final birthDateStr = _selectedBirthDate != null
+                                    ? '${_selectedBirthDate!.year.toString().padLeft(4, '0')}-'
+                                        '${_selectedBirthDate!.month.toString().padLeft(2, '0')}-'
+                                        '${_selectedBirthDate!.day.toString().padLeft(2, '0')}'
+                                    : null;
                                 final request = UpdateProfileRequest(
                                   name: _nameController.text,
                                   email: _emailController.text,
                                   phone: "+90${_phoneController.text.trim()}",
+                                  birthDate: birthDateStr,
                                 );
 
                                 await viewModel.updateProfile(request);

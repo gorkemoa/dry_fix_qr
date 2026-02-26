@@ -5,6 +5,7 @@ class User {
   final String phone;
   final int tokenBalance;
   final bool isActive;
+  final String? birthDate;
 
   User({
     required this.id,
@@ -13,6 +14,7 @@ class User {
     required this.phone,
     required this.tokenBalance,
     required this.isActive,
+    this.birthDate,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class User {
       phone: json['phone'] as String? ?? '',
       tokenBalance: json['token_balance'] as int? ?? 0,
       isActive: json['is_active'] as bool? ?? false,
+      birthDate: json['birth_date'] as String?,
     );
   }
 
@@ -34,6 +37,7 @@ class User {
       'phone': phone,
       'token_balance': tokenBalance,
       'is_active': isActive,
+      'birth_date': birthDate,
     };
   }
 }
@@ -111,15 +115,22 @@ class UpdateProfileRequest {
   final String name;
   final String email;
   final String phone;
+  final String? birthDate;
 
   UpdateProfileRequest({
     required this.name,
     required this.email,
     required this.phone,
+    this.birthDate,
   });
 
   Map<String, dynamic> toJson() {
-    return {'name': name, 'email': email, 'phone': phone};
+    return {
+      'name': name,
+      'email': email,
+      'phone': phone,
+      if (birthDate != null) 'birth_date': birthDate,
+    };
   }
 }
 

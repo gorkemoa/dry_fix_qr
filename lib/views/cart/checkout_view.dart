@@ -107,26 +107,13 @@ class _CheckoutViewState extends State<CheckoutView> {
                         children: [
                           Expanded(
                             child: Text(
-                              "${item.name} x1", // Simplified, as cart logic is simple
+                              item.name, // Simplified, as cart logic is simple
                               style: TextStyle(fontSize: SizeTokens.f14),
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                "${item.price} ",
-                                style: TextStyle(
-                                  fontSize: SizeTokens.f14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              DpSymbol(
-                                size: SizeTokens.p24,
-                                color: AppColors.darkBlue,
-                              ),
-                            ],
-                          ),
+                         
                         ],
                       ),
                     ),
@@ -145,38 +132,21 @@ class _CheckoutViewState extends State<CheckoutView> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "${viewModel.cartTotalPrice.toStringAsFixed(2)} ",
-                                style: TextStyle(
-                                  fontSize: SizeTokens.f16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.blue,
-                                ),
-                              ),
-                              DpSymbol(
-                                size: SizeTokens.p24,
-                                color: AppColors.blue,
-                              ),
-                            ],
-                          ),
-                          if (viewModel.cartTotalTokenPrice > 0)
+                        
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
                                   "+ ${viewModel.cartTotalTokenPrice} ",
                                   style: TextStyle(
-                                    fontSize: SizeTokens.f12,
+                                    fontSize: SizeTokens.f20,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.darkBlue,
                                   ),
                                 ),
                                 DpSymbol(
-                                  size: SizeTokens.p20,
-                                  color: AppColors.darkBlue,
+                                  size: SizeTokens.p32,
+                                  color: AppColors.blue,
                                 ),
                               ],
                             ),

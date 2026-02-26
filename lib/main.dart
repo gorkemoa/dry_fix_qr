@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -203,6 +204,13 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: NavigationService.navigatorKey,
         title: 'DryUsta',
         theme: AppTheme.lightTheme,
+        locale: const Locale('tr', 'TR'),
+        supportedLocales: const [Locale('tr', 'TR'), Locale('en', 'US')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         builder: (context, child) {
           return GestureDetector(
             // Klavye kapanma kolaylığı (Dismiss keyboard on tap)

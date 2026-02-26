@@ -4,8 +4,9 @@ import '../core/network/api_result.dart';
 import '../services/product_service.dart';
 import '../models/product_model.dart';
 import '../core/utils/logger.dart';
-
 import '../services/order_service.dart';
+
+enum ProductSortOrder { none, priceAsc, priceDesc, tokenAsc, tokenDesc }
 
 class ProductViewModel extends ChangeNotifier {
   final ProductService _productService;
@@ -26,15 +27,41 @@ class ProductViewModel extends ChangeNotifier {
   // Search & Filters
   String _searchQuery = "";
   bool? _inStock;
+  ProductSortOrder _sortOrder = ProductSortOrder.none;
   Timer? _debounce;
 
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
   String? get errorMessage => _errorMessage;
-  List<ProductModel> get products => _products;
   bool get hasMore => _meta != null && _meta!.currentPage < _meta!.lastPage;
   String get searchQuery => _searchQuery;
   bool? get inStock => _inStock;
+  ProductSortOrder get sortOrder => _sortOrder;
+
+  List<ProductModel> get products {
+    final sorted = List<ProductModel>.from(_products);
+    switch (_sortOrder) {
+      case ProductSortOrder.priceAsc:
+        sorted.sort(
+          (a, b) => double.parse(a.price).compareTo(double.parse(b.price)),
+        );
+        break;
+      case ProductSortOrder.priceDesc:
+        sorted.sort(
+          (a, b) => double.parse(b.price).compareTo(double.parse(a.price)),
+        );
+        break;
+      case ProductSortOrder.tokenAsc:
+        sorted.sort((a, b) => a.tokenPrice.compareTo(b.tokenPrice));
+        break;
+      case ProductSortOrder.tokenDesc:
+        sorted.sort((a, b) => b.tokenPrice.compareTo(a.tokenPrice));
+        break;
+      case ProductSortOrder.none:
+        break;
+    }
+    return sorted;
+  }
 
   List<ProductModel> get cart => _cart;
   int get cartCount => _cart.length;
@@ -110,6 +137,12 @@ class ProductViewModel extends ChangeNotifier {
     if (_inStock == value) return;
     _inStock = value;
     fetchProducts();
+  }
+
+  void setSortOrder(ProductSortOrder order) {
+    if (_sortOrder == order) return;
+    _sortOrder = order;
+    notifyListeners();
   }
 
   // Cart Methods
