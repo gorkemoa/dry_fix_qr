@@ -31,6 +31,12 @@ class _ProductsViewState extends State<ProductsView> {
   }
 
   @override
+  void deactivate() {
+    context.read<ProductViewModel>().resetFilters();
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
     _searchController.dispose();
@@ -47,10 +53,8 @@ class _ProductsViewState extends State<ProductsView> {
   void _showSortBottomSheet(BuildContext context, ProductViewModel viewModel) {
     final options = [
       (ProductSortOrder.none, 'Varsayılan'),
-      (ProductSortOrder.priceAsc, 'Fiyat: Azdan Çoğa'),
-      (ProductSortOrder.priceDesc, 'Fiyat: Çoktan Aza'),
-      (ProductSortOrder.tokenAsc, 'Token: Azdan Çoğa'),
-      (ProductSortOrder.tokenDesc, 'Token: Çoktan Aza'),
+      (ProductSortOrder.tokenAsc, 'DryPara: Azdan Çoğa'),
+      (ProductSortOrder.tokenDesc, 'DryPara: Çoktan Aza'),
     ];
     showModalBottomSheet(
       context: context,
@@ -244,141 +248,167 @@ class _ProductsViewState extends State<ProductsView> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          // Search Bar + Sort
-          Container(
-            color: AppColors.darkBlue,
-            padding: EdgeInsets.fromLTRB(
-              SizeTokens.p16,
-              0,
-              SizeTokens.p16,
-              SizeTokens.p16,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: SizeTokens.p48,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(SizeTokens.r12),
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: SizeTokens.f14,
-                      ),
-                      cursorColor: Colors.white,
-                      onChanged: (v) =>
-                          context.read<ProductViewModel>().setSearchQuery(v),
-                      decoration: InputDecoration(
-                        hintText: 'Ürün ara...',
-                        hintStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
-                          fontSize: SizeTokens.f14,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search_rounded,
-                          color: Colors.white.withOpacity(0.7),
-                          size: SizeTokens.p20,
-                        ),
-                        suffixIcon: viewModel.searchQuery.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(
-                                  Icons.close_rounded,
-                                  color: Colors.white.withOpacity(0.7),
-                                  size: SizeTokens.p20,
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  context
-                                      .read<ProductViewModel>()
-                                      .setSearchQuery('');
-                                },
-                              )
-                            : null,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: SizeTokens.p12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: SizeTokens.p8),
-                GestureDetector(
-                  onTap: () => _showSortBottomSheet(context, viewModel),
-                  child: Container(
-                    width: SizeTokens.p48,
-                    height: SizeTokens.p48,
-                    decoration: BoxDecoration(
-                      color: viewModel.sortOrder != ProductSortOrder.none
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(SizeTokens.r12),
-                    ),
-                    child: Icon(
-                      Icons.sort_rounded,
-                      color: viewModel.sortOrder != ProductSortOrder.none
-                          ? AppColors.darkBlue
-                          : Colors.white,
-                      size: SizeTokens.p24,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      body: RefreshIndicator(
+        onRefresh: () => viewModel.refresh(),
+        color: AppColors.darkBlue,
+        child: CustomScrollView(
+          controller: _scrollController,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
           ),
-          Expanded(
-            child: viewModel.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.darkBlue),
-                  )
-                : RefreshIndicator(
-                    onRefresh: () => viewModel.refresh(),
-                    color: AppColors.darkBlue,
-                    child: GridView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.all(SizeTokens.p16),
-                      physics: const BouncingScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.65,
-                        crossAxisSpacing: SizeTokens.p16,
-                        mainAxisSpacing: SizeTokens.p16,
-                      ),
-                      itemCount:
-                          viewModel.products.length +
-                          (viewModel.hasMore ? 2 : 0),
-                      itemBuilder: (context, index) {
-                        if (index < viewModel.products.length) {
-                          return ProductItem(
-                            product: viewModel.products[index],
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDetailView(
-                                    product: viewModel.products[index],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.darkBlue,
+          slivers: [
+            // Search Bar + Sort (scrolls with content)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  SizeTokens.p16,
+                  SizeTokens.p16,
+                  SizeTokens.p16,
+                  SizeTokens.p8,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: SizeTokens.p48,
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(SizeTokens.r12),
+                          border: Border.all(
+                            color: AppColors.titleLight,
+                            width: 1.2,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(
+                            color: AppColors.darkBlue,
+                            fontSize: SizeTokens.f14,
+                          ),
+                          cursorColor: AppColors.darkBlue,
+                          onChanged: (v) =>
+                              context.read<ProductViewModel>().setSearchQuery(v),
+                          decoration: InputDecoration(
+                            hintText: 'Ürün ara...',
+                            hintStyle: TextStyle(
+                              color: AppColors.gray,
+                              fontSize: SizeTokens.f14,
                             ),
-                          );
-                        }
-                      },
+                            prefixIcon: Icon(
+                              Icons.search_rounded,
+                              color: AppColors.gray,
+                              size: SizeTokens.p20,
+                            ),
+                            suffixIcon: viewModel.searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: Icon(
+                                      Icons.close_rounded,
+                                      color: AppColors.gray,
+                                      size: SizeTokens.p20,
+                                    ),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      context
+                                          .read<ProductViewModel>()
+                                          .setSearchQuery('');
+                                    },
+                                  )
+                                : null,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: SizeTokens.p12,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
+                    SizedBox(width: SizeTokens.p8),
+                    GestureDetector(
+                      onTap: () => _showSortBottomSheet(context, viewModel),
+                      child: Container(
+                        width: SizeTokens.p48,
+                        height: SizeTokens.p48,
+                        decoration: BoxDecoration(
+                          color: viewModel.sortOrder != ProductSortOrder.none
+                              ? AppColors.darkBlue
+                              : AppColors.white,
+                          borderRadius: BorderRadius.circular(SizeTokens.r12),
+                          border: Border.all(
+                            color: viewModel.sortOrder != ProductSortOrder.none
+                                ? AppColors.darkBlue
+                                : AppColors.titleLight,
+                            width: 1.2,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.sort_rounded,
+                          color: viewModel.sortOrder != ProductSortOrder.none
+                              ? AppColors.white
+                              : AppColors.gray,
+                          size: SizeTokens.p24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Products
+            if (viewModel.isLoading)
+              const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.darkBlue),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  SizeTokens.p16,
+                  SizeTokens.p8,
+                  SizeTokens.p16,
+                  SizeTokens.p16,
+                ),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.65,
+                    crossAxisSpacing: SizeTokens.p16,
+                    mainAxisSpacing: SizeTokens.p16,
                   ),
-          ),
-        ],
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index < viewModel.products.length) {
+                        return ProductItem(
+                          product: viewModel.products[index],
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailView(
+                                  product: viewModel.products[index],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.darkBlue,
+                          ),
+                        );
+                      }
+                    },
+                    childCount:
+                        viewModel.products.length +
+                        (viewModel.hasMore ? 2 : 0),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

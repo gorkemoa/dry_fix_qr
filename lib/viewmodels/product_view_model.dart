@@ -145,6 +145,15 @@ class ProductViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetFilters() {
+    _debounce?.cancel();
+    _searchQuery = '';
+    _sortOrder = ProductSortOrder.none;
+    _inStock = null;
+    // No notifyListeners() — called during deactivate (build phase).
+    // initState will call fetchProducts() with clean state on next entry.
+  }
+
   // Cart Methods
   void addToCart(ProductModel product) {
     // For now, simpler cart: allow multiples of same product

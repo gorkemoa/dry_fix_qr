@@ -128,16 +128,6 @@ class _BannerCardState extends State<_BannerCard> {
     }
   }
 
-  String _formatTokenPrice(int price) {
-    final str = price.toString();
-    final buffer = StringBuffer();
-    final offset = str.length % 3;
-    for (int i = 0; i < str.length; i++) {
-      if (i > 0 && (i - offset) % 3 == 0) buffer.write('.');
-      buffer.write(str[i]);
-    }
-    return buffer.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,27 +277,7 @@ class _BannerCardState extends State<_BannerCard> {
                         ],
                       ),
                     ),
-                    if (banner.product != null) ...[
-                      SizedBox(width: SizeTokens.p8),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: SizeTokens.p10,
-                          vertical: SizeTokens.p6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.blue,
-                          borderRadius: BorderRadius.circular(SizeTokens.r12),
-                        ),
-                        child: Text(
-                          '${_formatTokenPrice(banner.product!.tokenPrice)} DP',
-                          style: TextStyle(
-                            fontSize: SizeTokens.f11,
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                  
                   ],
                 ),
               ),
