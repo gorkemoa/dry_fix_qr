@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../app/agreement_constants.dart';
 import '../../app/app_theme.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/widgets/dp_symbol.dart';
@@ -20,6 +22,11 @@ class CheckoutView extends StatefulWidget {
 class _CheckoutViewState extends State<CheckoutView> {
   final TextEditingController _noteController = TextEditingController();
   Address? _selectedAddress;
+
+  bool _isKvkkAccepted = false;
+  bool _isEkSozlesmeAccepted = false;
+
+  static const Color _brandBlue = Color(0xFF3B71F3);
 
   @override
   void initState() {
@@ -258,6 +265,155 @@ class _CheckoutViewState extends State<CheckoutView> {
                 ),
               ),
             ),
+
+            SizedBox(height: SizeTokens.p24),
+
+            // ── Zorunlu Sözleşme Onayları ──────────────────────────────────
+            Container(
+              padding: EdgeInsets.all(SizeTokens.p16),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(SizeTokens.r8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Zorunlu Onaylar",
+                    style: TextStyle(
+                      fontSize: SizeTokens.f14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkBlue,
+                    ),
+                  ),
+                  SizedBox(height: SizeTokens.p12),
+
+                  // KVKK Onayı
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Transform.scale(
+                        scale: 0.9,
+                        child: Checkbox(
+                          value: _isKvkkAccepted,
+                          onChanged: (val) =>
+                              setState(() => _isKvkkAccepted = val ?? false),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          side: const BorderSide(color: _brandBlue),
+                          activeColor: _brandBlue,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "KVKK Aydınlatma Metni",
+                                  style: const TextStyle(
+                                    color: _brandBlue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () =>
+                                        AgreementConstants.showKvkkDialog(
+                                            context),
+                                ),
+                                TextSpan(
+                                  text:
+                                      "'ni okudum, kişisel verilerimin işlenmesini onaylıyorum.",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.darkBlue.withOpacity(0.7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: SizeTokens.p8),
+
+                  // Ek Sözleşme Onayı
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Transform.scale(
+                        scale: 0.9,
+                        child: Checkbox(
+                          value: _isEkSozlesmeAccepted,
+                          onChanged: (val) => setState(
+                              () => _isEkSozlesmeAccepted = val ?? false),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          side: const BorderSide(color: _brandBlue),
+                          activeColor: _brandBlue,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Ek Sözleşme",
+                                  style: const TextStyle(
+                                    color: _brandBlue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () =>
+                                        AgreementConstants
+                                            .showEkSozlesmeDialog(context),
+                                ),
+                                TextSpan(
+                                  text: "'yi okudum ve kabul ediyorum.",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.darkBlue.withOpacity(0.7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  if (!_isKvkkAccepted || !_isEkSozlesmeAccepted)
+                    Padding(
+                      padding: EdgeInsets.only(top: SizeTokens.p8),
+                      child: Text(
+                        "Siparişi tamamlamak için her iki onayı da vermeniz gerekmektedir.",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -277,7 +433,10 @@ class _CheckoutViewState extends State<CheckoutView> {
           child: SizedBox(
             height: 50,
             child: ElevatedButton(
-              onPressed: viewModel.isLoading || _selectedAddress == null
+              onPressed: viewModel.isLoading ||
+                      _selectedAddress == null ||
+                      !_isKvkkAccepted ||
+                      !_isEkSozlesmeAccepted
                   ? null
                   : () async {
                       // Prepare data

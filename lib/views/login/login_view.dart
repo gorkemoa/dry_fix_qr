@@ -325,7 +325,7 @@ class _LoginViewState extends State<LoginView> {
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
           controller: _regPhoneController,
-          hint: "Phone No.",
+          hint: "Telefon Numarası",
           icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.done,

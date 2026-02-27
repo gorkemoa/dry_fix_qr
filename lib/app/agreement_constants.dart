@@ -2,6 +2,86 @@ import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
 class AgreementConstants {
+  // ──────────────────────────────────────────────
+  // KVKK Aydınlatma Metni
+  // ──────────────────────────────────────────────
+  static void showKvkkDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "KVKK Aydınlatma Metni",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Text(
+              kvkkAgreement,
+              style: const TextStyle(fontSize: 13, color: AppColors.darkBlue),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "Kapat",
+              style: TextStyle(
+                color: AppColors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  // ──────────────────────────────────────────────
+  // Ek Sözleşme
+  // ──────────────────────────────────────────────
+  static void showEkSozlesmeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Ek Sözleşme",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Text(
+              ekSozlesme,
+              style: const TextStyle(fontSize: 13, color: AppColors.darkBlue),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "Kapat",
+              style: TextStyle(
+                color: AppColors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
   static void showMembershipAgreementDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -94,5 +174,33 @@ Politikamızı ve kişisel bilgileri işleme şeklimizi muhtelif zamanlarda göz
 Kişisel Veri Sahipleri, sorularını, görüşlerini veya taleplerini yazılı olarak Info@Izersan.Com.Tr iletmelidir. Bu halde 30 gün içerisinde yazılı şekilde cevap verilecektir.
 
 İZERSAN YAPI MALZEMELERİ SAN. VE TİC. LTD. ŞTİ.
+""";
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // KVKK metni (avukattan gelecek nihai metin buraya eklenecek)
+  // ──────────────────────────────────────────────────────────────────────────
+  static const String kvkkAgreement = """
+KVKK Aydınlatma Metni
+
+Bu metin, avukattan alınacak nihai belgeye göre güncellenecektir.
+
+İZERSAN YAPI MALZEMELERİ SAN. VE TİC. LTD. ŞTİ. tarafından işlenen kişisel verilerinize ilişkin aydınlatma metnidir.
+
+Kişisel verileriniz, 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında işlenmekte olup sipariş işlemlerinin gerçekleştirilmesi amacıyla kullanılmaktadır.
+
+(Nihai metin avukattan gelen PDF dokümanına göre güncellenecektir.)
+""";
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Ek Sözleşme metni (avukattan gelecek nihai metin buraya eklenecek)
+  // ──────────────────────────────────────────────────────────────────────────
+  static const String ekSozlesme = """
+Ek Sözleşme
+
+Bu metin, avukattan alınacak nihai belgeye göre güncellenecektir.
+
+İşbu ek sözleşme, İZERSAN YAPI MALZEMELERİ SAN. VE TİC. LTD. ŞTİ. ile alıcı arasında, yapılan satın alma işlemine ilişkin hüküm ve koşulları düzenlemektedir.
+
+(Nihai metin avukattan gelen PDF dokümanına göre güncellenecektir.)
 """;
 }
