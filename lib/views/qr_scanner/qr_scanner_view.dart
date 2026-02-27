@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -59,8 +60,57 @@ class _QrScannerViewState extends State<QrScannerView>
     super.dispose();
   }
 
-  void _onDetect(BarcodeCapture capture) async {
-    if (!_isScanning) return;
+  Future<void> _pickFromGallery() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    setState(() => _isScanning = false);
+
+    final BarcodeCapture? capture =
+        await _controller.analyzeImage(image.path);
+
+    if (!mounted) return;
+
+    final String? code = capture?.barcodes.firstOrNull?.rawValue;
+
+    if (code == null) {
+      setState(() => _isScanning = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Görselde QR kod bulunamadı.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    final viewModel = context.read<QrViewModel>();
+    final success = await viewModel.verifyQr(code);
+
+    if (!mounted) return;
+
+    if (success && viewModel.lastScanResult != null) {
+      context.read<HomeViewModel>().init();
+      context.read<HistoryViewModel>().fetchHistory();
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => QrSuccessView(response: viewModel.lastScanResult!),
+        ),
+      );
+      if (mounted) {
+        setState(() {
+          _isScanning = true;
+          viewModel.reset();
+        });
+      }
+    } else {
+      _showResultDialog(context, false, viewModel);
+    }
+  }
+
+  void _onDetect(BarcodeCapture capture) async {    if (!_isScanning) return;
 
     final List<Barcode> barcodes = capture.barcodes;
     if (barcodes.isNotEmpty) {
@@ -267,7 +317,7 @@ class _QrScannerViewState extends State<QrScannerView>
                       _CircleActionButton(
                         icon: Icons.image_outlined,
                         size: 56,
-                        onPressed: () {},
+                        onPressed: _pickFromGallery,
                       ),
                       SizedBox(height: SizeTokens.p24),
                       // Version Text
