@@ -1,4 +1,4 @@
-package com.izersan.dryfix
+package com.smartmetrics.dryfixqr
 
 import io.flutter.app.FlutterApplication
 import android.content.Context
