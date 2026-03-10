@@ -7,7 +7,7 @@ import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../app/agreement_constants.dart';
+import '../common/pdf_viewer_screen.dart';
 import 'package:flutter/gestures.dart';
 
 class RegisterView extends StatefulWidget {
@@ -161,8 +161,15 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              AgreementConstants.showMembershipAgreementDialog(
+                              Navigator.push(
                                 context,
+                                MaterialPageRoute(
+                                  builder: (_) => const PdfViewerScreen(
+                                    assetPath:
+                                        'assets/Üyelik _ Kullanım Sözleşmesi.pdf',
+                                    title: 'Üyelik & Kullanım Sözleşmesi',
+                                  ),
+                                ),
                               );
                             },
                         ),

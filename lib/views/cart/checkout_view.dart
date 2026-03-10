@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../app/agreement_constants.dart';
 import '../../app/app_theme.dart';
+import '../common/pdf_viewer_screen.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/widgets/dp_symbol.dart';
 import '../../viewmodels/product_view_model.dart';
@@ -324,9 +324,17 @@ class _CheckoutViewState extends State<CheckoutView> {
                                     decoration: TextDecoration.underline,
                                   ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () =>
-                                        AgreementConstants.showKvkkDialog(
-                                            context),
+                                    ..onTap = () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const PdfViewerScreen(
+                                              assetPath:
+                                                  'assets/KVKK Açık Rıza Metni.pdf',
+                                              title: 'KVKK Açık Rıza Metni',
+                                            ),
+                                          ),
+                                        ),
                                 ),
                                 TextSpan(
                                   text:
@@ -381,9 +389,18 @@ class _CheckoutViewState extends State<CheckoutView> {
                                     decoration: TextDecoration.underline,
                                   ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () =>
-                                        AgreementConstants
-                                            .showEkSozlesmeDialog(context),
+                                    ..onTap = () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const PdfViewerScreen(
+                                              assetPath:
+                                                  'assets/Üyelik _ Kullanım Sözleşmesi.pdf',
+                                              title:
+                                                  'Üyelik & Kullanım Sözleşmesi',
+                                            ),
+                                          ),
+                                        ),
                                 ),
                                 TextSpan(
                                   text: "'yi okudum ve kabul ediyorum.",

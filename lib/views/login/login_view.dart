@@ -8,7 +8,7 @@ import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../home/home_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../app/agreement_constants.dart';
+import '../common/pdf_viewer_screen.dart';
 import 'package:flutter/gestures.dart';
 
 class LoginView extends StatefulWidget {
@@ -35,6 +35,7 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _regPassConfirmController =
       TextEditingController();
   bool _isAccepted = false;
+  bool _isKvkkAccepted = false;
 
   static const Color brandBlue = Color(0xFF3B71F3);
 
@@ -107,6 +108,7 @@ class _LoginViewState extends State<LoginView> {
                                     boxShadow: _isLogin
                                         ? [
                                             BoxShadow(
+                                              // ignore: deprecated_member_use
                                               color: Colors.black.withOpacity(
                                                 0.05,
                                               ),
@@ -147,6 +149,7 @@ class _LoginViewState extends State<LoginView> {
                                     boxShadow: !_isLogin
                                         ? [
                                             BoxShadow(
+                                              // ignore: deprecated_member_use
                                               color: Colors.black.withOpacity(
                                                 0.05,
                                               ),
@@ -257,6 +260,7 @@ class _LoginViewState extends State<LoginView> {
                   "Beni Hatırla",
                   style: TextStyle(
                     fontSize: SizeTokens.f12,
+                    // ignore: deprecated_member_use
                     color: AppColors.darkBlue.withOpacity(0.7),
                     fontWeight: FontWeight.w500,
                   ),
@@ -331,6 +335,7 @@ class _LoginViewState extends State<LoginView> {
           textInputAction: TextInputAction.done,
         ),
         SizedBox(height: SizeTokens.p16),
+        // Üyelik & Kullanım Sözleşmesi
         Row(
           children: [
             Transform.scale(
@@ -352,10 +357,9 @@ class _LoginViewState extends State<LoginView> {
             Expanded(
               child: Text.rich(
                 TextSpan(
-                  text: "",
                   children: [
                     TextSpan(
-                      text: "Üyelik Sözleşmesi",
+                      text: "Üyelik & Kullanım Sözleşmesi",
                       style: const TextStyle(
                         color: brandBlue,
                         fontWeight: FontWeight.bold,
@@ -364,8 +368,15 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          AgreementConstants.showMembershipAgreementDialog(
+                          Navigator.push(
                             context,
+                            MaterialPageRoute(
+                              builder: (_) => const PdfViewerScreen(
+                                assetPath:
+                                    'assets/Üyelik _ Kullanım Sözleşmesi.pdf',
+                                title: 'Üyelik & Kullanım Sözleşmesi',
+                              ),
+                            ),
                           );
                         },
                     ),
@@ -373,6 +384,66 @@ class _LoginViewState extends State<LoginView> {
                       text: " okudum ve kabul ediyorum.",
                       style: TextStyle(
                         fontSize: 12,
+                        // ignore: deprecated_member_use
+                        color: AppColors.darkBlue.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: SizeTokens.p8),
+        // KVKK Açık Rıza Metni
+        Row(
+          children: [
+            Transform.scale(
+              scale: 0.9,
+              child: Checkbox(
+                value: _isKvkkAccepted,
+                onChanged: (val) {
+                  setState(() {
+                    _isKvkkAccepted = val ?? false;
+                  });
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                side: const BorderSide(color: brandBlue),
+                activeColor: brandBlue,
+              ),
+            ),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "KVKK Açık Rıza Metni",
+                      style: const TextStyle(
+                        color: brandBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const PdfViewerScreen(
+                                assetPath: 'assets/KVKK Açık Rıza Metni.pdf',
+                                title: 'KVKK Açık Rıza Metni',
+                              ),
+                            ),
+                          );
+                        },
+                    ),
+                    TextSpan(
+                      text: " okudum ve kabul ediyorum.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        // ignore: deprecated_member_use
                         color: AppColors.darkBlue.withOpacity(0.7),
                       ),
                     ),
@@ -390,7 +461,17 @@ class _LoginViewState extends State<LoginView> {
             if (!_isAccepted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Lütfen üyelik sözleşmesini onaylayın."),
+                  content: Text(
+                    "Lütfen Üyelik & Kullanım Sözleşmesi'ni onaylayın.",
+                  ),
+                ),
+              );
+              return;
+            }
+            if (!_isKvkkAccepted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Lütfen KVKK Açık Rıza Metni'ni onaylayın."),
                 ),
               );
               return;
@@ -435,6 +516,7 @@ class _LoginViewState extends State<LoginView> {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(
+          // ignore: deprecated_member_use
           color: AppColors.gray.withOpacity(0.6),
           fontSize: SizeTokens.f14,
         ),
@@ -447,6 +529,7 @@ class _LoginViewState extends State<LoginView> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SizeTokens.r32),
+          // ignore: deprecated_member_use
           borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
