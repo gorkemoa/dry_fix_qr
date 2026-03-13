@@ -79,7 +79,7 @@ class ProductModel {
   final int id;
   final int categoryId;
   final String name;
-  final String description;
+  final String? description;
   final String image;
   final String price;
   final int tokenPrice;
@@ -95,7 +95,7 @@ class ProductModel {
     required this.id,
     required this.categoryId,
     required this.name,
-    required this.description,
+    this.description,
     required this.image,
     required this.price,
     required this.tokenPrice,
@@ -116,7 +116,7 @@ class ProductModel {
       id: json['id'] as int,
       categoryId: json['category_id'] as int,
       name: json['name'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String?,
       image: mainImage,
       price: json['price'] as String,
       tokenPrice: json['token_price'] as int,

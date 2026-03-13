@@ -128,8 +128,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 SizedBox(height: SizeTokens.p12),
 
                 // Description Text
+                if (widget.product.description != null)
                 Text(
-                  widget.product.description,
+                  widget.product.description!,
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: SizeTokens.f14,
