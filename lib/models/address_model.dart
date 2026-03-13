@@ -37,7 +37,7 @@ class Address {
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      id: json['id'] as int? ?? 0,
+      id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
       title: json['title'] as String? ?? '',
       fullName: json['full_name'] as String? ?? '',
       phone: json['phone'] as String? ?? '',

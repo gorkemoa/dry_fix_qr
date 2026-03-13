@@ -7,9 +7,9 @@ class City {
 
   factory City.fromJson(Map<String, dynamic> json) {
     return City(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      plate: json['plate'] as int,
+      id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      plate: int.tryParse(json['plate']?.toString() ?? '') ?? 0,
     );
   }
 
@@ -26,8 +26,8 @@ class CityListResponse {
 
   factory CityListResponse.fromJson(Map<String, dynamic> json) {
     return CityListResponse(
-      success: json['success'] as bool,
-      data: (json['data'] as List<dynamic>)
+      success: json['success'] as bool? ?? false,
+      data: (json['data'] as List? ?? [])
           .map((e) => City.fromJson(e as Map<String, dynamic>))
           .toList(),
     );

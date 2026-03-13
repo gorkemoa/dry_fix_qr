@@ -7,9 +7,9 @@ class District {
 
   factory District.fromJson(Map<String, dynamic> json) {
     return District(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      cityId: json['city_id'] as int,
+      id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      name: json['name'] as String? ?? '',
+      cityId: int.tryParse(json['city_id']?.toString() ?? '') ?? 0,
     );
   }
 
@@ -26,8 +26,8 @@ class DistrictListResponse {
 
   factory DistrictListResponse.fromJson(Map<String, dynamic> json) {
     return DistrictListResponse(
-      success: json['success'] as bool,
-      data: (json['data'] as List<dynamic>)
+      success: json['success'] as bool? ?? false,
+      data: (json['data'] as List? ?? [])
           .map((e) => District.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
