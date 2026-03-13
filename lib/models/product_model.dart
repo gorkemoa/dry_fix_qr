@@ -47,8 +47,37 @@ class ProductResponse {
   }
 }
 
+class ProductCategory {
+  final int id;
+  final String name;
+  final bool isActive;
+
+  ProductCategory({
+    required this.id,
+    required this.name,
+    required this.isActive,
+  });
+
+  factory ProductCategory.fromJson(Map<String, dynamic> json) {
+    return ProductCategory(
+      id: json['id'] as int,
+      name: json['name'] as String,
+      isActive: json['is_active'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'is_active': isActive,
+    };
+  }
+}
+
 class ProductModel {
   final int id;
+  final int categoryId;
   final String name;
   final String description;
   final String image;
@@ -57,12 +86,14 @@ class ProductModel {
   final int stock;
   final bool isActive;
   final bool canBuy;
+  final ProductCategory? category;
   final String createdAt;
   final String updatedAt;
   final List<String> images;
 
   ProductModel({
     required this.id,
+    required this.categoryId,
     required this.name,
     required this.description,
     required this.image,
@@ -71,6 +102,7 @@ class ProductModel {
     required this.stock,
     required this.isActive,
     required this.canBuy,
+    this.category,
     required this.createdAt,
     required this.updatedAt,
     List<String>? images,
@@ -82,6 +114,7 @@ class ProductModel {
 
     return ProductModel(
       id: json['id'] as int,
+      categoryId: json['category_id'] as int,
       name: json['name'] as String,
       description: json['description'] as String,
       image: mainImage,
@@ -90,6 +123,9 @@ class ProductModel {
       stock: json['stock'] as int,
       isActive: json['is_active'] as bool,
       canBuy: json['can_buy'] as bool,
+      category: json['category'] != null
+          ? ProductCategory.fromJson(json['category'] as Map<String, dynamic>)
+          : null,
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       images: jsonImages != null
@@ -105,6 +141,7 @@ class ProductModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'category_id': categoryId,
       'name': name,
       'description': description,
       'image': image,
@@ -113,6 +150,7 @@ class ProductModel {
       'stock': stock,
       'is_active': isActive,
       'can_buy': canBuy,
+      'category': category?.toJson(),
       'created_at': createdAt,
       'updated_at': updatedAt,
       'images': images,

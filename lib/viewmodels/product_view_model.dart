@@ -28,6 +28,7 @@ class ProductViewModel extends ChangeNotifier {
   String _searchQuery = "";
   bool? _inStock;
   ProductSortOrder _sortOrder = ProductSortOrder.none;
+  int? _selectedCategoryId;
   Timer? _debounce;
 
   bool get isLoading => _isLoading;
@@ -37,6 +38,18 @@ class ProductViewModel extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   bool? get inStock => _inStock;
   ProductSortOrder get sortOrder => _sortOrder;
+  int? get selectedCategoryId => _selectedCategoryId;
+
+  List<ProductCategory> get availableCategories {
+    final seen = <int>{};
+    final categories = <ProductCategory>[];
+    for (final p in _products) {
+      if (p.category != null && seen.add(p.category!.id)) {
+        categories.add(p.category!);
+      }
+    }
+    return categories;
+  }
 
   List<ProductModel> get products {
     final sorted = List<ProductModel>.from(_products);
@@ -81,6 +94,7 @@ class ProductViewModel extends ChangeNotifier {
       page: 1,
       query: _searchQuery,
       inStock: _inStock,
+      categoryId: _selectedCategoryId,
     );
 
     if (result is Success<ProductResponse>) {
@@ -107,6 +121,7 @@ class ProductViewModel extends ChangeNotifier {
       page: nextPage,
       query: _searchQuery,
       inStock: _inStock,
+      categoryId: _selectedCategoryId,
     );
 
     if (result is Success<ProductResponse>) {
@@ -145,11 +160,18 @@ class ProductViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCategory(int? categoryId) {
+    if (_selectedCategoryId == categoryId) return;
+    _selectedCategoryId = categoryId;
+    fetchProducts();
+  }
+
   void resetFilters() {
     _debounce?.cancel();
     _searchQuery = '';
     _sortOrder = ProductSortOrder.none;
     _inStock = null;
+    _selectedCategoryId = null;
     // No notifyListeners() — called during deactivate (build phase).
     // initState will call fetchProducts() with clean state on next entry.
   }

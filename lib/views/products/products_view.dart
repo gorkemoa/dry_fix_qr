@@ -355,6 +355,44 @@ class _ProductsViewState extends State<ProductsView> {
               ),
             ),
 
+            // Category Filter Chips
+            if (viewModel.availableCategories.isNotEmpty)
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: SizeTokens.p40,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: SizeTokens.p16),
+                    itemCount: viewModel.availableCategories.length + 1,
+                    separatorBuilder: (_, __) =>
+                        SizedBox(width: SizeTokens.p8),
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        final isSelected =
+                            viewModel.selectedCategoryId == null;
+                        return _CategoryChip(
+                          label: 'Tümü',
+                          isSelected: isSelected,
+                          onTap: () =>
+                              context.read<ProductViewModel>().setCategory(null),
+                        );
+                      }
+                      final category =
+                          viewModel.availableCategories[index - 1];
+                      final isSelected =
+                          viewModel.selectedCategoryId == category.id;
+                      return _CategoryChip(
+                        label: category.name,
+                        isSelected: isSelected,
+                        onTap: () => context
+                            .read<ProductViewModel>()
+                            .setCategory(category.id),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
             // Products
             if (viewModel.isLoading)
               const SliverFillRemaining(
@@ -408,6 +446,48 @@ class _ProductsViewState extends State<ProductsView> {
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _CategoryChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: SizeTokens.p16),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.darkBlue : AppColors.white,
+          borderRadius: BorderRadius.circular(SizeTokens.r20),
+          border: Border.all(
+            color: isSelected ? AppColors.darkBlue : AppColors.titleLight,
+            width: 1.2,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: SizeTokens.f13,
+              fontWeight:
+                  isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? AppColors.white : AppColors.gray,
+            ),
+          ),
         ),
       ),
     );

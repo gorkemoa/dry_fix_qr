@@ -14,6 +14,7 @@ class ProductService {
     int perPage = 20,
     String? query,
     bool? inStock,
+    int? categoryId,
   }) async {
     try {
       final Map<String, dynamic> queryParameters = {
@@ -27,6 +28,10 @@ class ProductService {
 
       if (inStock != null) {
         queryParameters['in_stock'] = inStock ? 1 : 0;
+      }
+
+      if (categoryId != null) {
+        queryParameters['category_id'] = categoryId;
       }
 
       final response = await _apiClient.get(

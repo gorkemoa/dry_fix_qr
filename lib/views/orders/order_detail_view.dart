@@ -244,6 +244,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
             builder: (context) => ProductDetailView(
               product: ProductModel(
                 id: item.product.id,
+                categoryId: 0, // Not in OrderProductModel
                 name: item.product.name,
                 description: "", // Not in OrderProductModel
                 image: item.product.image,

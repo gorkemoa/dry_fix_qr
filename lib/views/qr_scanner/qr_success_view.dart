@@ -123,6 +123,7 @@ class QrSuccessView extends StatelessWidget {
                                 final product = response.product!;
                                 final productModel = ProductModel(
                                   id: product.id,
+                                  categoryId: 0, // Not in QrVerifyProduct
                                   name: product.name,
                                   description: '', // Missing in verify detail
                                   image: product.image,
