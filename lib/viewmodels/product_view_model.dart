@@ -205,8 +205,9 @@ class ProductViewModel extends ChangeNotifier {
   Future<void> refresh() => fetchProducts(isRefresh: true);
 
   Future<bool> completeOrder({
-    required dynamic address, // Accepts Address model
+    required dynamic address,
     String? notes,
+    Map<String, dynamic>? billing,
   }) async {
     if (_cart.isEmpty) return false;
 
@@ -237,6 +238,7 @@ class ProductViewModel extends ChangeNotifier {
       "items": itemsPayload,
       "address": addressPayload,
       "notes": notes,
+      if (billing != null) "billing": billing,
     };
 
     final result = await _orderService.createOrder(payload);

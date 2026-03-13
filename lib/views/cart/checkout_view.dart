@@ -26,6 +26,13 @@ class _CheckoutViewState extends State<CheckoutView> {
   bool _isKvkkAccepted = false;
   bool _isEkSozlesmeAccepted = false;
 
+  // Billing
+  final TextEditingController _companyTitleController = TextEditingController();
+  final TextEditingController _taxOfficeController = TextEditingController();
+  final TextEditingController _taxNumberController = TextEditingController();
+  final TextEditingController _companyAddressController = TextEditingController();
+  final TextEditingController _companyEmailController = TextEditingController();
+
   static const Color _brandBlue = Color(0xFF3B71F3);
 
   @override
@@ -44,20 +51,35 @@ class _CheckoutViewState extends State<CheckoutView> {
                     .first, // Hacky: assumes list might not be empty, handles later
         );
         if (addressViewModel.addresses.isNotEmpty) {
+          final addr = addressViewModel.addresses.firstWhere(
+            (element) => element.isDefault,
+            orElse: () => addressViewModel.addresses.first,
+          );
           setState(() {
-            _selectedAddress = addressViewModel.addresses.firstWhere(
-              (element) => element.isDefault,
-              orElse: () => addressViewModel.addresses.first,
-            );
+            _selectedAddress = addr;
+            _fillBillingFromAddress(addr);
           });
         }
       });
     });
   }
 
+  void _fillBillingFromAddress(Address addr) {
+    _companyTitleController.text = addr.companyTitle ?? '';
+    _taxOfficeController.text = addr.taxOffice ?? '';
+    _taxNumberController.text = addr.taxNumber ?? '';
+    _companyAddressController.text = addr.companyAddress ?? '';
+    _companyEmailController.text = addr.companyEmail ?? '';
+  }
+
   @override
   void dispose() {
     _noteController.dispose();
+    _companyTitleController.dispose();
+    _taxOfficeController.dispose();
+    _taxNumberController.dispose();
+    _companyAddressController.dispose();
+    _companyEmailController.dispose();
     super.dispose();
   }
 
@@ -229,12 +251,71 @@ class _CheckoutViewState extends State<CheckoutView> {
                       onChanged: (Address? value) {
                         setState(() {
                           _selectedAddress = value;
+                          if (value != null) _fillBillingFromAddress(value);
                         });
                       },
                     );
                   }).toList(),
                 ),
               ),
+
+            SizedBox(height: SizeTokens.p24),
+
+            // ── Fatura Bilgileri ─────────────────────────────────────────
+            Text(
+              "Fatura Bilgileri",
+              style: TextStyle(
+                fontSize: SizeTokens.f16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.darkBlue,
+              ),
+            ),
+            SizedBox(height: SizeTokens.p8),
+            Container(
+              padding: EdgeInsets.all(SizeTokens.p16),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(SizeTokens.r8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _BillingField(
+                    label: "Firma Ünvanı",
+                    controller: _companyTitleController,
+                    hint: "Firma unvanınızı giriniz",
+                  ),
+                  SizedBox(height: SizeTokens.p10),
+                  _BillingField(
+                    label: "Vergi Dairesi",
+                    controller: _taxOfficeController,
+                    hint: "Vergi dairesi adı",
+                  ),
+                  SizedBox(height: SizeTokens.p10),
+                  _BillingField(
+                    label: "Vergi No",
+                    controller: _taxNumberController,
+                    hint: "Vergi numarası",
+                    keyboardType: TextInputType.number,
+                  ),
+                  SizedBox(height: SizeTokens.p10),
+                  _BillingField(
+                    label: "Fatura Adresi",
+                    controller: _companyAddressController,
+                    hint: "Fatura adresi",
+                    maxLines: 2,
+                  ),
+                  SizedBox(height: SizeTokens.p10),
+                  _BillingField(
+                    label: "Fatura E-posta",
+                    controller: _companyEmailController,
+                    hint: "fatura@firma.com",
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ],
+              ),
+            ),
 
             SizedBox(height: SizeTokens.p24),
 
@@ -463,9 +544,18 @@ class _CheckoutViewState extends State<CheckoutView> {
                       final orderedItems = List<ProductModel>.from(
                         viewModel.cart,
                       );
+                      final Map<String, dynamic> billingPayload = {
+                        "company_title": _companyTitleController.text.trim(),
+                        "tax_office": _taxOfficeController.text.trim(),
+                        "tax_number": _taxNumberController.text.trim(),
+                        "company_address": _companyAddressController.text.trim(),
+                        "company_email": _companyEmailController.text.trim(),
+                      };
+
                       final success = await viewModel.completeOrder(
                         address: address,
                         notes: notes,
+                        billing: billingPayload,
                       );
 
                       if (!context.mounted) return;
@@ -517,6 +607,71 @@ class _CheckoutViewState extends State<CheckoutView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _BillingField extends StatelessWidget {
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final TextInputType keyboardType;
+  final int maxLines;
+
+  const _BillingField({
+    required this.label,
+    required this.hint,
+    required this.controller,
+    this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: SizeTokens.f13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.darkBlue,
+          ),
+        ),
+        SizedBox(height: SizeTokens.p4),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          style: TextStyle(fontSize: SizeTokens.f14),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              fontSize: SizeTokens.f13,
+              color: Colors.grey.shade400,
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: SizeTokens.p12,
+              vertical: SizeTokens.p10,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(SizeTokens.r8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(SizeTokens.r8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(SizeTokens.r8),
+              borderSide: const BorderSide(color: Color(0xFF3B71F3)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
