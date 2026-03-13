@@ -10,6 +10,7 @@ import '../home/home_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../common/pdf_viewer_screen.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -329,10 +330,18 @@ class _LoginViewState extends State<LoginView> {
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
           controller: _regPhoneController,
-          hint: "Telefon Numarası",
+          hint: "(5xx) xxx xx xx",
           icon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.done,
+          prefixText: '+90 ',
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            TextInputFormatter.withFunction((oldValue, newValue) {
+              if (newValue.text.startsWith('0')) return oldValue;
+              return newValue;
+            }),
+          ],
         ),
         SizedBox(height: SizeTokens.p16),
         // Üyelik & Kullanım Sözleşmesi
@@ -479,7 +488,7 @@ class _LoginViewState extends State<LoginView> {
             final request = RegisterRequest(
               name: _regNameController.text,
               email: _regEmailController.text,
-              phone: _regPhoneController.text,
+              phone: '+90${_regPhoneController.text}',
               password: _regPassController.text,
               passwordConfirmation: _regPassConfirmController.text,
             );
@@ -506,6 +515,8 @@ class _LoginViewState extends State<LoginView> {
     TextInputType keyboardType = TextInputType.text,
     TextCapitalization textCapitalization = TextCapitalization.none,
     TextInputAction? textInputAction,
+    String? prefixText,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextField(
       controller: controller,
@@ -513,14 +524,24 @@ class _LoginViewState extends State<LoginView> {
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.always,
         hintText: hint,
         hintStyle: TextStyle(
           // ignore: deprecated_member_use
-          color: AppColors.gray.withOpacity(0.6),
+          color: AppColors.darkBlue.withOpacity(0.5),
           fontSize: SizeTokens.f14,
         ),
         prefixIcon: Icon(icon, color: brandBlue),
+        prefixText: prefixText,
+        prefixStyle: prefixText != null
+            ? TextStyle(
+                color: brandBlue,
+                fontWeight: FontWeight.bold,
+                fontSize: SizeTokens.f14,
+              )
+            : null,
         filled: true,
         fillColor: AppColors.white,
         contentPadding: EdgeInsets.symmetric(
@@ -530,7 +551,7 @@ class _LoginViewState extends State<LoginView> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SizeTokens.r32),
           // ignore: deprecated_member_use
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+          borderSide: BorderSide(color: AppColors.darkBlue.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SizeTokens.r32),
