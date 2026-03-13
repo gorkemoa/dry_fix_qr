@@ -13,6 +13,7 @@ import 'edit_profile_view.dart';
 import 'update_password_view.dart';
 import 'addresses_view.dart';
 import 'add_address_view.dart';
+import 'edit_billing_info_view.dart';
 import 'support_list_view.dart';
 import '../login/login_view.dart';
 
@@ -634,7 +635,7 @@ class _ProfileViewState extends State<ProfileView> {
                 Navigator.pop(context);
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => AddAddressView(address: address),
+                    builder: (_) => EditBillingInfoView(address: address),
                   ),
                 );
               },
