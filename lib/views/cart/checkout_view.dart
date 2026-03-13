@@ -1,14 +1,13 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
-import '../common/pdf_viewer_screen.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/widgets/dp_symbol.dart';
 import '../../viewmodels/product_view_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import '../../models/address_model.dart';
 import '../profile/add_address_view.dart';
+import '../profile/edit_billing_info_view.dart';
 import '../orders/order_success_view.dart';
 import '../../models/product_model.dart';
 
@@ -23,17 +22,12 @@ class _CheckoutViewState extends State<CheckoutView> {
   final TextEditingController _noteController = TextEditingController();
   Address? _selectedAddress;
 
-  bool _isKvkkAccepted = false;
-  bool _isEkSozlesmeAccepted = false;
-
   // Billing
   final TextEditingController _companyTitleController = TextEditingController();
   final TextEditingController _taxOfficeController = TextEditingController();
   final TextEditingController _taxNumberController = TextEditingController();
   final TextEditingController _companyAddressController = TextEditingController();
   final TextEditingController _companyEmailController = TextEditingController();
-
-  static const Color _brandBlue = Color(0xFF3B71F3);
 
   @override
   void initState() {
@@ -70,6 +64,28 @@ class _CheckoutViewState extends State<CheckoutView> {
     _taxNumberController.text = addr.taxNumber ?? '';
     _companyAddressController.text = addr.companyAddress ?? '';
     _companyEmailController.text = addr.companyEmail ?? '';
+  }
+
+  void _showBillingEditDialog(BuildContext context) {
+    if (_selectedAddress == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditBillingInfoView(address: _selectedAddress!),
+      ),
+    ).then((_) {
+      final addressViewModel = context.read<AddressViewModel>();
+      addressViewModel.fetchAddresses().then((_) {
+        final updated = addressViewModel.addresses.firstWhere(
+          (a) => a.id == _selectedAddress!.id,
+          orElse: () => _selectedAddress!,
+        );
+        setState(() {
+          _selectedAddress = updated;
+          _fillBillingFromAddress(updated);
+        });
+      });
+    });
   }
 
   @override
@@ -262,58 +278,61 @@ class _CheckoutViewState extends State<CheckoutView> {
             SizedBox(height: SizeTokens.p24),
 
             // ── Fatura Bilgileri ─────────────────────────────────────────
-            Text(
-              "Fatura Bilgileri",
-              style: TextStyle(
-                fontSize: SizeTokens.f16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.darkBlue,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Fatura Bilgileri",
+                  style: TextStyle(
+                    fontSize: SizeTokens.f16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkBlue,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => _showBillingEditDialog(context),
+                  child: Text(
+                    "Düzenle",
+                    style: TextStyle(color: AppColors.blue),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: SizeTokens.p8),
             Container(
-              padding: EdgeInsets.all(SizeTokens.p16),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(SizeTokens.r8),
                 border: Border.all(color: Colors.grey.shade200),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _BillingField(
-                    label: "Firma Ünvanı",
-                    controller: _companyTitleController,
-                    hint: "Firma unvanınızı giriniz",
-                  ),
-                  SizedBox(height: SizeTokens.p10),
-                  _BillingField(
-                    label: "Vergi Dairesi",
-                    controller: _taxOfficeController,
-                    hint: "Vergi dairesi adı",
-                  ),
-                  SizedBox(height: SizeTokens.p10),
-                  _BillingField(
-                    label: "Vergi No",
-                    controller: _taxNumberController,
-                    hint: "Vergi numarası",
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: SizeTokens.p10),
-                  _BillingField(
-                    label: "Fatura Adresi",
-                    controller: _companyAddressController,
-                    hint: "Fatura adresi",
-                    maxLines: 2,
-                  ),
-                  SizedBox(height: SizeTokens.p10),
-                  _BillingField(
-                    label: "Fatura E-posta",
-                    controller: _companyEmailController,
-                    hint: "fatura@firma.com",
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                ],
+              child: Padding(
+                padding: EdgeInsets.all(SizeTokens.p16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _companyTitleController.text.isNotEmpty
+                          ? _companyTitleController.text
+                          : "Firma bilgisi girilmemiş",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    if (_taxNumberController.text.isNotEmpty)
+                      Text(
+                        "${_taxOfficeController.text} / ${_taxNumberController.text}",
+                        style: TextStyle(
+                          fontSize: SizeTokens.f13,
+                          color: AppColors.gray,
+                        ),
+                      ),
+                    if (_companyAddressController.text.isNotEmpty)
+                      Text(
+                        _companyAddressController.text,
+                        style: TextStyle(
+                          fontSize: SizeTokens.f13,
+                          color: AppColors.gray,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
 
@@ -348,170 +367,6 @@ class _CheckoutViewState extends State<CheckoutView> {
             ),
 
             SizedBox(height: SizeTokens.p24),
-
-            // ── Zorunlu Sözleşme Onayları ──────────────────────────────────
-            Container(
-              padding: EdgeInsets.all(SizeTokens.p16),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(SizeTokens.r8),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Zorunlu Onaylar",
-                    style: TextStyle(
-                      fontSize: SizeTokens.f14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.darkBlue,
-                    ),
-                  ),
-                  SizedBox(height: SizeTokens.p12),
-
-                  // KVKK Onayı
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Transform.scale(
-                        scale: 0.9,
-                        child: Checkbox(
-                          value: _isKvkkAccepted,
-                          onChanged: (val) =>
-                              setState(() => _isKvkkAccepted = val ?? false),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          side: const BorderSide(color: _brandBlue),
-                          activeColor: _brandBlue,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "KVKK Aydınlatma Metni",
-                                  style: const TextStyle(
-                                    color: _brandBlue,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const PdfViewerScreen(
-                                              assetPath:
-                                                  'assets/KVKK Açık Rıza Metni.pdf',
-                                              title: 'KVKK Açık Rıza Metni',
-                                            ),
-                                          ),
-                                        ),
-                                ),
-                                TextSpan(
-                                  text:
-                                      "'ni okudum, kişisel verilerimin işlenmesini onaylıyorum.",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.darkBlue.withOpacity(0.7),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: SizeTokens.p8),
-
-                  // Ek Sözleşme Onayı
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Transform.scale(
-                        scale: 0.9,
-                        child: Checkbox(
-                          value: _isEkSozlesmeAccepted,
-                          onChanged: (val) => setState(
-                              () => _isEkSozlesmeAccepted = val ?? false),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          side: const BorderSide(color: _brandBlue),
-                          activeColor: _brandBlue,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Ek Sözleşme",
-                                  style: const TextStyle(
-                                    color: _brandBlue,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const PdfViewerScreen(
-                                              assetPath:
-                                                  'assets/Üyelik _ Kullanım Sözleşmesi.pdf',
-                                              title:
-                                                  'Üyelik & Kullanım Sözleşmesi',
-                                            ),
-                                          ),
-                                        ),
-                                ),
-                                TextSpan(
-                                  text: "'yi okudum ve kabul ediyorum.",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.darkBlue.withOpacity(0.7),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  if (!_isKvkkAccepted || !_isEkSozlesmeAccepted)
-                    Padding(
-                      padding: EdgeInsets.only(top: SizeTokens.p8),
-                      child: Text(
-                        "Siparişi tamamlamak için her iki onayı da vermeniz gerekmektedir.",
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.red.shade400,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -531,10 +386,7 @@ class _CheckoutViewState extends State<CheckoutView> {
           child: SizedBox(
             height: 50,
             child: ElevatedButton(
-              onPressed: viewModel.isLoading ||
-                      _selectedAddress == null ||
-                      !_isKvkkAccepted ||
-                      !_isEkSozlesmeAccepted
+              onPressed: viewModel.isLoading || _selectedAddress == null
                   ? null
                   : () async {
                       // Prepare data
@@ -607,71 +459,6 @@ class _CheckoutViewState extends State<CheckoutView> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _BillingField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-  final int maxLines;
-
-  const _BillingField({
-    required this.label,
-    required this.hint,
-    required this.controller,
-    this.keyboardType = TextInputType.text,
-    this.maxLines = 1,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: SizeTokens.f13,
-            fontWeight: FontWeight.w600,
-            color: AppColors.darkBlue,
-          ),
-        ),
-        SizedBox(height: SizeTokens.p4),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-          style: TextStyle(fontSize: SizeTokens.f14),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              fontSize: SizeTokens.f13,
-              color: Colors.grey.shade400,
-            ),
-            filled: true,
-            fillColor: Colors.grey.shade50,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: SizeTokens.p12,
-              vertical: SizeTokens.p10,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeTokens.r8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeTokens.r8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(SizeTokens.r8),
-              borderSide: const BorderSide(color: Color(0xFF3B71F3)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
