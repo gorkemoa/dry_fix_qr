@@ -154,23 +154,11 @@ class CartView extends StatelessWidget {
                                 SizedBox(height: SizeTokens.p4),
                                 Row(
                                   children: [
-                                    Text(
-                                      "${product.price} ",
-                                      style: TextStyle(
-                                        fontSize: SizeTokens.f14,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.blue,
-                                      ),
-                                    ),
-                                    DpSymbol(
-                                      size: SizeTokens.p24,
-                                      color: AppColors.blue,
-                                    ),
-                                    if (product.tokenPrice > 0) ...[
+
                                       Text(
-                                        " + ${product.tokenPrice} ",
+                                        " ${product.tokenPrice} ",
                                         style: TextStyle(
-                                          fontSize: SizeTokens.f12,
+                                          fontSize: SizeTokens.f16,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.darkBlue,
                                         ),
@@ -179,7 +167,7 @@ class CartView extends StatelessWidget {
                                         size: SizeTokens.p20,
                                         color: AppColors.darkBlue,
                                       ),
-                                    ],
+                                    
                                   ],
                                 ),
                               ],
@@ -253,31 +241,14 @@ class CartView extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "${viewModel.cartTotalPrice.toStringAsFixed(2)} ",
-                                  style: TextStyle(
-                                    fontSize: SizeTokens.f18,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.blue,
-                                  ),
-                                ),
-                                DpSymbol(
-                                  size: SizeTokens.p32,
-                                  color: AppColors.blue,
-                                ),
-                              ],
-                            ),
-                            if (viewModel.cartTotalTokenPrice > 0)
+                           
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "+ ${viewModel.cartTotalTokenPrice} ",
+                                    "Toplam Tutar :  ${viewModel.cartTotalTokenPrice} ",
                                     style: TextStyle(
-                                      fontSize: SizeTokens.f12,
+                                      fontSize: SizeTokens.f24,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.darkBlue,
                                     ),

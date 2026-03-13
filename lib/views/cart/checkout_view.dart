@@ -144,7 +144,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  "+ ${viewModel.cartTotalTokenPrice} ",
+                                  "${viewModel.cartTotalTokenPrice} ",
                                   style: TextStyle(
                                     fontSize: SizeTokens.f20,
                                     fontWeight: FontWeight.bold,
