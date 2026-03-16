@@ -1,5 +1,7 @@
 class Address {
   final int id;
+  final String addressType;
+  final String? billingType;
   final String title;
   final String fullName;
   final String phone;
@@ -7,17 +9,18 @@ class Address {
   final String district;
   final String neighborhood;
   final String addressLine1;
-  final String? addressLine2;
-  final String postalCode;
+  final String? postalCode;
+  final String? billingIdentityNumber;
+  final String? billingCompanyTitle;
+  final String? billingTaxOffice;
+  final String? billingTaxNumber;
+  final String? billingInvoiceEmail;
   final bool isDefault;
-  final String? companyTitle;
-  final String? companyAddress;
-  final String? taxOffice;
-  final String? taxNumber;
-  final String? companyEmail;
 
   Address({
     required this.id,
+    required this.addressType,
+    this.billingType,
     required this.title,
     required this.fullName,
     required this.phone,
@@ -25,19 +28,20 @@ class Address {
     required this.district,
     required this.neighborhood,
     required this.addressLine1,
-    this.addressLine2,
-    required this.postalCode,
+    this.postalCode,
+    this.billingIdentityNumber,
+    this.billingCompanyTitle,
+    this.billingTaxOffice,
+    this.billingTaxNumber,
+    this.billingInvoiceEmail,
     required this.isDefault,
-    this.companyTitle,
-    this.companyAddress,
-    this.taxOffice,
-    this.taxNumber,
-    this.companyEmail,
   });
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
       id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      addressType: json['address_type'] as String? ?? 'shipping',
+      billingType: json['billing_type'] as String?,
       title: json['title'] as String? ?? '',
       fullName: json['full_name'] as String? ?? '',
       phone: json['phone'] as String? ?? '',
@@ -45,20 +49,21 @@ class Address {
       district: json['district'] as String? ?? '',
       neighborhood: json['neighborhood'] as String? ?? '',
       addressLine1: json['address_line1'] as String? ?? '',
-      addressLine2: json['address_line2'] as String?,
-      postalCode: json['postal_code'] as String? ?? '',
+      postalCode: json['postal_code'] as String?,
+      billingIdentityNumber: json['billing_identity_number'] as String?,
+      billingCompanyTitle: json['billing_company_title'] as String?,
+      billingTaxOffice: json['billing_tax_office'] as String?,
+      billingTaxNumber: json['billing_tax_number'] as String?,
+      billingInvoiceEmail: json['billing_invoice_email'] as String?,
       isDefault: json['is_default'] == true || json['is_default'] == 1,
-      companyTitle: json['company_title'] as String?,
-      companyAddress: json['company_address'] as String?,
-      taxOffice: json['tax_office'] as String?,
-      taxNumber: json['tax_number'] as String?,
-      companyEmail: json['company_email'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'address_type': addressType,
+      'billing_type': billingType,
       'title': title,
       'full_name': fullName,
       'phone': phone,
@@ -66,14 +71,13 @@ class Address {
       'district': district,
       'neighborhood': neighborhood,
       'address_line1': addressLine1,
-      'address_line2': addressLine2,
       'postal_code': postalCode,
+      'billing_identity_number': billingIdentityNumber,
+      'billing_company_title': billingCompanyTitle,
+      'billing_tax_office': billingTaxOffice,
+      'billing_tax_number': billingTaxNumber,
+      'billing_invoice_email': billingInvoiceEmail,
       'is_default': isDefault,
-      'company_title': companyTitle,
-      'company_address': companyAddress,
-      'tax_office': taxOffice,
-      'tax_number': taxNumber,
-      'company_email': companyEmail,
     };
   }
 }
@@ -95,83 +99,82 @@ class AddressListResponse {
 }
 
 class CreateAddressRequest {
+  final String addressType;
+  final String? billingType;
   final String title;
-  final String fullName;
-  final String phone;
-  final String city;
-  final String district;
-  final String neighborhood;
-  final String addressLine1;
-  final String? addressLine2;
-  final String postalCode;
+  final String? fullName;
+  final String? phone;
+  final String? city;
+  final String? district;
+  final String? neighborhood;
+  final String? addressLine1;
+  final String? postalCode;
+  final String? billingIdentityNumber;
+  final String? billingCompanyTitle;
+  final String? billingTaxOffice;
+  final String? billingTaxNumber;
+  final String? billingInvoiceEmail;
   final bool isDefault;
-  final String? companyTitle;
-  final String? companyAddress;
-  final String? taxOffice;
-  final String? taxNumber;
-  final String? companyEmail;
 
   CreateAddressRequest({
+    required this.addressType,
+    this.billingType,
     required this.title,
-    required this.fullName,
-    required this.phone,
-    required this.city,
-    required this.district,
-    required this.neighborhood,
-    required this.addressLine1,
-    this.addressLine2,
-    required this.postalCode,
+    this.fullName,
+    this.phone,
+    this.city,
+    this.district,
+    this.neighborhood,
+    this.addressLine1,
+    this.postalCode,
+    this.billingIdentityNumber,
+    this.billingCompanyTitle,
+    this.billingTaxOffice,
+    this.billingTaxNumber,
+    this.billingInvoiceEmail,
     required this.isDefault,
-    this.companyTitle,
-    this.companyAddress,
-    this.taxOffice,
-    this.taxNumber,
-    this.companyEmail,
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    final map = <String, dynamic>{
+      'address_type': addressType,
       'title': title,
-      'full_name': fullName,
-      'phone': phone,
-      'city': city,
-      'district': district,
-      'neighborhood': neighborhood,
-      'address_line1': addressLine1,
-      if (addressLine2 != null) 'address_line2': addressLine2,
-      'postal_code': postalCode,
       'is_default': isDefault ? 1 : 0,
-      'company_title': companyTitle,
-      'company_address': companyAddress,
-      'tax_office': taxOffice,
-      'tax_number': taxNumber,
-      'company_email': companyEmail,
     };
+    if (billingType != null) map['billing_type'] = billingType;
+    if (fullName != null && fullName!.isNotEmpty) map['full_name'] = fullName;
+    if (phone != null && phone!.isNotEmpty) map['phone'] = phone;
+    if (city != null && city!.isNotEmpty) map['city'] = city;
+    if (district != null && district!.isNotEmpty) map['district'] = district;
+    if (neighborhood != null && neighborhood!.isNotEmpty) map['neighborhood'] = neighborhood;
+    if (addressLine1 != null && addressLine1!.isNotEmpty) map['address_line1'] = addressLine1;
+    if (postalCode != null && postalCode!.isNotEmpty) map['postal_code'] = postalCode;
+    if (billingIdentityNumber != null && billingIdentityNumber!.isNotEmpty) map['billing_identity_number'] = billingIdentityNumber;
+    if (billingCompanyTitle != null && billingCompanyTitle!.isNotEmpty) map['billing_company_title'] = billingCompanyTitle;
+    if (billingTaxOffice != null && billingTaxOffice!.isNotEmpty) map['billing_tax_office'] = billingTaxOffice;
+    if (billingTaxNumber != null && billingTaxNumber!.isNotEmpty) map['billing_tax_number'] = billingTaxNumber;
+    if (billingInvoiceEmail != null && billingInvoiceEmail!.isNotEmpty) map['billing_invoice_email'] = billingInvoiceEmail;
+    return map;
   }
 }
 
-class CreateAddressResponse {
+class AddressResponse {
   final bool success;
-  final String message;
-  final Address address;
+  final String? message;
+  final Address data;
 
-  CreateAddressResponse({
+  AddressResponse({
     required this.success,
-    required this.message,
-    required this.address,
+    this.message,
+    required this.data,
   });
 
-  factory CreateAddressResponse.fromJson(Map<String, dynamic> json) {
-    // Some APIs return the object in 'data', some in 'address',
-    // and some might return it directly if success is present.
-    final addressData = json['data'] ?? json['address'] ?? json;
-
-    return CreateAddressResponse(
-      success:
-          json['success'] as bool? ??
-          true, // Assume true if not present but we got data
-      message: json['message'] as String? ?? '',
-      address: Address.fromJson(addressData as Map<String, dynamic>),
+  factory AddressResponse.fromJson(Map<String, dynamic> json) {
+    final addressData = json['data'] ?? json;
+    return AddressResponse(
+      success: json['success'] as bool? ?? true,
+      message: json['message'] as String?,
+      data: Address.fromJson(addressData as Map<String, dynamic>),
     );
   }
 }

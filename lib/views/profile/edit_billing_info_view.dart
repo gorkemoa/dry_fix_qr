@@ -19,41 +19,58 @@ class EditBillingInfoView extends StatefulWidget {
 class _EditBillingInfoViewState extends State<EditBillingInfoView> {
   final _formKey = GlobalKey<FormState>();
 
-  late final TextEditingController _companyTitleController;
-  late final TextEditingController _companyAddressController;
-  late final TextEditingController _taxOfficeController;
-  late final TextEditingController _taxNumberController;
-  late final TextEditingController _companyEmailController;
+  late final TextEditingController _billingCompanyTitleController;
+  late final TextEditingController _billingTaxOfficeController;
+  late final TextEditingController _billingTaxNumberController;
+  late final TextEditingController _billingInvoiceEmailController;
+  late final TextEditingController _billingIdentityNumberController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _addressLine1Controller;
+  late final TextEditingController _fullNameController;
 
   @override
   void initState() {
     super.initState();
-    _companyTitleController = TextEditingController(
-      text: widget.address.companyTitle,
+    _billingCompanyTitleController = TextEditingController(
+      text: widget.address.billingCompanyTitle,
     );
-    _companyAddressController = TextEditingController(
-      text: widget.address.companyAddress,
+    _billingTaxOfficeController = TextEditingController(
+      text: widget.address.billingTaxOffice,
     );
-    _taxOfficeController = TextEditingController(
-      text: widget.address.taxOffice,
+    _billingTaxNumberController = TextEditingController(
+      text: widget.address.billingTaxNumber,
     );
-    _taxNumberController = TextEditingController(
-      text: widget.address.taxNumber,
+    _billingInvoiceEmailController = TextEditingController(
+      text: widget.address.billingInvoiceEmail,
     );
-    _companyEmailController = TextEditingController(
-      text: widget.address.companyEmail,
+    _billingIdentityNumberController = TextEditingController(
+      text: widget.address.billingIdentityNumber,
+    );
+    _phoneController = TextEditingController(
+      text: widget.address.phone.replaceAll('+90', ''),
+    );
+    _addressLine1Controller = TextEditingController(
+      text: widget.address.addressLine1,
+    );
+    _fullNameController = TextEditingController(
+      text: widget.address.fullName,
     );
   }
 
   @override
   void dispose() {
-    _companyTitleController.dispose();
-    _companyAddressController.dispose();
-    _taxOfficeController.dispose();
-    _taxNumberController.dispose();
-    _companyEmailController.dispose();
+    _billingCompanyTitleController.dispose();
+    _billingTaxOfficeController.dispose();
+    _billingTaxNumberController.dispose();
+    _billingInvoiceEmailController.dispose();
+    _billingIdentityNumberController.dispose();
+    _phoneController.dispose();
+    _addressLine1Controller.dispose();
+    _fullNameController.dispose();
     super.dispose();
   }
+
+  bool get _isCorporate => widget.address.billingType == 'corporate';
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +90,9 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Kurumsal Bilgiler",
-          style: TextStyle(
+        title: Text(
+          _isCorporate ? "Kurumsal Fatura Bilgileri" : "Bireysel Fatura Bilgileri",
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
@@ -88,53 +105,124 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Billing type badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeTokens.p12,
+                  vertical: SizeTokens.p8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.darkBlue.withOpacity(0.07),
+                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _isCorporate
+                          ? Icons.business_outlined
+                          : Icons.person_outline_rounded,
+                      size: SizeTokens.f16,
+                      color: AppColors.darkBlue,
+                    ),
+                    SizedBox(width: SizeTokens.p8),
+                    Text(
+                      _isCorporate ? "Kurumsal Fatura" : "Bireysel Fatura",
+                      style: TextStyle(
+                        color: AppColors.darkBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: SizeTokens.f14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: SizeTokens.p24),
+
+              // Corporate fields
+              if (_isCorporate) ...[
+                AddressFormField(
+                  controller: _billingCompanyTitleController,
+                  label: "Firma Unvanı",
+                  hint: "Firma unvanını giriniz",
+                ),
+                SizedBox(height: SizeTokens.p16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AddressFormField(
+                        controller: _billingTaxOfficeController,
+                        label: "Vergi Dairesi",
+                        hint: "Vergi dairesi",
+                        isRequired: false,
+                      ),
+                    ),
+                    SizedBox(width: SizeTokens.p16),
+                    Expanded(
+                      child: AddressFormField(
+                        controller: _billingTaxNumberController,
+                        label: "Vergi No",
+                        hint: "Vergi numarası",
+                        isRequired: false,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _billingInvoiceEmailController,
+                  label: "Fatura E-posta",
+                  hint: "Fatura e-posta adresini giriniz",
+                  isRequired: false,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: SizeTokens.p16),
+              ],
+
+              // Individual fields
+              if (!_isCorporate) ...[
+                AddressFormField(
+                  controller: _fullNameController,
+                  label: "Ad Soyad",
+                  hint: "Adınızı ve soyadınızı giriniz",
+                  isRequired: false,
+                ),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _billingIdentityNumberController,
+                  label: "TC Kimlik Numarası",
+                  hint: "TC kimlik numaranızı giriniz",
+                  isRequired: false,
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _billingInvoiceEmailController,
+                  label: "Fatura E-posta",
+                  hint: "Fatura e-posta adresini giriniz",
+                  isRequired: false,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: SizeTokens.p16),
+              ],
+
+              // Common: Phone
               AddressFormField(
-                controller: _companyTitleController,
-                label: "Şirket Adı",
-                hint: "Şirket adını giriniz",
+                controller: _phoneController,
+                label: "Telefon",
+                hint: "(___) ___ __ __",
                 isRequired: false,
+                keyboardType: TextInputType.phone,
               ),
               SizedBox(height: SizeTokens.p16),
 
+              // Common: Address Line
               AddressFormField(
-                controller: _companyAddressController,
-                label: "Şirket Adresi",
-                hint: "Şirket adresini giriniz",
+                controller: _addressLine1Controller,
+                label: "Adres",
+                hint: "Fatura adresi giriniz",
                 isRequired: false,
                 maxLines: 2,
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: AddressFormField(
-                      controller: _taxOfficeController,
-                      label: "Vergi Dairesi",
-                      hint: "Vergi dairesi",
-                      isRequired: false,
-                    ),
-                  ),
-                  SizedBox(width: SizeTokens.p16),
-                  Expanded(
-                    child: AddressFormField(
-                      controller: _taxNumberController,
-                      label: "Vergi No",
-                      hint: "Vergi numarası",
-                      isRequired: false,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              AddressFormField(
-                controller: _companyEmailController,
-                label: "Şirket E-postası",
-                hint: "Şirket e-posta adresini giriniz",
-                isRequired: false,
-                keyboardType: TextInputType.emailAddress,
               ),
 
               SizedBox(height: SizeTokens.p32),
@@ -188,41 +276,51 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
     if (_formKey.currentState?.validate() ?? false) {
       final viewModel = context.read<AddressViewModel>();
 
+      final phone = _phoneController.text.trim().isEmpty
+          ? widget.address.phone
+          : "+90${_phoneController.text.trim()}";
+
       final request = CreateAddressRequest(
+        addressType: 'billing',
+        billingType: widget.address.billingType,
         title: widget.address.title,
-        fullName: widget.address.fullName,
-        phone: widget.address.phone,
-        city: widget.address.city,
-        district: widget.address.district,
-        neighborhood: widget.address.neighborhood,
-        addressLine1: widget.address.addressLine1,
-        addressLine2: widget.address.addressLine2,
-        postalCode: widget.address.postalCode,
+        fullName: _isCorporate ? null : _fullNameController.text.trim(),
+        phone: phone,
+        addressLine1: _addressLine1Controller.text.trim().isEmpty
+            ? widget.address.addressLine1
+            : _addressLine1Controller.text.trim(),
+        billingCompanyTitle: _isCorporate
+            ? (_billingCompanyTitleController.text.trim().isEmpty
+                ? null
+                : _billingCompanyTitleController.text.trim())
+            : null,
+        billingTaxOffice: _isCorporate
+            ? (_billingTaxOfficeController.text.trim().isEmpty
+                ? null
+                : _billingTaxOfficeController.text.trim())
+            : null,
+        billingTaxNumber: _isCorporate
+            ? (_billingTaxNumberController.text.trim().isEmpty
+                ? null
+                : _billingTaxNumberController.text.trim())
+            : null,
+        billingIdentityNumber: !_isCorporate
+            ? (_billingIdentityNumberController.text.trim().isEmpty
+                ? null
+                : _billingIdentityNumberController.text.trim())
+            : null,
+        billingInvoiceEmail: _billingInvoiceEmailController.text.trim().isEmpty
+            ? null
+            : _billingInvoiceEmailController.text.trim(),
         isDefault: widget.address.isDefault,
-        companyTitle: _companyTitleController.text.trim().isEmpty
-            ? null
-            : _companyTitleController.text.trim(),
-        companyAddress: _companyAddressController.text.trim().isEmpty
-            ? null
-            : _companyAddressController.text.trim(),
-        taxOffice: _taxOfficeController.text.trim().isEmpty
-            ? null
-            : _taxOfficeController.text.trim(),
-        taxNumber: _taxNumberController.text.trim().isEmpty
-            ? null
-            : _taxNumberController.text.trim(),
-        companyEmail: _companyEmailController.text.trim().isEmpty
-            ? null
-            : _companyEmailController.text.trim(),
       );
 
-      final success =
-          await viewModel.updateAddress(widget.address.id, request);
+      final success = await viewModel.updateAddress(widget.address.id, request);
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Kurumsal bilgiler güncellendi."),
+            content: Text("Fatura bilgileri güncellendi."),
             backgroundColor: AppColors.darkBlue,
           ),
         );

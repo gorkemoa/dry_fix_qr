@@ -11,9 +11,12 @@ class AddressService {
 
   AddressService(this._apiClient);
 
-  Future<ApiResult<List<Address>>> getAddresses() async {
+  Future<ApiResult<List<Address>>> getAddresses({String? addressType}) async {
     try {
-      final response = await _apiClient.get(ApiConstants.addresses);
+      final url = addressType != null
+          ? ApiConstants.addressesByType(addressType)
+          : ApiConstants.addresses;
+      final response = await _apiClient.get(url);
       final addressListResponse = AddressListResponse.fromJson(response);
       return Success(addressListResponse.data);
     } on ApiException catch (e) {
@@ -29,8 +32,8 @@ class AddressService {
         ApiConstants.addresses,
         data: request.toJson(),
       );
-      final createAddressResponse = CreateAddressResponse.fromJson(response);
-      return Success(createAddressResponse.address);
+      final addressResponse = AddressResponse.fromJson(response);
+      return Success(addressResponse.data);
     } on ApiException catch (e) {
       return Failure(e.message);
     } catch (e) {
@@ -47,8 +50,8 @@ class AddressService {
         ApiConstants.addressDetail(id),
         data: request.toJson(),
       );
-      final updateAddressResponse = CreateAddressResponse.fromJson(response);
-      return Success(updateAddressResponse.address);
+      final addressResponse = AddressResponse.fromJson(response);
+      return Success(addressResponse.data);
     } on ApiException catch (e) {
       return Failure(e.message);
     } catch (e) {
@@ -59,6 +62,17 @@ class AddressService {
   Future<ApiResult<bool>> deleteAddress(int id) async {
     try {
       await _apiClient.delete(ApiConstants.addressDetail(id));
+      return const Success(true);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<bool>> setDefaultAddress(int id) async {
+    try {
+      await _apiClient.post(ApiConstants.setAddressDefault(id));
       return const Success(true);
     } on ApiException catch (e) {
       return Failure(e.message);

@@ -214,9 +214,32 @@ class _AddressesViewState extends State<AddressesView> {
           onDelete: () {
             _showDeleteConfirmation(context, viewModel, address);
           },
+          onSetDefault: address.isDefault
+              ? null
+              : () => _setDefault(context, viewModel, address),
         );
       },
     );
+  }
+
+  void _setDefault(
+    BuildContext context,
+    AddressViewModel viewModel,
+    Address address,
+  ) async {
+    final success = await viewModel.setDefaultAddress(address.id);
+    if (success && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("\"${address.title}\" varsayılan olarak ayarlandı."),
+          backgroundColor: AppColors.darkBlue,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(SizeTokens.r12),
+          ),
+        ),
+      );
+    }
   }
 
   void _showDeleteConfirmation(

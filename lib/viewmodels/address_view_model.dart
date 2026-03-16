@@ -22,17 +22,21 @@ class AddressViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   List<Address> get addresses => _addresses;
+  List<Address> get shippingAddresses =>
+      _addresses.where((a) => a.addressType == 'shipping').toList();
+  List<Address> get billingAddresses =>
+      _addresses.where((a) => a.addressType == 'billing').toList();
   List<City> get cities => _cities;
   List<District> get districts => _districts;
   City? get selectedCity => _selectedCity;
   District? get selectedDistrict => _selectedDistrict;
 
-  Future<void> fetchAddresses() async {
+  Future<void> fetchAddresses({String? addressType}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
-    final result = await _addressService.getAddresses();
+    final result = await _addressService.getAddresses(addressType: addressType);
 
     if (result is Success<List<Address>>) {
       _addresses = result.data;
@@ -107,11 +111,36 @@ class AddressViewModel extends ChangeNotifier {
 
     if (result is Success<bool>) {
       Logger.info("Address deleted successfully: ID $id");
-      await fetchAddresses(); // Refresh list after delete
+      await fetchAddresses();
       return true;
     } else if (result is Failure<bool>) {
       _errorMessage = result.errorMessage;
       Logger.error("Address deletion failed", _errorMessage ?? "Unknown error");
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
+  Future<bool> setDefaultAddress(int id) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final result = await _addressService.setDefaultAddress(id);
+
+    if (result is Success<bool>) {
+      Logger.info("Address set as default: ID $id");
+      await fetchAddresses();
+      return true;
+    } else if (result is Failure<bool>) {
+      _errorMessage = result.errorMessage;
+      Logger.error(
+          "Set default address failed", _errorMessage ?? "Unknown error");
       _isLoading = false;
       notifyListeners();
       return false;

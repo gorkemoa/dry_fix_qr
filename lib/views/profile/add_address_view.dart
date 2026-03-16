@@ -21,92 +21,98 @@ class AddAddressView extends StatefulWidget {
 class _AddAddressViewState extends State<AddAddressView> {
   final _formKey = GlobalKey<FormState>();
 
-  late final TextEditingController _fullNameController;
+  // Common fields
+  late final TextEditingController _titleController;
   late final TextEditingController _phoneController;
+  late final TextEditingController _addressLine1Controller;
+
+  // Shipping-specific fields
+  late final TextEditingController _fullNameController;
   late final TextEditingController _cityController;
   late final TextEditingController _districtController;
   late final TextEditingController _neighborhoodController;
-  late final TextEditingController _addressLine1Controller;
-  late final TextEditingController _titleController;
   late final TextEditingController _postalCodeController;
-  late final TextEditingController _companyTitleController;
-  late final TextEditingController _companyAddressController;
-  late final TextEditingController _taxOfficeController;
-  late final TextEditingController _taxNumberController;
-  late final TextEditingController _companyEmailController;
+
+  // Billing-specific fields
+  late final TextEditingController _billingCompanyTitleController;
+  late final TextEditingController _billingTaxOfficeController;
+  late final TextEditingController _billingTaxNumberController;
+  late final TextEditingController _billingInvoiceEmailController;
+  late final TextEditingController _billingIdentityNumberController;
 
   bool _isDefault = false;
+  String _selectedAddressType = 'shipping';
+  String _selectedBillingType = 'corporate';
 
   bool get isEditMode => widget.address != null;
 
   @override
   void initState() {
     super.initState();
-    _fullNameController = TextEditingController(text: widget.address?.fullName);
+
+    final addr = widget.address;
+    _selectedAddressType = addr?.addressType ?? 'shipping';
+    _selectedBillingType = addr?.billingType ?? 'corporate';
+
+    _titleController = TextEditingController(text: addr?.title);
     _phoneController = TextEditingController(
-      text: widget.address?.phone.replaceAll('+90', ''),
+      text: addr?.phone.replaceAll('+90', ''),
     );
-    _cityController = TextEditingController(text: widget.address?.city);
-    _districtController = TextEditingController(text: widget.address?.district);
-    _neighborhoodController = TextEditingController(
-      text: widget.address?.neighborhood,
-    );
-    _addressLine1Controller = TextEditingController(
-      text: widget.address?.addressLine1,
-    );
-    _titleController = TextEditingController(text: widget.address?.title);
-    _postalCodeController = TextEditingController(
-      text: widget.address?.postalCode,
-    );
-    _companyTitleController = TextEditingController(
-      text: widget.address?.companyTitle,
-    );
-    _companyAddressController = TextEditingController(
-      text: widget.address?.companyAddress,
-    );
-    _taxOfficeController = TextEditingController(
-      text: widget.address?.taxOffice,
-    );
-    _taxNumberController = TextEditingController(
-      text: widget.address?.taxNumber,
-    );
-    _companyEmailController = TextEditingController(
-      text: widget.address?.companyEmail,
-    );
-    _isDefault = widget.address?.isDefault ?? false;
+    _addressLine1Controller = TextEditingController(text: addr?.addressLine1);
+
+    _fullNameController = TextEditingController(text: addr?.fullName);
+    _cityController = TextEditingController(text: addr?.city);
+    _districtController = TextEditingController(text: addr?.district);
+    _neighborhoodController = TextEditingController(text: addr?.neighborhood);
+    _postalCodeController = TextEditingController(text: addr?.postalCode);
+
+    _billingCompanyTitleController =
+        TextEditingController(text: addr?.billingCompanyTitle);
+    _billingTaxOfficeController =
+        TextEditingController(text: addr?.billingTaxOffice);
+    _billingTaxNumberController =
+        TextEditingController(text: addr?.billingTaxNumber);
+    _billingInvoiceEmailController =
+        TextEditingController(text: addr?.billingInvoiceEmail);
+    _billingIdentityNumberController =
+        TextEditingController(text: addr?.billingIdentityNumber);
+
+    _isDefault = addr?.isDefault ?? false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final viewModel = context.read<AddressViewModel>();
-      viewModel.resetSelection();
-      viewModel.fetchCities().then((_) {
-        if (isEditMode && widget.address != null) {
-          final city = viewModel.cities.cast<City?>().firstWhere(
-            (c) => c?.name == widget.address!.city,
-            orElse: () => null,
-          );
-          if (city != null) {
-            viewModel.setSelectedCity(city);
+      if (_selectedAddressType == 'shipping') {
+        final viewModel = context.read<AddressViewModel>();
+        viewModel.resetSelection();
+        viewModel.fetchCities().then((_) {
+          if (isEditMode && addr != null) {
+            final city = viewModel.cities.cast<City?>().firstWhere(
+              (c) => c?.name == addr.city,
+              orElse: () => null,
+            );
+            if (city != null) {
+              viewModel.setSelectedCity(city);
+            }
           }
-        }
-      });
+        });
+      }
     });
   }
 
   @override
   void dispose() {
-    _fullNameController.dispose();
+    _titleController.dispose();
     _phoneController.dispose();
+    _addressLine1Controller.dispose();
+    _fullNameController.dispose();
     _cityController.dispose();
     _districtController.dispose();
     _neighborhoodController.dispose();
-    _addressLine1Controller.dispose();
-    _titleController.dispose();
     _postalCodeController.dispose();
-    _companyTitleController.dispose();
-    _companyAddressController.dispose();
-    _taxOfficeController.dispose();
-    _taxNumberController.dispose();
-    _companyEmailController.dispose();
+    _billingCompanyTitleController.dispose();
+    _billingTaxOfficeController.dispose();
+    _billingTaxNumberController.dispose();
+    _billingInvoiceEmailController.dispose();
+    _billingIdentityNumberController.dispose();
     super.dispose();
   }
 
@@ -124,12 +130,12 @@ class _AddAddressViewState extends State<AddAddressView> {
       builder: (context) => Material(
         type: MaterialType.transparency,
         child: Container(
-          height: 300,
+          height: SizeTokens.p300,
           color: AppColors.white,
           child: Column(
             children: [
               Container(
-                height: 50,
+                height: SizeTokens.p50,
                 decoration: BoxDecoration(
                   color: AppColors.background,
                   border: Border(
@@ -178,7 +184,7 @@ class _AddAddressViewState extends State<AddAddressView> {
               ),
               Expanded(
                 child: CupertinoPicker(
-                  itemExtent: 40,
+                  itemExtent: SizeTokens.p40,
                   scrollController: FixedExtentScrollController(
                     initialItem: initialIndex,
                   ),
@@ -230,7 +236,6 @@ class _AddAddressViewState extends State<AddAddressView> {
         _cityController.text = city.name;
         _districtController.clear();
 
-        // Auto-open district selection after city is selected
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
             _showDistrictSelection(context, viewModel);
@@ -252,9 +257,7 @@ class _AddAddressViewState extends State<AddAddressView> {
     }
 
     if (viewModel.districts.isEmpty) {
-      if (viewModel.isLoading) {
-        return; // Still loading
-      }
+      if (viewModel.isLoading) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Bu şehir için ilçe bulunamadı.")),
       );
@@ -316,23 +319,41 @@ class _AddAddressViewState extends State<AddAddressView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Ad Soyad (Combined)
+              // Address Type Toggle (only shown when creating)
+              if (!isEditMode) ...[
+                _buildAddressTypeToggle(),
+                SizedBox(height: SizeTokens.p24),
+              ] else ...[
+                _buildAddressTypeBadge(),
+                SizedBox(height: SizeTokens.p16),
+              ],
+
+              // Billing Type Toggle (only for billing addresses)
+              if (_selectedAddressType == 'billing' && !isEditMode) ...[
+                _buildBillingTypeToggle(),
+                SizedBox(height: SizeTokens.p24),
+              ] else if (_selectedAddressType == 'billing' && isEditMode) ...[
+                _buildBillingTypeBadge(),
+                SizedBox(height: SizeTokens.p16),
+              ],
+
+              // Common: Adres Başlığı
               AddressFormField(
-                controller: _fullNameController,
-                label: "Ad Soyad",
-                hint: "Adınızı ve soyadınızı giriniz",
+                controller: _titleController,
+                label: "Adres Başlığı",
+                hint: "Adres başlığı giriniz (Ev, İş vb.)",
                 validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
               SizedBox(height: SizeTokens.p16),
 
-              // Telefon
+              // Common: Telefon
               AddressFormField(
                 controller: _phoneController,
                 label: "Telefon",
                 hint: "(___) ___ __ __",
                 keyboardType: TextInputType.phone,
                 prefix: Container(
-                  width: 60,
+                  width: SizeTokens.p60,
                   alignment: Alignment.center,
                   child: const Text(
                     "+90",
@@ -346,191 +367,204 @@ class _AddAddressViewState extends State<AddAddressView> {
               ),
               SizedBox(height: SizeTokens.p16),
 
-              // İl / İlçe
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _showCitySelection(context, viewModel),
-                      child: AbsorbPointer(
-                        child: AddressFormField(
-                          controller: _cityController,
-                          label: "İl",
-                          hint: "Seçiniz",
-                          suffix: const Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppColors.gray,
-                          ),
-                          validator: (v) =>
-                              v?.isEmpty ?? true ? "Gerekli" : null,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: SizeTokens.p16),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _showDistrictSelection(context, viewModel),
-                      child: AbsorbPointer(
-                        child: AddressFormField(
-                          controller: _districtController,
-                          label: "İlçe",
-                          hint: "Seçiniz",
-                          suffix: const Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            color: AppColors.gray,
-                          ),
-                          validator: (v) =>
-                              v?.isEmpty ?? true ? "Gerekli" : null,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              // Mahalle
-              AddressFormField(
-                controller: _neighborhoodController,
-                label: "Mahalle",
-                hint: "Mahalle adını giriniz",
-                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              // Info Box
-              Container(
-                padding: EdgeInsets.all(SizeTokens.f10),
-                decoration: BoxDecoration(
-                  color: AppColors.darkBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+              // Shipping-specific fields
+              if (_selectedAddressType == 'shipping') ...[
+                AddressFormField(
+                  controller: _fullNameController,
+                  label: "Ad Soyad",
+                  hint: "Adınızı ve soyadınızı giriniz",
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                SizedBox(height: SizeTokens.p16),
+                Row(
                   children: [
-                    Icon(
-                      Icons.error_rounded,
-                      color: AppColors.darkBlue,
-                      size: SizeTokens.f20,
-                    ),
-                    SizedBox(width: SizeTokens.p12),
                     Expanded(
-                      child: Text(
-                        "Kargonuzun sorunsuz ulaşması için adres bilgilerinizi eksiksiz girin.",
-                        style: TextStyle(
-                          color: AppColors.darkBlue,
-                          fontSize: SizeTokens.f12,
-                          height: 1.4,
-                          fontWeight: FontWeight.w500,
+                      child: GestureDetector(
+                        onTap: () => _showCitySelection(context, viewModel),
+                        child: AbsorbPointer(
+                          child: AddressFormField(
+                            controller: _cityController,
+                            label: "İl",
+                            hint: "Seçiniz",
+                            suffix: const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: AppColors.gray,
+                            ),
+                            validator: (v) =>
+                                v?.isEmpty ?? true ? "Gerekli" : null,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: SizeTokens.p16),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () =>
+                            _showDistrictSelection(context, viewModel),
+                        child: AbsorbPointer(
+                          child: AddressFormField(
+                            controller: _districtController,
+                            label: "İlçe",
+                            hint: "Seçiniz",
+                            suffix: const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: AppColors.gray,
+                            ),
+                            validator: (v) =>
+                                v?.isEmpty ?? true ? "Gerekli" : null,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: SizeTokens.p16),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _neighborhoodController,
+                  label: "Mahalle",
+                  hint: "Mahalle adını giriniz",
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+                ),
+                SizedBox(height: SizeTokens.p16),
+                Container(
+                  padding: EdgeInsets.all(SizeTokens.f10),
+                  decoration: BoxDecoration(
+                    color: AppColors.darkBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_rounded,
+                        color: AppColors.darkBlue,
+                        size: SizeTokens.f20,
+                      ),
+                      SizedBox(width: SizeTokens.p12),
+                      Expanded(
+                        child: Text(
+                          "Kargonuzun sorunsuz ulaşması için adres bilgilerinizi eksiksiz girin.",
+                          style: TextStyle(
+                            color: AppColors.darkBlue,
+                            fontSize: SizeTokens.f12,
+                            height: 1.4,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: SizeTokens.p16),
+              ],
 
-              // Adres
+              // Common: Adres Satırı
               AddressFormField(
                 controller: _addressLine1Controller,
                 label: "Adres",
-                hint: "Cadde, mahalle sokak ve diğer bilgileri giriniz.",
-                maxLines: 3,
+                hint: _selectedAddressType == 'shipping'
+                    ? "Cadde, mahalle sokak ve diğer bilgileri giriniz."
+                    : "Fatura adresi giriniz",
+                maxLines: _selectedAddressType == 'shipping' ? 3 : 2,
                 validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
               SizedBox(height: SizeTokens.p16),
 
-              // Adres Başlığı
-              AddressFormField(
-                controller: _titleController,
-                label: "Adres Başlığı",
-                hint: "Adres Başlığı Giriniz",
-                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              // Posta Kodu
-              AddressFormField(
-                controller: _postalCodeController,
-                label: "Posta Kodu",
-                hint: "Opsiyonel",
-                isRequired: false,
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.next,
-              ),
-
-              SizedBox(height: SizeTokens.p24),
-              const Text(
-                "Kurumsal Bilgiler",
-                style: TextStyle(
-                  color: AppColors.darkBlue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              // Shipping-specific: Posta Kodu
+              if (_selectedAddressType == 'shipping') ...[
+                AddressFormField(
+                  controller: _postalCodeController,
+                  label: "Posta Kodu",
+                  hint: "Opsiyonel",
+                  isRequired: false,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
                 ),
-              ),
-              SizedBox(height: SizeTokens.p16),
+                SizedBox(height: SizeTokens.p16),
+              ],
 
-              AddressFormField(
-                controller: _companyTitleController,
-                label: "Şirket Adı",
-                hint: "Şirket adını giriniz",
-                isRequired: false,
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              AddressFormField(
-                controller: _companyAddressController,
-                label: "Şirket Adresi",
-                hint: "Şirket adresini giriniz",
-                isRequired: false,
-                maxLines: 2,
-              ),
-              SizedBox(height: SizeTokens.p16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: AddressFormField(
-                      controller: _taxOfficeController,
-                      label: "Vergi Dairesi",
-                      hint: "Vergi dairesi",
-                      isRequired: false,
+              // Billing corporate fields
+              if (_selectedAddressType == 'billing' &&
+                  _selectedBillingType == 'corporate') ...[
+                AddressFormField(
+                  controller: _billingCompanyTitleController,
+                  label: "Firma Unvanı",
+                  hint: "Firma unvanını giriniz",
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+                ),
+                SizedBox(height: SizeTokens.p16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AddressFormField(
+                        controller: _billingTaxOfficeController,
+                        label: "Vergi Dairesi",
+                        hint: "Vergi dairesi",
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? "Gerekli" : null,
+                      ),
                     ),
-                  ),
-                  SizedBox(width: SizeTokens.p16),
-                  Expanded(
-                    child: AddressFormField(
-                      controller: _taxNumberController,
-                      label: "Vergi Numarası",
-                      hint: "Vergi numarası",
-                      isRequired: false,
-                      keyboardType: TextInputType.number,
+                    SizedBox(width: SizeTokens.p16),
+                    Expanded(
+                      child: AddressFormField(
+                        controller: _billingTaxNumberController,
+                        label: "Vergi Numarası",
+                        hint: "Vergi numarası",
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? "Gerekli" : null,
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: SizeTokens.p16),
+                  ],
+                ),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _billingInvoiceEmailController,
+                  label: "Fatura E-posta",
+                  hint: "Fatura e-posta adresini giriniz",
+                  isRequired: false,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: SizeTokens.p16),
+              ],
 
-              AddressFormField(
-                controller: _companyEmailController,
-                label: "Şirket E-postası",
-                hint: "Şirket e-posta adresini giriniz",
-                isRequired: false,
-                keyboardType: TextInputType.emailAddress,
-              ),
-
-              SizedBox(height: SizeTokens.p24),
+              // Billing individual fields
+              if (_selectedAddressType == 'billing' &&
+                  _selectedBillingType == 'individual') ...[
+                AddressFormField(
+                  controller: _fullNameController,
+                  label: "Ad Soyad",
+                  hint: "Adınızı ve soyadınızı giriniz",
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+                ),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _billingIdentityNumberController,
+                  label: "TC Kimlik Numarası",
+                  hint: "TC kimlik numaranızı giriniz",
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: SizeTokens.p16),
+                AddressFormField(
+                  controller: _billingInvoiceEmailController,
+                  label: "Fatura E-posta",
+                  hint: "Fatura e-posta adresini giriniz",
+                  isRequired: false,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: SizeTokens.p16),
+              ],
 
               // Default Switch
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
-                title: const Text(
+                title: Text(
                   "Varsayılan Adres Yap",
                   style: TextStyle(
                     color: Color(0xFF444444),
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: SizeTokens.f14,
                   ),
                 ),
                 value: _isDefault,
@@ -544,25 +578,25 @@ class _AddAddressViewState extends State<AddAddressView> {
                 onPressed: viewModel.isLoading ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkBlue,
-                  minimumSize: const Size(double.infinity, 56),
+                  minimumSize: Size(double.infinity, SizeTokens.p56),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(SizeTokens.r8),
                   ),
                 ),
                 child: viewModel.isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
+                    ? SizedBox(
+                        height: SizeTokens.p20,
+                        width: SizeTokens.p20,
+                        child: const CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2,
                         ),
                       )
                     : Text(
                         isEditMode ? "Güncelle" : "Adresi Kaydet",
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: SizeTokens.f16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -585,39 +619,247 @@ class _AddAddressViewState extends State<AddAddressView> {
     );
   }
 
+  Widget _buildAddressTypeToggle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Adres Tipi",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontSize: SizeTokens.f14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: SizeTokens.p8),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTypeButton(
+                label: "Teslimat",
+                icon: Icons.local_shipping_outlined,
+                isSelected: _selectedAddressType == 'shipping',
+                onTap: () {
+                  setState(() {
+                    _selectedAddressType = 'shipping';
+                  });
+                  final viewModel = context.read<AddressViewModel>();
+                  viewModel.resetSelection();
+                  viewModel.fetchCities();
+                },
+              ),
+            ),
+            SizedBox(width: SizeTokens.p12),
+            Expanded(
+              child: _buildTypeButton(
+                label: "Fatura",
+                icon: Icons.receipt_long_outlined,
+                isSelected: _selectedAddressType == 'billing',
+                onTap: () => setState(() => _selectedAddressType = 'billing'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBillingTypeToggle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Fatura Tipi",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontSize: SizeTokens.f14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: SizeTokens.p8),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTypeButton(
+                label: "Kurumsal",
+                icon: Icons.business_outlined,
+                isSelected: _selectedBillingType == 'corporate',
+                onTap: () =>
+                    setState(() => _selectedBillingType = 'corporate'),
+              ),
+            ),
+            SizedBox(width: SizeTokens.p12),
+            Expanded(
+              child: _buildTypeButton(
+                label: "Bireysel",
+                icon: Icons.person_outline_rounded,
+                isSelected: _selectedBillingType == 'individual',
+                onTap: () =>
+                    setState(() => _selectedBillingType = 'individual'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTypeButton({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(vertical: SizeTokens.p12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.darkBlue : AppColors.white,
+          borderRadius: BorderRadius.circular(SizeTokens.r8),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.darkBlue
+                : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: SizeTokens.f18,
+              color: isSelected ? AppColors.white : AppColors.gray,
+            ),
+            SizedBox(width: SizeTokens.p8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppColors.white : AppColors.darkBlue,
+                fontWeight: FontWeight.bold,
+                fontSize: SizeTokens.f14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddressTypeBadge() {
+    final isShipping = _selectedAddressType == 'shipping';
+    return Row(
+      children: [
+        Icon(
+          isShipping
+              ? Icons.local_shipping_outlined
+              : Icons.receipt_long_outlined,
+          size: SizeTokens.f16,
+          color: AppColors.darkBlue,
+        ),
+        SizedBox(width: SizeTokens.p8),
+        Text(
+          isShipping ? "Teslimat Adresi" : "Fatura Adresi",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontWeight: FontWeight.bold,
+            fontSize: SizeTokens.f14,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBillingTypeBadge() {
+    final isCorporate = _selectedBillingType == 'corporate';
+    return Row(
+      children: [
+        Icon(
+          isCorporate ? Icons.business_outlined : Icons.person_outline_rounded,
+          size: SizeTokens.f16,
+          color: AppColors.gray,
+        ),
+        SizedBox(width: SizeTokens.p8),
+        Text(
+          isCorporate ? "Kurumsal Fatura" : "Bireysel Fatura",
+          style: TextStyle(
+            color: AppColors.gray,
+            fontSize: SizeTokens.f13,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       final viewModel = context.read<AddressViewModel>();
 
-      final fullName = _fullNameController.text.trim();
-      final phone = "+90${_phoneController.text.trim()}";
+      final phone = _phoneController.text.trim().isEmpty
+          ? null
+          : "+90${_phoneController.text.trim()}";
 
-      final request = CreateAddressRequest(
-        title: _titleController.text,
-        fullName: fullName,
-        phone: phone,
-        city: _cityController.text,
-        district: _districtController.text,
-        neighborhood: _neighborhoodController.text,
-        addressLine1: _addressLine1Controller.text,
-        postalCode: _postalCodeController.text,
-        isDefault: _isDefault,
-        companyTitle: _companyTitleController.text.trim().isEmpty
-            ? null
-            : _companyTitleController.text.trim(),
-        companyAddress: _companyAddressController.text.trim().isEmpty
-            ? null
-            : _companyAddressController.text.trim(),
-        taxOffice: _taxOfficeController.text.trim().isEmpty
-            ? null
-            : _taxOfficeController.text.trim(),
-        taxNumber: _taxNumberController.text.trim().isEmpty
-            ? null
-            : _taxNumberController.text.trim(),
-        companyEmail: _companyEmailController.text.trim().isEmpty
-            ? null
-            : _companyEmailController.text.trim(),
-      );
+      final CreateAddressRequest request;
+
+      if (_selectedAddressType == 'shipping') {
+        request = CreateAddressRequest(
+          addressType: 'shipping',
+          title: _titleController.text.trim(),
+          fullName: _fullNameController.text.trim(),
+          phone: phone,
+          city: _cityController.text.trim(),
+          district: _districtController.text.trim(),
+          neighborhood: _neighborhoodController.text.trim(),
+          addressLine1: _addressLine1Controller.text.trim(),
+          postalCode: _postalCodeController.text.trim().isEmpty
+              ? null
+              : _postalCodeController.text.trim(),
+          isDefault: _isDefault,
+        );
+      } else if (_selectedBillingType == 'corporate') {
+        request = CreateAddressRequest(
+          addressType: 'billing',
+          billingType: 'corporate',
+          title: _titleController.text.trim(),
+          phone: phone,
+          addressLine1: _addressLine1Controller.text.trim(),
+          billingCompanyTitle:
+              _billingCompanyTitleController.text.trim().isEmpty
+                  ? null
+                  : _billingCompanyTitleController.text.trim(),
+          billingTaxOffice: _billingTaxOfficeController.text.trim().isEmpty
+              ? null
+              : _billingTaxOfficeController.text.trim(),
+          billingTaxNumber: _billingTaxNumberController.text.trim().isEmpty
+              ? null
+              : _billingTaxNumberController.text.trim(),
+          billingInvoiceEmail:
+              _billingInvoiceEmailController.text.trim().isEmpty
+                  ? null
+                  : _billingInvoiceEmailController.text.trim(),
+          isDefault: _isDefault,
+        );
+      } else {
+        request = CreateAddressRequest(
+          addressType: 'billing',
+          billingType: 'individual',
+          title: _titleController.text.trim(),
+          fullName: _fullNameController.text.trim(),
+          phone: phone,
+          addressLine1: _addressLine1Controller.text.trim(),
+          billingIdentityNumber:
+              _billingIdentityNumberController.text.trim().isEmpty
+                  ? null
+                  : _billingIdentityNumberController.text.trim(),
+          billingInvoiceEmail:
+              _billingInvoiceEmailController.text.trim().isEmpty
+                  ? null
+                  : _billingInvoiceEmailController.text.trim(),
+          isDefault: _isDefault,
+        );
+      }
 
       final bool success;
       if (isEditMode) {
@@ -639,3 +881,4 @@ class _AddAddressViewState extends State<AddAddressView> {
     }
   }
 }
+

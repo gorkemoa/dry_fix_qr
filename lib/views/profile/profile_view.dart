@@ -214,12 +214,10 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                     Consumer<AddressViewModel>(
                       builder: (context, addressViewModel, child) {
-                        final billingAddress = addressViewModel.addresses
+                        final billingAddress = addressViewModel.billingAddresses
                             .cast<Address?>()
                             .firstWhere(
-                              (a) =>
-                                  a?.companyTitle != null &&
-                                  a!.companyTitle!.isNotEmpty,
+                              (a) => a != null,
                               orElse: () => null,
                             );
 
@@ -621,14 +619,12 @@ class _ProfileViewState extends State<ProfileView> {
             ),
             const Divider(),
             SizedBox(height: SizeTokens.p16),
-            _buildBillingDetail("Firma:", address.companyTitle ?? "-"),
-            _buildBillingDetail(
-              "Adres:",
-              address.companyAddress ?? address.addressLine1,
-            ),
-            _buildBillingDetail("V.Daire:", address.taxOffice ?? "-"),
-            _buildBillingDetail("V.No:", address.taxNumber ?? "-"),
-            _buildBillingDetail("E-posta:", address.companyEmail ?? "-"),
+            _buildBillingDetail("Firma:", address.billingCompanyTitle ?? address.fullName),
+            _buildBillingDetail("Adres:", address.addressLine1),
+            _buildBillingDetail("V.Daire:", address.billingTaxOffice ?? "-"),
+            _buildBillingDetail("V.No:", address.billingTaxNumber ?? "-"),
+            _buildBillingDetail("TC No:", address.billingIdentityNumber ?? "-"),
+            _buildBillingDetail("E-posta:", address.billingInvoiceEmail ?? "-"),
             SizedBox(height: SizeTokens.p24),
             ElevatedButton(
               onPressed: () {

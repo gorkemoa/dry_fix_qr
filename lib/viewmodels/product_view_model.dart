@@ -230,7 +230,6 @@ class ProductViewModel extends ChangeNotifier {
       "district": address.district,
       "neighborhood": address.neighborhood,
       "address_line1": address.addressLine1,
-      "address_line2": address.addressLine2,
       "postal_code": address.postalCode,
     };
 

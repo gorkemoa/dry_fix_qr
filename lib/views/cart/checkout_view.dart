@@ -21,13 +21,7 @@ class CheckoutView extends StatefulWidget {
 class _CheckoutViewState extends State<CheckoutView> {
   final TextEditingController _noteController = TextEditingController();
   Address? _selectedAddress;
-
-  // Billing
-  final TextEditingController _companyTitleController = TextEditingController();
-  final TextEditingController _taxOfficeController = TextEditingController();
-  final TextEditingController _taxNumberController = TextEditingController();
-  final TextEditingController _companyAddressController = TextEditingController();
-  final TextEditingController _companyEmailController = TextEditingController();
+  Address? _selectedBillingAddress;
 
   @override
   void initState() {
@@ -35,55 +29,42 @@ class _CheckoutViewState extends State<CheckoutView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final addressViewModel = context.read<AddressViewModel>();
       addressViewModel.fetchAddresses().then((_) {
-        // Auto-select default address
-        addressViewModel.addresses.firstWhere(
-          (a) => a.isDefault,
-          orElse: () => addressViewModel.addresses.isNotEmpty
-              ? addressViewModel.addresses.first
-              : addressViewModel
-                    .addresses
-                    .first, // Hacky: assumes list might not be empty, handles later
-        );
-        if (addressViewModel.addresses.isNotEmpty) {
-          final addr = addressViewModel.addresses.firstWhere(
-            (element) => element.isDefault,
-            orElse: () => addressViewModel.addresses.first,
+        // Auto-select default shipping address
+        if (addressViewModel.shippingAddresses.isNotEmpty) {
+          final defaultShipping = addressViewModel.shippingAddresses.firstWhere(
+            (a) => a.isDefault,
+            orElse: () => addressViewModel.shippingAddresses.first,
           );
-          setState(() {
-            _selectedAddress = addr;
-            _fillBillingFromAddress(addr);
-          });
+          setState(() => _selectedAddress = defaultShipping);
+        }
+        // Auto-select default billing address
+        if (addressViewModel.billingAddresses.isNotEmpty) {
+          final defaultBilling = addressViewModel.billingAddresses.firstWhere(
+            (a) => a.isDefault,
+            orElse: () => addressViewModel.billingAddresses.first,
+          );
+          setState(() => _selectedBillingAddress = defaultBilling);
         }
       });
     });
   }
 
-  void _fillBillingFromAddress(Address addr) {
-    _companyTitleController.text = addr.companyTitle ?? '';
-    _taxOfficeController.text = addr.taxOffice ?? '';
-    _taxNumberController.text = addr.taxNumber ?? '';
-    _companyAddressController.text = addr.companyAddress ?? '';
-    _companyEmailController.text = addr.companyEmail ?? '';
-  }
-
   void _showBillingEditDialog(BuildContext context) {
-    if (_selectedAddress == null) return;
+    if (_selectedBillingAddress == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => EditBillingInfoView(address: _selectedAddress!),
+        builder: (_) =>
+            EditBillingInfoView(address: _selectedBillingAddress!),
       ),
     ).then((_) {
       final addressViewModel = context.read<AddressViewModel>();
       addressViewModel.fetchAddresses().then((_) {
-        final updated = addressViewModel.addresses.firstWhere(
-          (a) => a.id == _selectedAddress!.id,
-          orElse: () => _selectedAddress!,
+        final updated = addressViewModel.billingAddresses.firstWhere(
+          (a) => a.id == _selectedBillingAddress!.id,
+          orElse: () => _selectedBillingAddress!,
         );
-        setState(() {
-          _selectedAddress = updated;
-          _fillBillingFromAddress(updated);
-        });
+        setState(() => _selectedBillingAddress = updated);
       });
     });
   }
@@ -91,11 +72,6 @@ class _CheckoutViewState extends State<CheckoutView> {
   @override
   void dispose() {
     _noteController.dispose();
-    _companyTitleController.dispose();
-    _taxOfficeController.dispose();
-    _taxNumberController.dispose();
-    _companyAddressController.dispose();
-    _companyEmailController.dispose();
     super.dispose();
   }
 
@@ -232,7 +208,7 @@ class _CheckoutViewState extends State<CheckoutView> {
             ),
             if (addressViewModel.isLoading)
               const Center(child: CircularProgressIndicator())
-            else if (addressViewModel.addresses.isEmpty)
+            else if (addressViewModel.shippingAddresses.isEmpty)
               Container(
                 padding: EdgeInsets.all(SizeTokens.p16),
                 decoration: BoxDecoration(
@@ -240,8 +216,8 @@ class _CheckoutViewState extends State<CheckoutView> {
                   borderRadius: BorderRadius.circular(SizeTokens.r8),
                   border: Border.all(color: Colors.orange.shade200),
                 ),
-                child: Text(
-                  "Kayıtlı adresiniz bulunmamaktadır. Lütfen adres ekleyin.",
+                child: const Text(
+                  "Kayıtlı teslimat adresiniz bulunmamaktadır. Lütfen adres ekleyin.",
                 ),
               )
             else
@@ -252,11 +228,11 @@ class _CheckoutViewState extends State<CheckoutView> {
                   border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: Column(
-                  children: addressViewModel.addresses.map((address) {
+                  children: addressViewModel.shippingAddresses.map((address) {
                     return RadioListTile<Address>(
                       title: Text(
                         address.title,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
                         "${address.addressLine1} ${address.district}/${address.city}",
@@ -265,10 +241,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                       groupValue: _selectedAddress,
                       activeColor: AppColors.darkBlue,
                       onChanged: (Address? value) {
-                        setState(() {
-                          _selectedAddress = value;
-                          if (value != null) _fillBillingFromAddress(value);
-                        });
+                        setState(() => _selectedAddress = value);
                       },
                     );
                   }).toList(),
@@ -282,59 +255,66 @@ class _CheckoutViewState extends State<CheckoutView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Fatura Bilgileri",
+                  "Fatura Adresi",
                   style: TextStyle(
                     fontSize: SizeTokens.f16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.darkBlue,
                   ),
                 ),
-                TextButton(
-                  onPressed: () => _showBillingEditDialog(context),
-                  child: Text(
-                    "Düzenle",
-                    style: TextStyle(color: AppColors.blue),
+                if (_selectedBillingAddress != null)
+                  TextButton(
+                    onPressed: () => _showBillingEditDialog(context),
+                    child: Text(
+                      "Düzenle",
+                      style: TextStyle(color: AppColors.blue),
+                    ),
                   ),
-                ),
               ],
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(SizeTokens.r8),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Padding(
+            if (addressViewModel.billingAddresses.isEmpty)
+              Container(
                 padding: EdgeInsets.all(SizeTokens.p16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: const Text(
+                  "Kayıtlı fatura adresiniz bulunmamaktadır. İsteğe bağlı olarak fatura adresi ekleyebilirsiniz.",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+            else
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(SizeTokens.r8),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _companyTitleController.text.isNotEmpty
-                          ? _companyTitleController.text
-                          : "Firma bilgisi girilmemiş",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    if (_taxNumberController.text.isNotEmpty)
-                      Text(
-                        "${_taxOfficeController.text} / ${_taxNumberController.text}",
-                        style: TextStyle(
-                          fontSize: SizeTokens.f13,
-                          color: AppColors.gray,
-                        ),
+                  children: addressViewModel.billingAddresses.map((address) {
+                    final isCorporate = address.billingType == 'corporate';
+                    return RadioListTile<Address>(
+                      title: Text(
+                        address.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    if (_companyAddressController.text.isNotEmpty)
-                      Text(
-                        _companyAddressController.text,
-                        style: TextStyle(
-                          fontSize: SizeTokens.f13,
-                          color: AppColors.gray,
-                        ),
+                      subtitle: Text(
+                        isCorporate
+                            ? (address.billingCompanyTitle ?? address.addressLine1)
+                            : "${address.fullName} - ${address.addressLine1}",
                       ),
-                  ],
+                      value: address,
+                      groupValue: _selectedBillingAddress,
+                      activeColor: AppColors.darkBlue,
+                      onChanged: (Address? value) {
+                        setState(() => _selectedBillingAddress = value);
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
-            ),
 
             SizedBox(height: SizeTokens.p24),
 
@@ -389,20 +369,35 @@ class _CheckoutViewState extends State<CheckoutView> {
               onPressed: viewModel.isLoading || _selectedAddress == null
                   ? null
                   : () async {
-                      // Prepare data
                       final address = _selectedAddress!;
                       final notes = _noteController.text;
 
                       final orderedItems = List<ProductModel>.from(
                         viewModel.cart,
                       );
-                      final Map<String, dynamic> billingPayload = {
-                        "company_title": _companyTitleController.text.trim(),
-                        "tax_office": _taxOfficeController.text.trim(),
-                        "tax_number": _taxNumberController.text.trim(),
-                        "company_address": _companyAddressController.text.trim(),
-                        "company_email": _companyEmailController.text.trim(),
-                      };
+
+                      final Map<String, dynamic>? billingPayload =
+                          _selectedBillingAddress != null
+                              ? {
+                                  "billing_type":
+                                      _selectedBillingAddress!.billingType,
+                                  "billing_company_title":
+                                      _selectedBillingAddress!
+                                          .billingCompanyTitle,
+                                  "billing_tax_office":
+                                      _selectedBillingAddress!.billingTaxOffice,
+                                  "billing_tax_number":
+                                      _selectedBillingAddress!.billingTaxNumber,
+                                  "billing_invoice_email":
+                                      _selectedBillingAddress!
+                                          .billingInvoiceEmail,
+                                  "billing_identity_number":
+                                      _selectedBillingAddress!
+                                          .billingIdentityNumber,
+                                  "address_line1":
+                                      _selectedBillingAddress!.addressLine1,
+                                }
+                              : null;
 
                       final success = await viewModel.completeOrder(
                         address: address,
