@@ -262,13 +262,32 @@ class _CheckoutViewState extends State<CheckoutView> {
                     color: AppColors.darkBlue,
                   ),
                 ),
-                if (_selectedBillingAddress != null)
+                if (addressViewModel.billingAddresses.isNotEmpty)
+                  if (_selectedBillingAddress != null)
+                    TextButton(
+                      onPressed: () => _showBillingEditDialog(context),
+                      child: Text(
+                        "Düzenle",
+                        style: TextStyle(color: AppColors.blue),
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink()
+                else
                   TextButton(
-                    onPressed: () => _showBillingEditDialog(context),
-                    child: Text(
-                      "Düzenle",
-                      style: TextStyle(color: AppColors.blue),
-                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddAddressView(
+                            initialAddressType: 'billing',
+                          ),
+                        ),
+                      ).then((_) {
+                        addressViewModel.fetchAddresses();
+                      });
+                    },
+                    child: const Text("Fatura Adresi Ekle"),
                   ),
               ],
             ),
@@ -281,7 +300,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                   border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: const Text(
-                  "Kayıtlı fatura adresiniz bulunmamaktadır. İsteğe bağlı olarak fatura adresi ekleyebilirsiniz.",
+                  "Kayıtlı fatura adresiniz bulunmamaktadır.Fatura adresi eklemeniz gerekmektedir.",
                   style: TextStyle(color: Colors.grey),
                 ),
               )
@@ -364,7 +383,7 @@ class _CheckoutViewState extends State<CheckoutView> {
         ),
         child: SafeArea(
           child: SizedBox(
-            height: 50,
+            height: SizeTokens.p50,
             child: ElevatedButton(
               onPressed: viewModel.isLoading || _selectedAddress == null
                   ? null

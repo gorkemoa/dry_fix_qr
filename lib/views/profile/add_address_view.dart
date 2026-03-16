@@ -11,8 +11,9 @@ import 'widgets/address_form_field.dart';
 
 class AddAddressView extends StatefulWidget {
   final Address? address;
+  final String? initialAddressType;
 
-  const AddAddressView({super.key, this.address});
+  const AddAddressView({super.key, this.address, this.initialAddressType});
 
   @override
   State<AddAddressView> createState() => _AddAddressViewState();
@@ -51,7 +52,8 @@ class _AddAddressViewState extends State<AddAddressView> {
     super.initState();
 
     final addr = widget.address;
-    _selectedAddressType = addr?.addressType ?? 'shipping';
+    _selectedAddressType =
+        addr?.addressType ?? widget.initialAddressType ?? 'shipping';
     _selectedBillingType = addr?.billingType ?? 'corporate';
 
     _titleController = TextEditingController(text: addr?.title);
