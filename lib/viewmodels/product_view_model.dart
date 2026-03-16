@@ -224,13 +224,15 @@ class ProductViewModel extends ChangeNotifier {
         .toList();
 
     final Map<String, dynamic> addressPayload = {
+      "title": address.title,
       "full_name": address.fullName,
       "phone": address.phone,
+      "country": address.country ?? "TR",
       "city": address.city,
       "district": address.district,
       "neighborhood": address.neighborhood,
       "address_line1": address.addressLine1,
-      "postal_code": address.postalCode,
+      "postal_code": address.postalCode ?? "",
     };
 
     final Map<String, dynamic> payload = {

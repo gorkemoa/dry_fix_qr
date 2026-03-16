@@ -49,8 +49,31 @@ class _CheckoutViewState extends State<CheckoutView> {
     });
   }
 
-  void _showBillingEditDialog(BuildContext context) {
-    if (_selectedBillingAddress == null) return;
+  Map<String, dynamic> _buildBillingPayload(Address address) {
+    final isCorporate = address.billingType == 'corporate';
+    if (isCorporate) {
+      return {
+        "invoice_type": "corporate",
+        "company_title": address.billingCompanyTitle ?? "",
+        "company_address": address.addressLine1,
+        "tax_office": address.billingTaxOffice ?? "",
+        "tax_number": address.billingTaxNumber ?? "",
+        "company_phone": address.phone,
+        "invoice_email": address.billingInvoiceEmail ?? "",
+      };
+    } else {
+      return {
+        "invoice_type": "individual",
+        "full_name": address.fullName,
+        "tc_no": address.billingIdentityNumber ?? "",
+        "phone": address.phone,
+        "email": address.billingInvoiceEmail ?? "",
+        "address": address.addressLine1,
+      };
+    }
+  }
+
+  void _showBillingEditDialog(BuildContext context) {    if (_selectedBillingAddress == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -397,25 +420,7 @@ class _CheckoutViewState extends State<CheckoutView> {
 
                       final Map<String, dynamic>? billingPayload =
                           _selectedBillingAddress != null
-                              ? {
-                                  "billing_type":
-                                      _selectedBillingAddress!.billingType,
-                                  "billing_company_title":
-                                      _selectedBillingAddress!
-                                          .billingCompanyTitle,
-                                  "billing_tax_office":
-                                      _selectedBillingAddress!.billingTaxOffice,
-                                  "billing_tax_number":
-                                      _selectedBillingAddress!.billingTaxNumber,
-                                  "billing_invoice_email":
-                                      _selectedBillingAddress!
-                                          .billingInvoiceEmail,
-                                  "billing_identity_number":
-                                      _selectedBillingAddress!
-                                          .billingIdentityNumber,
-                                  "address_line1":
-                                      _selectedBillingAddress!.addressLine1,
-                                }
+                              ? _buildBillingPayload(_selectedBillingAddress!)
                               : null;
 
                       final success = await viewModel.completeOrder(

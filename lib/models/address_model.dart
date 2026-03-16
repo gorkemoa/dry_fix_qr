@@ -5,6 +5,7 @@ class Address {
   final String title;
   final String fullName;
   final String phone;
+  final String? country;
   final String city;
   final String district;
   final String neighborhood;
@@ -24,6 +25,7 @@ class Address {
     required this.title,
     required this.fullName,
     required this.phone,
+    this.country,
     required this.city,
     required this.district,
     required this.neighborhood,
@@ -45,6 +47,7 @@ class Address {
       title: json['title'] as String? ?? '',
       fullName: json['full_name'] as String? ?? '',
       phone: json['phone'] as String? ?? '',
+      country: json['country'] as String?,
       city: json['city'] as String? ?? '',
       district: json['district'] as String? ?? '',
       neighborhood: json['neighborhood'] as String? ?? '',
@@ -67,6 +70,7 @@ class Address {
       'title': title,
       'full_name': fullName,
       'phone': phone,
+      'country': country,
       'city': city,
       'district': district,
       'neighborhood': neighborhood,

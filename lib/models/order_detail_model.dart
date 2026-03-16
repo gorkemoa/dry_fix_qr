@@ -2,12 +2,16 @@ class OrderDetailResponse {
   final bool success;
   final OrderDetailModel order;
   final OrderAddressModel address;
+  final OrderBillingModel? billing;
+  final OrderAddressModel? billingAddress;
   final List<OrderItemModel> items;
 
   OrderDetailResponse({
     required this.success,
     required this.order,
     required this.address,
+    this.billing,
+    this.billingAddress,
     required this.items,
   });
 
@@ -18,6 +22,14 @@ class OrderDetailResponse {
       address: OrderAddressModel.fromJson(
         json['address'] as Map<String, dynamic>,
       ),
+      billing: json['billing'] != null
+          ? OrderBillingModel.fromJson(json['billing'] as Map<String, dynamic>)
+          : null,
+      billingAddress: json['billing_address'] != null
+          ? OrderAddressModel.fromJson(
+              json['billing_address'] as Map<String, dynamic>,
+            )
+          : null,
       items: (json['items'] as List)
           .map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -29,6 +41,8 @@ class OrderDetailResponse {
       'success': success,
       'order': order.toJson(),
       'address': address.toJson(),
+      'billing': billing?.toJson(),
+      'billing_address': billingAddress?.toJson(),
       'items': items.map((e) => e.toJson()).toList(),
     };
   }
@@ -39,7 +53,6 @@ class OrderDetailModel {
   final String status;
   final int totalTokenSpent;
   final String totalPrice;
-  final int quantity;
   final String? notes;
   final String purchasedAt;
   final String createdAt;
@@ -49,7 +62,6 @@ class OrderDetailModel {
     required this.status,
     required this.totalTokenSpent,
     required this.totalPrice,
-    required this.quantity,
     this.notes,
     required this.purchasedAt,
     required this.createdAt,
@@ -61,7 +73,6 @@ class OrderDetailModel {
       status: json['status'] as String,
       totalTokenSpent: json['total_token_spent'] as int,
       totalPrice: json['total_price'] as String,
-      quantity: json['quantity'] as int? ?? json['items_count'] as int? ?? 0,
       notes: json['notes'] as String?,
       purchasedAt: json['purchased_at'] as String,
       createdAt: json['created_at'] as String,
@@ -84,7 +95,7 @@ class OrderDetailModel {
 class OrderAddressModel {
   final String fullName;
   final String phone;
-  final String country;
+  final String? country;
   final String city;
   final String district;
   final String addressLine1;
@@ -95,7 +106,7 @@ class OrderAddressModel {
   OrderAddressModel({
     required this.fullName,
     required this.phone,
-    required this.country,
+    this.country,
     required this.city,
     required this.district,
     required this.addressLine1,
@@ -106,14 +117,14 @@ class OrderAddressModel {
 
   factory OrderAddressModel.fromJson(Map<String, dynamic> json) {
     return OrderAddressModel(
-      fullName: json['full_name'] as String,
-      phone: json['phone'] as String,
-      country: json['country'] as String,
-      city: json['city'] as String,
-      district: json['district'] as String,
-      addressLine1: json['address_line1'] as String,
+      fullName: json['full_name'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
+      country: json['country'] as String?,
+      city: json['city'] as String? ?? '',
+      district: json['district'] as String? ?? '',
+      addressLine1: json['address_line1'] as String? ?? '',
       addressLine2: json['address_line2'] as String?,
-      postalCode: json['postal_code'] as String,
+      postalCode: json['postal_code'] as String? ?? '',
       notes: json['notes'] as String?,
     );
   }
@@ -129,6 +140,72 @@ class OrderAddressModel {
       'address_line2': addressLine2,
       'postal_code': postalCode,
       'notes': notes,
+    };
+  }
+}
+
+class OrderBillingModel {
+  final String invoiceType;
+  // Individual fields
+  final String? fullName;
+  final String? tcNo;
+  final String? phone;
+  final String? email;
+  final String? address;
+  // Corporate fields
+  final String? companyTitle;
+  final String? companyAddress;
+  final String? taxOffice;
+  final String? taxNumber;
+  final String? companyPhone;
+  final String? invoiceEmail;
+
+  OrderBillingModel({
+    required this.invoiceType,
+    this.fullName,
+    this.tcNo,
+    this.phone,
+    this.email,
+    this.address,
+    this.companyTitle,
+    this.companyAddress,
+    this.taxOffice,
+    this.taxNumber,
+    this.companyPhone,
+    this.invoiceEmail,
+  });
+
+  factory OrderBillingModel.fromJson(Map<String, dynamic> json) {
+    return OrderBillingModel(
+      invoiceType: json['invoice_type'] as String? ?? 'individual',
+      fullName: json['full_name'] as String?,
+      tcNo: json['tc_no'] as String?,
+      phone: json['phone'] as String?,
+      email: json['email'] as String?,
+      address: json['address'] as String?,
+      companyTitle: json['company_title'] as String?,
+      companyAddress: json['company_address'] as String?,
+      taxOffice: json['tax_office'] as String?,
+      taxNumber: json['tax_number'] as String?,
+      companyPhone: json['company_phone'] as String?,
+      invoiceEmail: json['invoice_email'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'invoice_type': invoiceType,
+      'full_name': fullName,
+      'tc_no': tcNo,
+      'phone': phone,
+      'email': email,
+      'address': address,
+      'company_title': companyTitle,
+      'company_address': companyAddress,
+      'tax_office': taxOffice,
+      'tax_number': taxNumber,
+      'company_phone': companyPhone,
+      'invoice_email': invoiceEmail,
     };
   }
 }
