@@ -8,9 +8,9 @@ import '../../viewmodels/address_view_model.dart';
 import 'widgets/address_form_field.dart';
 
 class EditBillingInfoView extends StatefulWidget {
-  final Address address;
+  final Address? address;
 
-  const EditBillingInfoView({super.key, required this.address});
+  const EditBillingInfoView({super.key, this.address});
 
   @override
   State<EditBillingInfoView> createState() => _EditBillingInfoViewState();
@@ -19,6 +19,7 @@ class EditBillingInfoView extends StatefulWidget {
 class _EditBillingInfoViewState extends State<EditBillingInfoView> {
   final _formKey = GlobalKey<FormState>();
 
+  late final TextEditingController _titleController;
   late final TextEditingController _billingCompanyTitleController;
   late final TextEditingController _billingTaxOfficeController;
   late final TextEditingController _billingTaxNumberController;
@@ -28,37 +29,46 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
   late final TextEditingController _addressLine1Controller;
   late final TextEditingController _fullNameController;
 
+  String _selectedBillingType = 'corporate';
+
+  bool get isEditMode => widget.address != null;
+
   @override
   void initState() {
     super.initState();
+    final addr = widget.address;
+    _selectedBillingType = addr?.billingType ?? 'corporate';
+
+    _titleController = TextEditingController(text: addr?.title);
     _billingCompanyTitleController = TextEditingController(
-      text: widget.address.billingCompanyTitle,
+      text: addr?.billingCompanyTitle,
     );
     _billingTaxOfficeController = TextEditingController(
-      text: widget.address.billingTaxOffice,
+      text: addr?.billingTaxOffice,
     );
     _billingTaxNumberController = TextEditingController(
-      text: widget.address.billingTaxNumber,
+      text: addr?.billingTaxNumber,
     );
     _billingInvoiceEmailController = TextEditingController(
-      text: widget.address.billingInvoiceEmail,
+      text: addr?.billingInvoiceEmail,
     );
     _billingIdentityNumberController = TextEditingController(
-      text: widget.address.billingIdentityNumber,
+      text: addr?.billingIdentityNumber,
     );
     _phoneController = TextEditingController(
-      text: widget.address.phone.replaceAll('+90', ''),
+      text: addr?.phone.replaceAll('+90', ''),
     );
     _addressLine1Controller = TextEditingController(
-      text: widget.address.addressLine1,
+      text: addr?.addressLine1,
     );
     _fullNameController = TextEditingController(
-      text: widget.address.fullName,
+      text: addr?.fullName,
     );
   }
 
   @override
   void dispose() {
+    _titleController.dispose();
     _billingCompanyTitleController.dispose();
     _billingTaxOfficeController.dispose();
     _billingTaxNumberController.dispose();
@@ -70,7 +80,7 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
     super.dispose();
   }
 
-  bool get _isCorporate => widget.address.billingType == 'corporate';
+  bool get _isCorporate => _selectedBillingType == 'corporate';
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +101,9 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          _isCorporate ? "Kurumsal Fatura Bilgileri" : "Bireysel Fatura Bilgileri",
+          isEditMode
+              ? (_isCorporate ? "Kurumsal Fatura Bilgileri" : "Bireysel Fatura Bilgileri")
+              : "Fatura Bilgileri",
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -105,38 +117,53 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Billing type badge
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeTokens.p12,
-                  vertical: SizeTokens.p8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.darkBlue.withOpacity(0.07),
-                  borderRadius: BorderRadius.circular(SizeTokens.r8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      _isCorporate
-                          ? Icons.business_outlined
-                          : Icons.person_outline_rounded,
-                      size: SizeTokens.f16,
-                      color: AppColors.darkBlue,
-                    ),
-                    SizedBox(width: SizeTokens.p8),
-                    Text(
-                      _isCorporate ? "Kurumsal Fatura" : "Bireysel Fatura",
-                      style: TextStyle(
+              // Fatura tipi toggle (sadece oluştururken) veya badge (düzenlerken)
+              if (!isEditMode) ...[
+                _buildBillingTypeToggle(),
+                SizedBox(height: SizeTokens.p24),
+              ] else ...[
+                // Billing type badge
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeTokens.p12,
+                    vertical: SizeTokens.p8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.darkBlue.withOpacity(0.07),
+                    borderRadius: BorderRadius.circular(SizeTokens.r8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isCorporate
+                            ? Icons.business_outlined
+                            : Icons.person_outline_rounded,
+                        size: SizeTokens.f16,
                         color: AppColors.darkBlue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: SizeTokens.f14,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: SizeTokens.p8),
+                      Text(
+                        _isCorporate ? "Kurumsal Fatura" : "Bireysel Fatura",
+                        style: TextStyle(
+                          color: AppColors.darkBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeTokens.f14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                SizedBox(height: SizeTokens.p24),
+              ],
+
+              // Fatura Başlığı
+              AddressFormField(
+                controller: _titleController,
+                label: "Fatura Başlığı",
+                hint: "Fatura başlığı giriniz (Şirket, Bireysel vb.)",
+                validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
               ),
-              SizedBox(height: SizeTokens.p24),
+              SizedBox(height: SizeTokens.p16),
 
               // Corporate fields
               if (_isCorporate) ...[
@@ -144,6 +171,7 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
                   controller: _billingCompanyTitleController,
                   label: "Firma Unvanı",
                   hint: "Firma unvanını giriniz",
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                 ),
                 SizedBox(height: SizeTokens.p16),
                 Row(
@@ -153,7 +181,8 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
                         controller: _billingTaxOfficeController,
                         label: "Vergi Dairesi",
                         hint: "Vergi dairesi",
-                        isRequired: false,
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? "Gerekli" : null,
                       ),
                     ),
                     SizedBox(width: SizeTokens.p16),
@@ -162,7 +191,8 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
                         controller: _billingTaxNumberController,
                         label: "Vergi No",
                         hint: "Vergi numarası",
-                        isRequired: false,
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? "Gerekli" : null,
                         keyboardType: TextInputType.number,
                       ),
                     ),
@@ -185,14 +215,14 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
                   controller: _fullNameController,
                   label: "Ad Soyad",
                   hint: "Adınızı ve soyadınızı giriniz",
-                  isRequired: false,
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                 ),
                 SizedBox(height: SizeTokens.p16),
                 AddressFormField(
                   controller: _billingIdentityNumberController,
                   label: "TC Kimlik Numarası",
                   hint: "TC kimlik numaranızı giriniz",
-                  isRequired: false,
+                  validator: (v) => v?.isEmpty ?? true ? "Gerekli" : null,
                   keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: SizeTokens.p16),
@@ -231,23 +261,23 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
                 onPressed: viewModel.isLoading ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkBlue,
-                  minimumSize: const Size(double.infinity, 56),
+                  minimumSize: Size(double.infinity, SizeTokens.p56),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(SizeTokens.r8),
                   ),
                 ),
                 child: viewModel.isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
+                    ? SizedBox(
+                        height: SizeTokens.p20,
+                        width: SizeTokens.p20,
+                        child: const CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
-                        "Güncelle",
-                        style: TextStyle(
+                    : Text(
+                        isEditMode ? "Güncelle" : "Kaydet",
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -272,22 +302,104 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
     );
   }
 
+  Widget _buildBillingTypeToggle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Fatura Tipi",
+          style: TextStyle(
+            color: AppColors.darkBlue,
+            fontSize: SizeTokens.f14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: SizeTokens.p8),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTypeButton(
+                label: "Kurumsal",
+                icon: Icons.business_outlined,
+                isSelected: _isCorporate,
+                onTap: () => setState(() => _selectedBillingType = 'corporate'),
+              ),
+            ),
+            SizedBox(width: SizeTokens.p12),
+            Expanded(
+              child: _buildTypeButton(
+                label: "Bireysel",
+                icon: Icons.person_outline_rounded,
+                isSelected: !_isCorporate,
+                onTap: () => setState(() => _selectedBillingType = 'individual'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTypeButton({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(vertical: SizeTokens.p12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.darkBlue : AppColors.white,
+          borderRadius: BorderRadius.circular(SizeTokens.r8),
+          border: Border.all(
+            color: isSelected ? AppColors.darkBlue : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: SizeTokens.f18,
+              color: isSelected ? AppColors.white : AppColors.gray,
+            ),
+            SizedBox(width: SizeTokens.p8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppColors.white : AppColors.darkBlue,
+                fontWeight: FontWeight.bold,
+                fontSize: SizeTokens.f14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       final viewModel = context.read<AddressViewModel>();
 
       final phone = _phoneController.text.trim().isEmpty
-          ? widget.address.phone
+          ? (isEditMode ? widget.address!.phone : null)
           : "+90${_phoneController.text.trim()}";
 
       final request = CreateAddressRequest(
         addressType: 'billing',
-        billingType: widget.address.billingType,
-        title: widget.address.title,
-        fullName: _isCorporate ? null : _fullNameController.text.trim(),
+        billingType: _selectedBillingType,
+        title: _titleController.text.trim().isEmpty
+            ? (isEditMode ? widget.address!.title : _selectedBillingType == 'corporate' ? 'Kurumsal Fatura' : 'Bireysel Fatura')
+            : _titleController.text.trim(),
+        fullName: !_isCorporate ? _fullNameController.text.trim() : null,
         phone: phone,
         addressLine1: _addressLine1Controller.text.trim().isEmpty
-            ? widget.address.addressLine1
+            ? (isEditMode ? widget.address!.addressLine1 : null)
             : _addressLine1Controller.text.trim(),
         billingCompanyTitle: _isCorporate
             ? (_billingCompanyTitleController.text.trim().isEmpty
@@ -312,15 +424,20 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
         billingInvoiceEmail: _billingInvoiceEmailController.text.trim().isEmpty
             ? null
             : _billingInvoiceEmailController.text.trim(),
-        isDefault: widget.address.isDefault,
+        isDefault: isEditMode ? widget.address!.isDefault : true,
       );
 
-      final success = await viewModel.updateAddress(widget.address.id, request);
+      final bool success;
+      if (isEditMode) {
+        success = await viewModel.updateAddress(widget.address!.id, request);
+      } else {
+        success = await viewModel.createAddress(request);
+      }
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Fatura bilgileri güncellendi."),
+          SnackBar(
+            content: Text(isEditMode ? "Fatura bilgileri güncellendi." : "Fatura bilgileri kaydedildi."),
             backgroundColor: AppColors.darkBlue,
           ),
         );

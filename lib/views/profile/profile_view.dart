@@ -4,7 +4,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../app/app_theme.dart';
 import '../../viewmodels/profile_view_model.dart';
 import '../../viewmodels/address_view_model.dart';
-import '../../models/address_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/widgets/dp_symbol.dart';
@@ -12,8 +11,7 @@ import '../transactions/transactions_view.dart';
 import 'edit_profile_view.dart';
 import 'update_password_view.dart';
 import 'addresses_view.dart';
-import 'add_address_view.dart';
-import 'edit_billing_info_view.dart';
+import 'billing_addresses_view.dart';
 import 'support_list_view.dart';
 import '../login/login_view.dart';
 
@@ -212,36 +210,14 @@ class _ProfileViewState extends State<ProfileView> {
                         );
                       },
                     ),
-                    Consumer<AddressViewModel>(
-                      builder: (context, addressViewModel, child) {
-                        final billingAddress = addressViewModel.billingAddresses
-                            .cast<Address?>()
-                            .firstWhere(
-                              (a) => a != null,
-                              orElse: () => null,
-                            );
-
-                        return Column(
-                          children: [
-                            _buildMenuItem(
-                              icon: Icons.receipt_long_outlined,
-                              title: "Fatura Bilgileri",
-                              onTap: () {
-                                if (billingAddress != null) {
-                                  _showBillingDetailsSheet(
-                                    context,
-                                    billingAddress,
-                                  );
-                                } else {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const AddAddressView(),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
+                    _buildMenuItem(
+                      icon: Icons.receipt_long_outlined,
+                      title: "Fatura Bilgileri",
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const BillingAddressesView(),
+                          ),
                         );
                       },
                     ),
@@ -582,104 +558,6 @@ class _ProfileViewState extends State<ProfileView> {
             color: AppColors.background,
           ),
       ],
-    );
-  }
-
-  void _showBillingDetailsSheet(BuildContext context, Address address) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(SizeTokens.r24),
-        ),
-      ),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(SizeTokens.p24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Fatura Bilgileri",
-                  style: TextStyle(
-                    color: AppColors.darkBlue,
-                    fontSize: SizeTokens.f18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded),
-                ),
-              ],
-            ),
-            const Divider(),
-            SizedBox(height: SizeTokens.p16),
-            _buildBillingDetail("Firma:", address.billingCompanyTitle ?? address.fullName),
-            _buildBillingDetail("Adres:", address.addressLine1),
-            _buildBillingDetail("V.Daire:", address.billingTaxOffice ?? "-"),
-            _buildBillingDetail("V.No:", address.billingTaxNumber ?? "-"),
-            _buildBillingDetail("TC No:", address.billingIdentityNumber ?? "-"),
-            _buildBillingDetail("E-posta:", address.billingInvoiceEmail ?? "-"),
-            SizedBox(height: SizeTokens.p24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => EditBillingInfoView(address: address),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.darkBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(SizeTokens.r12),
-                ),
-                padding: EdgeInsets.symmetric(vertical: SizeTokens.p16),
-              ),
-              child: const Text("Bilgileri Düzenle"),
-            ),
-            SizedBox(height: SizeTokens.p16),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBillingDetail(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 70,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: AppColors.gray,
-                fontSize: SizeTokens.f12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                color: AppColors.darkBlue,
-                fontSize: SizeTokens.f12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

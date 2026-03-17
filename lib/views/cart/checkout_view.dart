@@ -302,9 +302,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddAddressView(
-                            initialAddressType: 'billing',
-                          ),
+                          builder: (context) => const EditBillingInfoView(),
                         ),
                       ).then((_) {
                         addressViewModel.fetchAddresses();

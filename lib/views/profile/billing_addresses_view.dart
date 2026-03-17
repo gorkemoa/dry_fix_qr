@@ -6,16 +6,16 @@ import '../../core/responsive/size_tokens.dart';
 import '../../models/address_model.dart';
 import '../../viewmodels/address_view_model.dart';
 import 'widgets/address_item.dart';
-import 'add_address_view.dart';
+import 'edit_billing_info_view.dart';
 
-class AddressesView extends StatefulWidget {
-  const AddressesView({super.key});
+class BillingAddressesView extends StatefulWidget {
+  const BillingAddressesView({super.key});
 
   @override
-  State<AddressesView> createState() => _AddressesViewState();
+  State<BillingAddressesView> createState() => _BillingAddressesViewState();
 }
 
-class _AddressesViewState extends State<AddressesView> {
+class _BillingAddressesViewState extends State<BillingAddressesView> {
   @override
   void initState() {
     super.initState();
@@ -43,7 +43,7 @@ class _AddressesViewState extends State<AddressesView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Adreslerim",
+          "Fatura Bilgileri",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -53,15 +53,15 @@ class _AddressesViewState extends State<AddressesView> {
             )
           : viewModel.errorMessage != null
           ? _buildErrorView(viewModel)
-          : viewModel.shippingAddresses.isEmpty
+          : viewModel.billingAddresses.isEmpty
           ? _buildEmptyView()
-          : _buildAddressList(viewModel),
+          : _buildBillingList(viewModel),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AddAddressView()),
-          );
+            MaterialPageRoute(builder: (_) => const EditBillingInfoView()),
+          ).then((_) => context.read<AddressViewModel>().fetchAddresses());
         },
         backgroundColor: AppColors.darkBlue,
         elevation: 4,
@@ -100,7 +100,7 @@ class _AddressesViewState extends State<AddressesView> {
             ),
             SizedBox(height: SizeTokens.p8),
             Text(
-              viewModel.errorMessage ?? "Adresler yüklenirken bir hata oluştu.",
+              viewModel.errorMessage ?? "Fatura bilgileri yüklenirken bir hata oluştu.",
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.gray, fontSize: SizeTokens.f14),
             ),
@@ -139,14 +139,14 @@ class _AddressesViewState extends State<AddressesView> {
                 borderRadius: BorderRadius.circular(SizeTokens.r32),
               ),
               child: Icon(
-                Icons.location_off_rounded,
+                Icons.receipt_long_outlined,
                 color: AppColors.darkBlue.withOpacity(0.2),
                 size: SizeTokens.p64,
               ),
             ),
             SizedBox(height: SizeTokens.p32),
             Text(
-              "Adres Bulunamadı",
+              "Fatura Bilgisi Bulunamadı",
               style: TextStyle(
                 color: AppColors.darkBlue,
                 fontSize: SizeTokens.f20,
@@ -155,7 +155,7 @@ class _AddressesViewState extends State<AddressesView> {
             ),
             SizedBox(height: SizeTokens.p12),
             Text(
-              "Henüz bir adres eklememişsiniz. Yeni bir adres ekleyerek devam edebilirsiniz.",
+              "Henüz bir fatura bilgisi eklememişsiniz. Yeni bir fatura bilgisi ekleyerek devam edebilirsiniz.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.gray,
@@ -165,16 +165,18 @@ class _AddressesViewState extends State<AddressesView> {
             ),
             SizedBox(height: SizeTokens.p40),
             SizedBox(
-              width: 200,
+              width: 220,
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const AddAddressView()),
-                  );
+                    MaterialPageRoute(
+                      builder: (_) => const EditBillingInfoView(),
+                    ),
+                  ).then((_) => context.read<AddressViewModel>().fetchAddresses());
                 },
                 icon: const Icon(Icons.add_rounded),
-                label: const Text("Adres Ekle"),
+                label: const Text("Fatura Bilgisi Ekle"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkBlue,
                   padding: EdgeInsets.symmetric(vertical: SizeTokens.p16),
@@ -190,7 +192,7 @@ class _AddressesViewState extends State<AddressesView> {
     );
   }
 
-  Widget _buildAddressList(AddressViewModel viewModel) {
+  Widget _buildBillingList(AddressViewModel viewModel) {
     return ListView.builder(
       padding: EdgeInsets.fromLTRB(
         SizeTokens.p24,
@@ -198,18 +200,18 @@ class _AddressesViewState extends State<AddressesView> {
         SizeTokens.p24,
         SizeTokens.p100,
       ),
-      itemCount: viewModel.shippingAddresses.length,
+      itemCount: viewModel.billingAddresses.length,
       itemBuilder: (context, index) {
-        final address = viewModel.shippingAddresses[index];
+        final address = viewModel.billingAddresses[index];
         return AddressItem(
           address: address,
           onEdit: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => AddAddressView(address: address),
+                builder: (_) => EditBillingInfoView(address: address),
               ),
-            );
+            ).then((_) => context.read<AddressViewModel>().fetchAddresses());
           },
           onDelete: () {
             _showDeleteConfirmation(context, viewModel, address);
@@ -256,14 +258,14 @@ class _AddressesViewState extends State<AddressesView> {
           borderRadius: BorderRadius.circular(SizeTokens.r24),
         ),
         title: Text(
-          "Adresi Sil",
+          "Fatura Bilgisini Sil",
           style: TextStyle(
             color: AppColors.darkBlue,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Text(
-          "\"${address.title}\" başlıklı adresi silmek istediğinize emin misiniz?",
+          "\"${address.title}\" başlıklı fatura bilgisini silmek istediğinize emin misiniz?",
           style: TextStyle(color: AppColors.darkBlue.withOpacity(0.8)),
         ),
         actionsPadding: EdgeInsets.only(
@@ -288,7 +290,7 @@ class _AddressesViewState extends State<AddressesView> {
               if (success && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text("Adres başarıyla silindi."),
+                    content: const Text("Fatura bilgisi başarıyla silindi."),
                     backgroundColor: AppColors.darkBlue,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
