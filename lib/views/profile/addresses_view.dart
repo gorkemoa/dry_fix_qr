@@ -199,24 +199,24 @@ class _AddressesViewState extends State<AddressesView> {
         SizeTokens.p100,
       ),
       itemCount: viewModel.shippingAddresses.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (_, index) {
         final address = viewModel.shippingAddresses[index];
         return AddressItem(
           address: address,
           onEdit: () {
             Navigator.push(
-              context,
+              this.context,
               MaterialPageRoute(
                 builder: (_) => AddAddressView(address: address),
               ),
             );
           },
           onDelete: () {
-            _showDeleteConfirmation(context, viewModel, address);
+            _showDeleteConfirmation(this.context, viewModel, address);
           },
           onSetDefault: address.isDefault
               ? null
-              : () => _setDefault(context, viewModel, address),
+              : () => _setDefault(this.context, viewModel, address),
         );
       },
     );

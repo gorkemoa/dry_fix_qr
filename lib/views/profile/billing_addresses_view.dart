@@ -61,7 +61,9 @@ class _BillingAddressesViewState extends State<BillingAddressesView> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const EditBillingInfoView()),
-          ).then((_) => context.read<AddressViewModel>().fetchAddresses());
+          ).then((_) {
+            if (mounted) context.read<AddressViewModel>().fetchAddresses();
+          });
         },
         backgroundColor: AppColors.darkBlue,
         elevation: 4,
@@ -173,7 +175,9 @@ class _BillingAddressesViewState extends State<BillingAddressesView> {
                     MaterialPageRoute(
                       builder: (_) => const EditBillingInfoView(),
                     ),
-                  ).then((_) => context.read<AddressViewModel>().fetchAddresses());
+                  ).then((_) {
+                    if (mounted) context.read<AddressViewModel>().fetchAddresses();
+                  });
                 },
                 icon: const Icon(Icons.add_rounded),
                 label: const Text("Fatura Bilgisi Ekle"),
@@ -201,24 +205,26 @@ class _BillingAddressesViewState extends State<BillingAddressesView> {
         SizeTokens.p100,
       ),
       itemCount: viewModel.billingAddresses.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (_, index) {
         final address = viewModel.billingAddresses[index];
         return AddressItem(
           address: address,
           onEdit: () {
             Navigator.push(
-              context,
+              this.context,
               MaterialPageRoute(
                 builder: (_) => EditBillingInfoView(address: address),
               ),
-            ).then((_) => context.read<AddressViewModel>().fetchAddresses());
+            ).then((_) {
+              if (mounted) this.context.read<AddressViewModel>().fetchAddresses();
+            });
           },
           onDelete: () {
-            _showDeleteConfirmation(context, viewModel, address);
+            _showDeleteConfirmation(this.context, viewModel, address);
           },
           onSetDefault: address.isDefault
               ? null
-              : () => _setDefault(context, viewModel, address),
+              : () => _setDefault(this.context, viewModel, address),
         );
       },
     );

@@ -101,9 +101,7 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          isEditMode
-              ? (_isCorporate ? "Kurumsal Fatura Bilgileri" : "Bireysel Fatura Bilgileri")
-              : "Fatura Bilgileri",
+          _isCorporate ? "Kurumsal Fatura" : "Bireysel Fatura",
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -117,44 +115,9 @@ class _EditBillingInfoViewState extends State<EditBillingInfoView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Fatura tipi toggle (sadece oluştururken) veya badge (düzenlerken)
-              if (!isEditMode) ...[
-                _buildBillingTypeToggle(),
-                SizedBox(height: SizeTokens.p24),
-              ] else ...[
-                // Billing type badge
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: SizeTokens.p12,
-                    vertical: SizeTokens.p8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.darkBlue.withOpacity(0.07),
-                    borderRadius: BorderRadius.circular(SizeTokens.r8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _isCorporate
-                            ? Icons.business_outlined
-                            : Icons.person_outline_rounded,
-                        size: SizeTokens.f16,
-                        color: AppColors.darkBlue,
-                      ),
-                      SizedBox(width: SizeTokens.p8),
-                      Text(
-                        _isCorporate ? "Kurumsal Fatura" : "Bireysel Fatura",
-                        style: TextStyle(
-                          color: AppColors.darkBlue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: SizeTokens.f14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: SizeTokens.p24),
-              ],
+              // Fatura tipi toggle (hem oluştururken hem düzenlerken)
+              _buildBillingTypeToggle(),
+              SizedBox(height: SizeTokens.p24),
 
               // Fatura Başlığı
               AddressFormField(
