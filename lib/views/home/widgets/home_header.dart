@@ -78,6 +78,7 @@ class HomeHeader extends StatelessWidget {
                           _greeting,
                           style: TextStyle(
                             fontSize: SizeTokens.f14,
+                            // ignore: deprecated_member_use
                             color: Colors.white.withOpacity(0.9),
                             fontWeight: FontWeight.w400,
                           ),
@@ -88,6 +89,7 @@ class HomeHeader extends StatelessWidget {
                       height: SizeTokens.p48,
                       width: SizeTokens.p48,
                       decoration: BoxDecoration(
+                        // ignore: deprecated_member_use
                         color: Colors.black.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),

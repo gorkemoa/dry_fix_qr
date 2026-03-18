@@ -239,7 +239,7 @@ class ProductViewModel extends ChangeNotifier {
       "items": itemsPayload,
       "address": addressPayload,
       "notes": notes,
-      if (billing != null) "billing": billing,
+      "billing": ?billing,
     };
 
     final result = await _orderService.createOrder(payload);

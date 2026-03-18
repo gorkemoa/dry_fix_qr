@@ -28,6 +28,7 @@ class _HistoryItemState extends State<HistoryItem> {
         borderRadius: BorderRadius.circular(SizeTokens.r20),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
@@ -58,7 +59,9 @@ class _HistoryItemState extends State<HistoryItem> {
                 padding: EdgeInsets.all(SizeTokens.p10),
                 decoration: BoxDecoration(
                   color: widget.item.reason == 'purchase'
+                      // ignore: deprecated_member_use
                       ? const Color(0xFFFE8B6D).withOpacity(0.15)
+                      // ignore: deprecated_member_use
                       : const Color(0xFF6DB6FE).withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
@@ -181,6 +184,7 @@ class _HistoryItemState extends State<HistoryItem> {
                                 SizeTokens.r8,
                               ),
                               border: Border.all(
+                                // ignore: deprecated_member_use
                                 color: AppColors.gray.withOpacity(0.1),
                               ),
                               image: DecorationImage(

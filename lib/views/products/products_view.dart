@@ -276,6 +276,7 @@ class _ProductsViewState extends State<ProductsView> {
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(SizeTokens.r12),
                           border: Border.all(
+                            // ignore: deprecated_member_use
                             color: AppColors.darkBlue.withOpacity( 0.3),
                             width: 1.2,
                           ),
@@ -336,7 +337,9 @@ class _ProductsViewState extends State<ProductsView> {
                           borderRadius: BorderRadius.circular(SizeTokens.r12),
                           border: Border.all(
                             color: viewModel.sortOrder != ProductSortOrder.none
+                                // ignore: deprecated_member_use
                                 ? AppColors.darkBlue.withOpacity(0.3)
+                                // ignore: deprecated_member_use
                                 : AppColors.darkBlue.withOpacity(0.3),
                             width: 1.2,
                           ),

@@ -18,6 +18,7 @@ class AppTheme {
       primary: AppColors.darkBlue,
       secondary: AppColors.blue,
       surface: AppColors.white,
+      // ignore: deprecated_member_use
       background: AppColors.background,
     ),
     scaffoldBackgroundColor: AppColors.background,

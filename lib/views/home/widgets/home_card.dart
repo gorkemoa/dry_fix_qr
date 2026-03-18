@@ -26,6 +26,7 @@ class HomeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(SizeTokens.r24),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 20,
             offset: const Offset(0, 8),

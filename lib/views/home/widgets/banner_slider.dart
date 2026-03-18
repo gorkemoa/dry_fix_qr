@@ -89,6 +89,7 @@ class _BannerSliderState extends State<BannerSlider> {
                 decoration: BoxDecoration(
                   color: isActive
                       ? AppColors.blue
+                      // ignore: deprecated_member_use
                       : AppColors.gray.withOpacity(0.35),
                   borderRadius: BorderRadius.circular(SizeTokens.r4),
                 ),
@@ -147,6 +148,7 @@ class _BannerCardState extends State<_BannerCard> {
           borderRadius: BorderRadius.circular(SizeTokens.r20),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.06),
               blurRadius: 16,
               offset: const Offset(0, 6),
@@ -195,6 +197,7 @@ class _BannerCardState extends State<_BannerCard> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
+                        // ignore: deprecated_member_use
                         Colors.black.withOpacity(0.72),
                       ],
                       stops: const [0.30, 1.0],
@@ -213,6 +216,7 @@ class _BannerCardState extends State<_BannerCard> {
                     vertical: SizeTokens.p4,
                   ),
                   decoration: BoxDecoration(
+                    // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.45),
                     borderRadius: BorderRadius.circular(SizeTokens.r20),
                   ),
@@ -222,6 +226,7 @@ class _BannerCardState extends State<_BannerCard> {
                       Icon(
                         Icons.calendar_today_rounded,
                         size: SizeTokens.p10,
+                        // ignore: deprecated_member_use
                         color: AppColors.white.withOpacity(0.85),
                       ),
                       SizedBox(width: SizeTokens.p4),
@@ -269,6 +274,7 @@ class _BannerCardState extends State<_BannerCard> {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: SizeTokens.f11,
+                                // ignore: deprecated_member_use
                                 color: AppColors.white.withOpacity(0.85),
                                 fontWeight: FontWeight.w400,
                               ),
@@ -285,6 +291,7 @@ class _BannerCardState extends State<_BannerCard> {
               // Tap loading overlay
               if (_isLoading)
                 Container(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.35),
                   child: const Center(
                     child: CircularProgressIndicator(

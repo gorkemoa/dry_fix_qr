@@ -84,6 +84,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                   Icon(
                     Icons.notifications_off_outlined,
                     size: SizeTokens.p64,
+                    // ignore: deprecated_member_use
                     color: AppColors.gray.withOpacity(0.5),
                   ),
                   SizedBox(height: SizeTokens.p16),

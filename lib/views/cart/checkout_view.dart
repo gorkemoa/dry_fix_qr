@@ -81,6 +81,7 @@ class _CheckoutViewState extends State<CheckoutView> {
             EditBillingInfoView(address: _selectedBillingAddress!),
       ),
     ).then((_) {
+      // ignore: use_build_context_synchronously
       final addressViewModel = context.read<AddressViewModel>();
       addressViewModel.fetchAddresses().then((_) {
         final updated = addressViewModel.billingAddresses.firstWhere(
@@ -261,8 +262,10 @@ class _CheckoutViewState extends State<CheckoutView> {
                         "${address.addressLine1} ${address.district}/${address.city}",
                       ),
                       value: address,
+                      // ignore: deprecated_member_use
                       groupValue: _selectedAddress,
                       activeColor: AppColors.darkBlue,
+                      // ignore: deprecated_member_use
                       onChanged: (Address? value) {
                         setState(() => _selectedAddress = value);
                       },
@@ -346,8 +349,10 @@ class _CheckoutViewState extends State<CheckoutView> {
                             : "${address.fullName} - ${address.addressLine1}",
                       ),
                       value: address,
+                      // ignore: deprecated_member_use
                       groupValue: _selectedBillingAddress,
                       activeColor: AppColors.darkBlue,
+                      // ignore: deprecated_member_use
                       onChanged: (Address? value) {
                         setState(() => _selectedBillingAddress = value);
                       },
@@ -396,6 +401,7 @@ class _CheckoutViewState extends State<CheckoutView> {
           color: AppColors.white,
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -5),

@@ -129,7 +129,7 @@ class CartView extends StatelessWidget {
                               child: Image.network(
                                 product.image,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => Icon(
+                                errorBuilder: (_, _, _) => Icon(
                                   Icons.image_not_supported_outlined,
                                   color: Colors.grey,
                                 ),
@@ -225,6 +225,7 @@ class CartView extends StatelessWidget {
                 color: AppColors.white,
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, -5),

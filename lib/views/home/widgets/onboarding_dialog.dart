@@ -17,6 +17,7 @@ class OnboardingDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(SizeTokens.r32),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 10),
@@ -75,9 +76,11 @@ class OnboardingDialog extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(SizeTokens.p20),
                       decoration: BoxDecoration(
+                        // ignore: deprecated_member_use
                         color: AppColors.blue.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(SizeTokens.r20),
                         border: Border.all(
+                          // ignore: deprecated_member_use
                           color: AppColors.blue.withOpacity(0.1),
                           width: 1,
                         ),

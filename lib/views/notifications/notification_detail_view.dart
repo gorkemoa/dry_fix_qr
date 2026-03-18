@@ -65,6 +65,7 @@ class NotificationDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.1),
             blurRadius: 15,
             offset: const Offset(0, 5),
@@ -79,6 +80,7 @@ class NotificationDetailView extends StatelessWidget {
             height: double.infinity,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => Container(
+              // ignore: deprecated_member_use
               color: AppColors.gray.withOpacity(0.1),
               child: const Center(
                 child: Icon(
@@ -93,6 +95,7 @@ class NotificationDetailView extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
+                // ignore: deprecated_member_use
                 colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
               ),
             ),
@@ -158,11 +161,13 @@ class NotificationDetailView extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.background,
             borderRadius: BorderRadius.circular(SizeTokens.r12),
+            // ignore: deprecated_member_use
             border: Border.all(color: AppColors.gray.withOpacity(0.1)),
           ),
           child: Text(
             item.body,
             style: TextStyle(
+              // ignore: deprecated_member_use
               color: AppColors.darkBlue.withOpacity(0.8),
               fontSize: SizeTokens.f16,
               height: 1.6,
