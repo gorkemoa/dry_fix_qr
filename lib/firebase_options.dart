@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDBjut0XW8R3kufsd1uzPxqMBmukDuY4ro',
-    appId: '1:291237777308:android:b99f585092480f6b7d0259',
+    appId: '1:291237777308:android:f52bd0b61789c1307d0259',
     messagingSenderId: '291237777308',
     projectId: 'dryfixqr',
     storageBucket: 'dryfixqr.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAFe-QT7GXdptkZEM77w111-gWkkbQIFWs',
-    appId: '1:291237777308:ios:97a46abaabeee0007d0259',
+    appId: '1:291237777308:ios:bbf69b1d43b488ff7d0259',
     messagingSenderId: '291237777308',
     projectId: 'dryfixqr',
     storageBucket: 'dryfixqr.firebasestorage.app',
-    iosBundleId: 'com.izersan.dryfix',
+    iosBundleId: 'com.izersan.dryustaapp',
   );
+
 }

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:291237777308:android:b99f585092480f6b7d0259",
+        "mobilesdk_app_id": "1:291237777308:android:f52bd0b61789c1307d0259",
         "android_client_info": {
-          "package_name": "com.smartmetrics.dryfixqr"
+          "package_name": "com.izersan.dryustaapp"
         }
       },
       "oauth_client": [],

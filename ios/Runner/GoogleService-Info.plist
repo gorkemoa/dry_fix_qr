@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.smartmetrics.dryfixqr</string>
+	<string>com.izersan.dryustaapp</string>
 	<key>PROJECT_ID</key>
 	<string>dryfixqr</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:291237777308:ios:97a46abaabeee0007d0259</string>
+	<string>1:291237777308:ios:bbf69b1d43b488ff7d0259</string>
 </dict>
 </plist>

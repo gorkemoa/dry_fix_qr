@@ -1,4 +1,4 @@
-package com.smartmetrics.dryfixqr
+package com.izersan.dryustaapp
 
 import io.flutter.app.FlutterApplication
 import android.content.Context

@@ -276,7 +276,7 @@ class _ProductsViewState extends State<ProductsView> {
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(SizeTokens.r12),
                           border: Border.all(
-                            color: AppColors.titleLight,
+                            color: AppColors.darkBlue.withOpacity( 0.3),
                             width: 1.2,
                           ),
                         ),
@@ -292,19 +292,19 @@ class _ProductsViewState extends State<ProductsView> {
                           decoration: InputDecoration(
                             hintText: 'Ürün ara...',
                             hintStyle: TextStyle(
-                              color: AppColors.gray,
+                              color: AppColors.darkBlue,
                               fontSize: SizeTokens.f14,
                             ),
                             prefixIcon: Icon(
                               Icons.search_rounded,
-                              color: AppColors.gray,
+                              color: AppColors.darkBlue,
                               size: SizeTokens.p20,
                             ),
                             suffixIcon: viewModel.searchQuery.isNotEmpty
                                 ? IconButton(
                                     icon: Icon(
                                       Icons.close_rounded,
-                                      color: AppColors.gray,
+                                      color: AppColors.darkBlue,
                                       size: SizeTokens.p20,
                                     ),
                                     onPressed: () {
@@ -336,8 +336,8 @@ class _ProductsViewState extends State<ProductsView> {
                           borderRadius: BorderRadius.circular(SizeTokens.r12),
                           border: Border.all(
                             color: viewModel.sortOrder != ProductSortOrder.none
-                                ? AppColors.darkBlue
-                                : AppColors.titleLight,
+                                ? AppColors.darkBlue.withOpacity(0.3)
+                                : AppColors.darkBlue.withOpacity(0.3),
                             width: 1.2,
                           ),
                         ),
@@ -345,7 +345,7 @@ class _ProductsViewState extends State<ProductsView> {
                           Icons.sort_rounded,
                           color: viewModel.sortOrder != ProductSortOrder.none
                               ? AppColors.white
-                              : AppColors.gray,
+                              : AppColors.darkBlue,
                           size: SizeTokens.p24,
                         ),
                       ),
@@ -474,7 +474,7 @@ class _CategoryChip extends StatelessWidget {
           color: isSelected ? AppColors.darkBlue : AppColors.white,
           borderRadius: BorderRadius.circular(SizeTokens.r20),
           border: Border.all(
-            color: isSelected ? AppColors.darkBlue : AppColors.titleLight,
+            color: isSelected ? AppColors.darkBlue : AppColors.gray,
             width: 1.2,
           ),
         ),
@@ -485,7 +485,7 @@ class _CategoryChip extends StatelessWidget {
               fontSize: SizeTokens.f13,
               fontWeight:
                   isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? AppColors.white : AppColors.gray,
+              color: isSelected ? AppColors.white : const Color(0xFF4A5072),
             ),
           ),
         ),
