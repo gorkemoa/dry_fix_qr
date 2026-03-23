@@ -8,10 +8,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <application
         android:label="DryUsta"
-        android:name="com.izersan.dryustamobilMainApplication"
+        android:name=".MainApplication"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name="com.izersan.dryustamobilMainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
