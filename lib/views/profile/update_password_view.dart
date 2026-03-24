@@ -64,6 +64,7 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
               Container(
                 padding: EdgeInsets.all(SizeTokens.p12),
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: AppColors.darkBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(SizeTokens.r8),
                 ),
