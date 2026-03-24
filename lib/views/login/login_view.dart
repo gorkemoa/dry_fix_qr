@@ -12,6 +12,8 @@ import '../common/pdf_viewer_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 
+enum AuthTab { login, register }
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -21,10 +23,12 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   // Common
-  bool _isLogin = true;
+  AuthTab _selectedTab = AuthTab.login;
+  bool _isPhoneInput = false;
 
   // Login Controllers
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneLoginController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _rememberMe = false;
 
@@ -94,87 +98,15 @@ class _LoginViewState extends State<LoginView> {
                         padding: EdgeInsets.all(SizeTokens.p4),
                         child: Row(
                           children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() => _isLogin = true),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  decoration: BoxDecoration(
-                                    color: _isLogin
-                                        ? AppColors.white
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(
-                                      SizeTokens.r24,
-                                    ),
-                                    boxShadow: _isLogin
-                                        ? [
-                                            BoxShadow(
-                                              // ignore: deprecated_member_use
-                                              color: Colors.black.withOpacity(
-                                                0.05,
-                                              ),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ]
-                                        : [],
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Giriş",
-                                    style: TextStyle(
-                                      color: _isLogin
-                                          ? AppColors.darkBlue
-                                          : AppColors.gray,
-                                      fontWeight: _isLogin
-                                          ? FontWeight.bold
-                                          : FontWeight.w500,
-                                      fontSize: SizeTokens.f14,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            _buildTabItem(
+                              title: "Giriş Yap",
+                              tab: AuthTab.login,
+                              isSelected: _selectedTab == AuthTab.login,
                             ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setState(() => _isLogin = false),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  decoration: BoxDecoration(
-                                    color: !_isLogin
-                                        ? AppColors.white
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(
-                                      SizeTokens.r32,
-                                    ),
-                                    boxShadow: !_isLogin
-                                        ? [
-                                            BoxShadow(
-                                              // ignore: deprecated_member_use
-                                              color: Colors.black.withOpacity(
-                                                0.05,
-                                              ),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ]
-                                        : [],
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Üye Ol",
-                                    style: TextStyle(
-                                      color: !_isLogin
-                                          ? AppColors.darkBlue
-                                          : AppColors.gray,
-                                      fontWeight: !_isLogin
-                                          ? FontWeight.bold
-                                          : FontWeight.w500,
-                                      fontSize: SizeTokens.f14,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            _buildTabItem(
+                              title: "Üye Ol",
+                              tab: AuthTab.register,
+                              isSelected: _selectedTab == AuthTab.register,
                             ),
                           ],
                         ),
@@ -182,7 +114,7 @@ class _LoginViewState extends State<LoginView> {
                       SizedBox(height: SizeTokens.p32),
 
                       // Form Content
-                      if (_isLogin)
+                      if (_selectedTab == AuthTab.login)
                         _buildLoginForm(loginViewModel)
                       else
                         _buildRegisterForm(registerViewModel),
@@ -201,10 +133,10 @@ class _LoginViewState extends State<LoginView> {
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: Image.asset(
-                      _isLogin
-                          ? 'assets/login_mascot.png'
-                          : 'assets/register_mascot.png',
-                      key: ValueKey(_isLogin),
+                      _selectedTab == AuthTab.register
+                          ? 'assets/register_mascot.png'
+                          : 'assets/login_mascot.png',
+                      key: ValueKey(_selectedTab),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -221,12 +153,30 @@ class _LoginViewState extends State<LoginView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTextField(
-          controller: _emailController,
-          hint: "E-mail",
-          icon: Icons.mail_outline,
-          textInputAction: TextInputAction.next,
-        ),
+        if (!_isPhoneInput)
+          _buildTextField(
+            controller: _emailController,
+            hint: "E-mail",
+            icon: Icons.mail_outline,
+            textInputAction: TextInputAction.next,
+          )
+        else
+          _buildTextField(
+            controller: _phoneLoginController,
+            hint: "(5xx) xxx xx xx",
+            icon: Icons.phone_outlined,
+            keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.next,
+            prefixText: '+90 ',
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(10),
+              TextInputFormatter.withFunction((oldValue, newValue) {
+                if (newValue.text.startsWith('0')) return oldValue;
+                return newValue;
+              }),
+            ],
+          ),
         SizedBox(height: SizeTokens.p16),
         _buildTextField(
           controller: _passwordController,
@@ -268,6 +218,23 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ],
             ),
+            TextButton(
+              onPressed: () => setState(() => _isPhoneInput = !_isPhoneInput),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                _isPhoneInput ? "E-mail ile Giriş" : "Telefon ile Giriş",
+                style: TextStyle(
+                  color: brandBlue,
+                  fontSize: SizeTokens.f14,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ],
         ),
         SizedBox(height: SizeTokens.p24),
@@ -275,8 +242,11 @@ class _LoginViewState extends State<LoginView> {
           text: "Giriş Yap",
           isLoading: viewModel.isLoading,
           onPressed: () async {
+            final identifier = !_isPhoneInput
+                ? _emailController.text
+                : '+90${_phoneLoginController.text}';
             await viewModel.login(
-              _emailController.text,
+              identifier,
               _passwordController.text,
             );
             if (viewModel.user != null && mounted) {
@@ -337,6 +307,7 @@ class _LoginViewState extends State<LoginView> {
           prefixText: '+90 ',
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10),
             TextInputFormatter.withFunction((oldValue, newValue) {
               if (newValue.text.startsWith('0')) return oldValue;
               return newValue;
@@ -605,6 +576,44 @@ class _LoginViewState extends State<LoginView> {
         message,
         style: const TextStyle(color: Colors.redAccent),
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildTabItem({
+    required String title,
+    required AuthTab tab,
+    required bool isSelected,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedTab = tab),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(SizeTokens.r24),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      // ignore: deprecated_member_use
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? AppColors.darkBlue : AppColors.gray,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              fontSize: SizeTokens.f13,
+            ),
+          ),
+        ),
       ),
     );
   }

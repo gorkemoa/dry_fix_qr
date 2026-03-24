@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../app/app_theme.dart';
 import '../../../core/responsive/size_tokens.dart';
 
@@ -15,6 +16,7 @@ class AddressFormField extends StatelessWidget {
   final bool obscureText;
   final Widget? prefix;
   final Widget? suffix;
+  final List<TextInputFormatter>? inputFormatters;
 
   const AddressFormField({
     super.key,
@@ -30,6 +32,7 @@ class AddressFormField extends StatelessWidget {
     this.obscureText = false,
     this.prefix,
     this.suffix,
+    this.inputFormatters,
   });
 
   @override
@@ -59,6 +62,7 @@ class AddressFormField extends StatelessWidget {
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           textInputAction: textInputAction,
           textCapitalization: textCapitalization,
           validator: validator,

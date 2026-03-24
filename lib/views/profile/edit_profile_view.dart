@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../viewmodels/profile_view_model.dart';
@@ -194,6 +195,14 @@ class _EditProfileViewState extends State<EditProfileView> {
                       label: "Telefon",
                       hint: "(___) ___ __ __",
                       keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          if (newValue.text.startsWith('0')) return oldValue;
+                          return newValue;
+                        }),
+                      ],
                       prefix: Container(
                         width: 60,
                         alignment: Alignment.center,

@@ -9,7 +9,7 @@ import '../../core/responsive/size_tokens.dart';
 import '../../core/widgets/dp_symbol.dart';
 import '../transactions/transactions_view.dart';
 import 'edit_profile_view.dart';
-import 'update_password_view.dart';
+import 'account_settings_view.dart';
 import 'addresses_view.dart';
 import 'billing_addresses_view.dart';
 import 'support_list_view.dart';
@@ -233,12 +233,12 @@ class _ProfileViewState extends State<ProfileView> {
                       },
                     ),
                     _buildMenuItem(
-                      icon: Icons.lock_outline_rounded,
-                      title: "Şifre İşlemleri",
+                      icon: Icons.settings_outlined,
+                      title: "Hesap Ayarları",
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => const UpdatePasswordView(),
+                            builder: (_) => const AccountSettingsView(),
                           ),
                         );
                       },
