@@ -47,6 +47,8 @@
 	<string>QR kodun nerede okutulduğunu ve uygulamanın hangi bölgelerde kullanıldığını takip edebilmek için konum erişimine ihtiyaç duyulmaktadır.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Galeriden QR kod seçebilmeniz için galeri erişimine ihtiyaç duyulmaktadır.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Size daha iyi reklam deneyimi sunabilmek için verilerinizi kullanmamıza izin verin.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

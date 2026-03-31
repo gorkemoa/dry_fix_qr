@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../app/app_theme.dart';
@@ -18,7 +19,20 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // App Tracking Transparency
+      try {
+        final status =
+            await AppTrackingTransparency.trackingAuthorizationStatus;
+        if (status == TrackingStatus.notDetermined) {
+          // Bir miktar gecikme iOS 15+ için önerilir (Splash ekranı oturana kadar)
+          await Future.delayed(const Duration(milliseconds: 1000));
+          await AppTrackingTransparency.requestTrackingAuthorization();
+        }
+      } catch (e) {
+        debugPrint("App Tracking Transparency error: $e");
+      }
+
       final viewModel = context.read<SplashViewModel>();
       viewModel.init().then((_) {
         viewModel.controller?.addListener(() {

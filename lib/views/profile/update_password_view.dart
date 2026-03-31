@@ -140,6 +140,7 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
                           await viewModel.updatePassword(request);
 
                           if (viewModel.isSuccess && mounted) {
+                            // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text(
@@ -148,6 +149,7 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
                                 backgroundColor: AppColors.darkBlue,
                               ),
                             );
+                            // ignore: use_build_context_synchronously
                             Navigator.of(context).pop();
                           }
                         }
