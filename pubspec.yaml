@@ -56,6 +56,7 @@ dependencies:
   flutter_pdfview: ^1.4.4
   path_provider: ^2.1.4
   app_tracking_transparency: ^2.0.6+1
+  confetti: ^0.8.0
 
 dev_dependencies:
   flutter_test:
@@ -105,6 +106,7 @@ flutter:
     - assets/KVKK Açık Rıza Metni.pdf
     - assets/Üyelik _ Kullanım Sözleşmesi.pdf
     - assets/sifremiunuttum.png
+    - assets/hosgeldinbonus.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
