@@ -6,6 +6,7 @@ class User {
   final int tokenBalance;
   final bool isActive;
   final String? birthDate;
+  final int welcomeBonusClaimed;
 
   User({
     required this.id,
@@ -15,6 +16,7 @@ class User {
     required this.tokenBalance,
     required this.isActive,
     this.birthDate,
+    this.welcomeBonusClaimed = 0,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class User {
       tokenBalance: json['token_balance'] as int? ?? 0,
       isActive: json['is_active'] as bool? ?? false,
       birthDate: json['birth_date'] as String?,
+      welcomeBonusClaimed: json['welcome_bonus_claimed'] as int? ?? 0,
     );
   }
 
@@ -38,6 +41,7 @@ class User {
       'token_balance': tokenBalance,
       'is_active': isActive,
       'birth_date': birthDate,
+      'welcome_bonus_claimed': welcomeBonusClaimed,
     };
   }
 }

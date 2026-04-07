@@ -35,6 +35,10 @@ import 'viewmodels/support_view_model.dart';
 import 'services/support_service.dart';
 import 'services/banner_service.dart';
 import 'viewmodels/banner_view_model.dart';
+import 'viewmodels/forgot_password_view_model.dart';
+import 'viewmodels/reset_password_view_model.dart';
+import 'services/welcome_bonus_service.dart';
+import 'viewmodels/welcome_bonus_view_model.dart';
 import 'package:upgrader/upgrader.dart';
 import 'views/login/login_view.dart';
 import 'views/home/home_view.dart';
@@ -164,6 +168,7 @@ class _MyAppState extends State<MyApp> {
     final mobileLogService = MobileLogService(widget.apiClient);
     final supportService = SupportService(widget.apiClient);
     final bannerService = BannerService(widget.apiClient);
+    final welcomeBonusService = WelcomeBonusService(widget.apiClient);
 
     return MultiProvider(
       providers: [
@@ -198,6 +203,15 @@ class _MyAppState extends State<MyApp> {
           create: (_) => BannerViewModel(bannerService, productService),
         ),
         ChangeNotifierProvider(create: (_) => SplashViewModel()),
+        ChangeNotifierProvider(
+          create: (_) => ForgotPasswordViewModel(widget.authService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ResetPasswordViewModel(widget.authService),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => WelcomeBonusViewModel(welcomeBonusService),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

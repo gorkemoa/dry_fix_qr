@@ -4,6 +4,7 @@ import '../core/network/api_exception.dart';
 import '../core/storage/storage_manager.dart';
 import '../app/api_constants.dart';
 import '../models/user_model.dart';
+import '../models/forgot_password_model.dart';
 
 class AuthService {
   final ApiClient _apiClient;
@@ -100,6 +101,44 @@ class AuthService {
         data: {'password': password},
       );
       return Success(true);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<ForgotPasswordResponse>> forgotPassword({
+    String? email,
+    String? phone,
+  }) async {
+    try {
+      final Map<String, dynamic> body = {};
+      if (email != null) body['email'] = email;
+      if (phone != null) body['phone'] = phone;
+      final response = await _apiClient.post(
+        ApiConstants.forgotPassword,
+        data: body,
+      );
+      final result = ForgotPasswordResponse.fromJson(response);
+      return Success(result);
+    } on ApiException catch (e) {
+      return Failure(e.message);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+  Future<ApiResult<ResetPasswordResponse>> resetPassword(
+    ResetPasswordRequest request,
+  ) async {
+    try {
+      final response = await _apiClient.post(
+        ApiConstants.resetPassword,
+        data: request.toJson(),
+      );
+      final result = ResetPasswordResponse.fromJson(response);
+      return Success(result);
     } on ApiException catch (e) {
       return Failure(e.message);
     } catch (e) {

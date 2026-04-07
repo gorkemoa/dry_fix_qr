@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../common/pdf_viewer_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import '../forgot_password/forgot_password_view.dart';
 
 enum AuthTab { login, register }
 
@@ -235,6 +236,31 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
           ],
+        ),
+        SizedBox(height: SizeTokens.p12),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const ForgotPasswordView(),
+              ),
+            ),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              'Şifremi Unuttum?',
+              style: TextStyle(
+                color: brandBlue,
+                fontSize: SizeTokens.f14,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
         ),
         SizedBox(height: SizeTokens.p24),
         _buildActionButton(

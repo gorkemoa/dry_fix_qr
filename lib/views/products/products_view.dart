@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/app_theme.dart';
 import '../../viewmodels/product_view_model.dart';
-import '../../viewmodels/home_view_model.dart';import '../../core/responsive/size_config.dart';
+import '../../viewmodels/home_view_model.dart';
+import '../../viewmodels/welcome_bonus_view_model.dart';
+import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
 import '../../core/widgets/dp_symbol.dart';
 import 'widgets/product_item.dart';
+import 'widgets/welcome_bonus_dialog.dart';
 import 'product_detail_view.dart';
 import '../cart/cart_view.dart';
 
@@ -24,10 +27,27 @@ class _ProductsViewState extends State<ProductsView> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<ProductViewModel>().fetchProducts();
-      context.read<HomeViewModel>().init();
+      final homeVM = context.read<HomeViewModel>();
+      await homeVM.init();
+      if (!mounted) return;
+      final user = homeVM.user;
+      if (user != null && user.welcomeBonusClaimed == 0) {
+        _showWelcomeBonusDialog();
+      }
     });
+  }
+
+  void _showWelcomeBonusDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => ChangeNotifierProvider.value(
+        value: context.read<WelcomeBonusViewModel>(),
+        child: const WelcomeBonusDialog(),
+      ),
+    );
   }
 
   @override
