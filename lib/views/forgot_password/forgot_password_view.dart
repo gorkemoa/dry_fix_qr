@@ -230,7 +230,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
               top: MediaQuery.of(context).padding.top,
               child: IgnorePointer(
                 child: SizedBox(
-                  height: getProportionateScreenHeight(220),
+                  height: getProportionateScreenHeight(210),
                   width: SizeConfig.screenWidth,
                   child: Image.asset(
                     'assets/sifremiunuttum.png',
