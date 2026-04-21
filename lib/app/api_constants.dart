@@ -35,4 +35,8 @@ class ApiConstants {
   static String bannerClick(int id) => '$banners/$id/click';
 
   static const String welcomeBonusClaim = '$baseUrl/api/v1/welcome-bonus/claim';
+
+  static const String submitGameScore = '$baseUrl/api/v1/game/score';
+  static const String finishMemoryMatch =
+      '$baseUrl/api/v1/games/memory-match/finish';
 }

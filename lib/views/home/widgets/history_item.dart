@@ -20,6 +20,8 @@ class _HistoryItemState extends State<HistoryItem> {
   @override
   Widget build(BuildContext context) {
     bool isCredit = widget.item.direction == 'credit';
+    final iconColor = _getReasonColor(widget.item.reason);
+    final iconBackgroundColor = iconColor.withValues(alpha: 0.15);
 
     return Container(
       margin: EdgeInsets.only(bottom: SizeTokens.p12),
@@ -58,20 +60,12 @@ class _HistoryItemState extends State<HistoryItem> {
               Container(
                 padding: EdgeInsets.all(SizeTokens.p10),
                 decoration: BoxDecoration(
-                  color: widget.item.reason == 'purchase'
-                      // ignore: deprecated_member_use
-                      ? const Color(0xFFFE8B6D).withOpacity(0.15)
-                      // ignore: deprecated_member_use
-                      : const Color(0xFF6DB6FE).withOpacity(0.15),
+                  color: iconBackgroundColor,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  widget.item.reason == 'purchase'
-                      ? Icons.shopping_bag_rounded
-                      : Icons.qr_code_2_rounded,
-                  color: widget.item.reason == 'purchase'
-                      ? const Color(0xFFFE8B6D)
-                      : const Color(0xFF6DB6FE),
+                  _getReasonIcon(widget.item.reason),
+                  color: iconColor,
                   size: SizeTokens.p24,
                 ),
               ),
@@ -81,11 +75,7 @@ class _HistoryItemState extends State<HistoryItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.item.note.toLowerCase().contains(
-                            'qr okuma kazancı',
-                          )
-                          ? 'QR Tarama'
-                          : widget.item.note,
+                      _getTitleText(widget.item),
                       style: TextStyle(
                         fontSize: SizeTokens.f16,
                         fontWeight: FontWeight.bold,
@@ -165,7 +155,7 @@ class _HistoryItemState extends State<HistoryItem> {
                       "#${widget.item.orderId}",
                     ),
                   ],
-                  if (widget.item.qr != null) ...[
+                  if (_shouldShowQrDetails(widget.item)) ...[
                     SizedBox(height: SizeTokens.p16),
                     Container(
                       padding: EdgeInsets.all(SizeTokens.p12),
@@ -280,11 +270,62 @@ class _HistoryItemState extends State<HistoryItem> {
     switch (reason) {
       case 'qr_scan':
         return 'QR Okuma';
+      case 'memory_match':
+        return 'Memory Match';
+      case 'welcome_bonus':
+        return 'Hoş Geldin Bonusu';
       case 'purchase':
         return 'Kazandıklarım';
       default:
         if (reason.isEmpty) return 'Belirtilmedi';
         return reason[0].toUpperCase() + reason.substring(1);
     }
+  }
+
+  String _getTitleText(model.HistoryItem item) {
+    switch (item.reason) {
+      case 'qr_scan':
+        return 'QR Tarama';
+      case 'memory_match':
+        return 'Memory Match';
+      case 'welcome_bonus':
+        return 'Hoş Geldin Bonusu';
+      default:
+        return item.note;
+    }
+  }
+
+  IconData _getReasonIcon(String reason) {
+    switch (reason) {
+      case 'purchase':
+        return Icons.shopping_bag_rounded;
+      case 'memory_match':
+        return Icons.extension_rounded;
+      case 'welcome_bonus':
+        return Icons.card_giftcard_rounded;
+      case 'qr_scan':
+        return Icons.qr_code_2_rounded;
+      default:
+        return Icons.receipt_long_rounded;
+    }
+  }
+
+  Color _getReasonColor(String reason) {
+    switch (reason) {
+      case 'purchase':
+        return const Color(0xFFFE8B6D);
+      case 'memory_match':
+        return const Color(0xFF8E24AA);
+      case 'welcome_bonus':
+        return const Color(0xFFFFB300);
+      case 'qr_scan':
+        return const Color(0xFF6DB6FE);
+      default:
+        return AppColors.blue;
+    }
+  }
+
+  bool _shouldShowQrDetails(model.HistoryItem item) {
+    return item.reason == 'qr_scan' && item.qr != null;
   }
 }

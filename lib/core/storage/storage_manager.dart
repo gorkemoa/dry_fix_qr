@@ -48,4 +48,15 @@ class StorageManager {
   static Future<void> setOnboardingShown() async {
     await _prefs.setBool(_onboardingKey, true);
   }
+
+  // Game specific
+  static const String _lastGameDateKey = 'last_game_date';
+
+  static Future<void> saveLastGameDate(String isoDate) async {
+    await setString(_lastGameDateKey, isoDate);
+  }
+
+  static String? getLastGameDate() {
+    return getString(_lastGameDateKey);
+  }
 }

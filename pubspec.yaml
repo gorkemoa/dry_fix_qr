@@ -107,6 +107,8 @@ flutter:
     - assets/Üyelik _ Kullanım Sözleşmesi.pdf
     - assets/sifremiunuttum.png
     - assets/hosgeldinbonus.png
+    - assets/cards.svg
+    - assets/oyunkutusu.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

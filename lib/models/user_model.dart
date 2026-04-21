@@ -7,6 +7,7 @@ class User {
   final bool isActive;
   final String? birthDate;
   final int welcomeBonusClaimed;
+  final UserGames? games;
 
   User({
     required this.id,
@@ -17,6 +18,7 @@ class User {
     required this.isActive,
     this.birthDate,
     this.welcomeBonusClaimed = 0,
+    this.games,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,33 @@ class User {
       isActive: json['is_active'] as bool? ?? false,
       birthDate: json['birth_date'] as String?,
       welcomeBonusClaimed: json['welcome_bonus_claimed'] as int? ?? 0,
+      games: json['games'] is Map<String, dynamic>
+          ? UserGames.fromJson(json['games'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  User copyWith({
+    int? id,
+    String? name,
+    String? email,
+    String? phone,
+    int? tokenBalance,
+    bool? isActive,
+    String? birthDate,
+    int? welcomeBonusClaimed,
+    UserGames? games,
+  }) {
+    return User(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      tokenBalance: tokenBalance ?? this.tokenBalance,
+      isActive: isActive ?? this.isActive,
+      birthDate: birthDate ?? this.birthDate,
+      welcomeBonusClaimed: welcomeBonusClaimed ?? this.welcomeBonusClaimed,
+      games: games ?? this.games,
     );
   }
 
@@ -42,6 +71,73 @@ class User {
       'is_active': isActive,
       'birth_date': birthDate,
       'welcome_bonus_claimed': welcomeBonusClaimed,
+      'games': games?.toJson(),
+    };
+  }
+}
+
+class UserGames {
+  final UserGameInfo? memoryMatch;
+
+  const UserGames({this.memoryMatch});
+
+  factory UserGames.fromJson(Map<String, dynamic> json) {
+    return UserGames(
+      memoryMatch: json['memory_match'] is Map<String, dynamic>
+          ? UserGameInfo.fromJson(json['memory_match'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  UserGames copyWith({UserGameInfo? memoryMatch}) {
+    return UserGames(memoryMatch: memoryMatch ?? this.memoryMatch);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'memory_match': memoryMatch?.toJson()};
+  }
+}
+
+class UserGameInfo {
+  final String key;
+  final String name;
+  final int rewardAmount;
+  final int cooldownDays;
+  final String? lastPlayedAt;
+  final String? nextPlayableAt;
+  final bool isPlayable;
+
+  const UserGameInfo({
+    required this.key,
+    required this.name,
+    required this.rewardAmount,
+    required this.cooldownDays,
+    required this.lastPlayedAt,
+    required this.nextPlayableAt,
+    required this.isPlayable,
+  });
+
+  factory UserGameInfo.fromJson(Map<String, dynamic> json) {
+    return UserGameInfo(
+      key: json['key'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      rewardAmount: json['reward_amount'] as int? ?? 0,
+      cooldownDays: json['cooldown_days'] as int? ?? 0,
+      lastPlayedAt: json['last_played_at'] as String?,
+      nextPlayableAt: json['next_playable_at'] as String?,
+      isPlayable: json['is_playable'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'key': key,
+      'name': name,
+      'reward_amount': rewardAmount,
+      'cooldown_days': cooldownDays,
+      'last_played_at': lastPlayedAt,
+      'next_playable_at': nextPlayableAt,
+      'is_playable': isPlayable,
     };
   }
 }

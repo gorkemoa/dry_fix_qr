@@ -41,4 +41,16 @@ class HomeViewModel extends ChangeNotifier {
   void refresh() {
     init();
   }
+
+  void syncGameStatus({required int balance, required UserGameInfo game}) {
+    if (_user == null) {
+      return;
+    }
+
+    _user = _user!.copyWith(
+      tokenBalance: balance,
+      games: (_user!.games ?? const UserGames()).copyWith(memoryMatch: game),
+    );
+    notifyListeners();
+  }
 }

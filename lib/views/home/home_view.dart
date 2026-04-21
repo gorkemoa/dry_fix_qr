@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/home_view_model.dart';
 import '../../viewmodels/history_view_model.dart';
+import '../../viewmodels/game_view_model.dart';
 import '../transactions/transactions_view.dart';
 import '../profile/profile_view.dart';
 import '../qr_scanner/qr_scanner_view.dart';
@@ -21,6 +22,7 @@ import '../cart/cart_view.dart';
 import '../notifications/notifications_view.dart';
 import '../../core/storage/storage_manager.dart';
 import 'widgets/onboarding_dialog.dart';
+import 'memory_game_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -37,6 +39,7 @@ class _HomeViewState extends State<HomeView> {
       context.read<HomeViewModel>().init();
       context.read<HistoryViewModel>().fetchHistory();
       context.read<BannerViewModel>().init();
+      context.read<GameViewModel>().init();
       _checkOnboarding();
     });
   }
@@ -59,6 +62,7 @@ class _HomeViewState extends State<HomeView> {
     final historyViewModel = context.watch<HistoryViewModel>();
     final productViewModel = context.watch<ProductViewModel>();
     final bannerViewModel = context.watch<BannerViewModel>();
+    final gameViewModel = context.watch<GameViewModel>();
 
     return Scaffold(
       backgroundColor: AppColors.blue,
@@ -70,6 +74,7 @@ class _HomeViewState extends State<HomeView> {
             await Future.wait([
               context.read<HomeViewModel>().init(),
               context.read<HistoryViewModel>().fetchHistory(),
+              context.read<GameViewModel>().init(),
               context.read<BannerViewModel>().refresh(),
             ]);
           },
@@ -87,6 +92,15 @@ class _HomeViewState extends State<HomeView> {
                         userName: viewModel.user?.name ?? "Kullanıcı",
                         tokenBalance: viewModel.user?.tokenBalance ?? 0,
                         cartItemCount: productViewModel.cartCount,
+                        isGamePlayable: gameViewModel.isPlayable,
+                        nextGamePlayableAt: gameViewModel.nextPlayableAt,
+                        onGameTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const MemoryGameView(),
+                            ),
+                          );
+                        },
                         onCartTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const CartView()),
@@ -184,25 +198,24 @@ class _HomeViewState extends State<HomeView> {
                             ),
 
                             // Banner Slider Section
-                            if (bannerViewModel.banners.isNotEmpty) ...
-                              [
-                                BannerSlider(
-                                  banners: bannerViewModel.banners,
-                                  onBannerTap: (banner) async {
-                                    final product = await context
-                                        .read<BannerViewModel>()
-                                        .onBannerTapped(banner);
-                                    if (product != null && context.mounted) {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              ProductDetailView(product: product),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
+                            if (bannerViewModel.banners.isNotEmpty) ...[
+                              BannerSlider(
+                                banners: bannerViewModel.banners,
+                                onBannerTap: (banner) async {
+                                  final product = await context
+                                      .read<BannerViewModel>()
+                                      .onBannerTapped(banner);
+                                  if (product != null && context.mounted) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            ProductDetailView(product: product),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
 
                             // History Section Header
                             Padding(
@@ -245,7 +258,12 @@ class _HomeViewState extends State<HomeView> {
 
                             // History List
                             Padding(
-                              padding: EdgeInsets.fromLTRB(SizeTokens.p24, SizeTokens.p10, SizeTokens.p24, SizeTokens.p10),
+                              padding: EdgeInsets.fromLTRB(
+                                SizeTokens.p24,
+                                SizeTokens.p10,
+                                SizeTokens.p24,
+                                SizeTokens.p10,
+                              ),
                               child: historyViewModel.isLoading
                                   ? const Center(
                                       child: CircularProgressIndicator(
