@@ -35,7 +35,7 @@ class _CardTemplate {
 }
 
 class GameViewModel extends ChangeNotifier {
-  static const int _totalSeconds = 10;
+  static const int _totalSeconds = 100;
 
   static const List<_CardTemplate> _cardTemplates = [
     _CardTemplate(Icons.format_paint_rounded, Color(0xFFE53935)),

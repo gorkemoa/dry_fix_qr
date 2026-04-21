@@ -7,7 +7,9 @@ import '../../viewmodels/home_view_model.dart';
 import '../../viewmodels/game_view_model.dart';
 import '../../core/responsive/size_config.dart';
 import '../../core/responsive/size_tokens.dart';
+import '../../core/utils/date_utils.dart';
 import '../../app/app_theme.dart';
+import 'widgets/memory_game_result_overlay.dart';
 
 class MemoryGameView extends StatefulWidget {
   const MemoryGameView({super.key});
@@ -360,12 +362,10 @@ class _MemoryGameViewState extends State<MemoryGameView>
                   numberOfParticles: 20,
                   gravity: 0.08,
                   colors: const [
-                    Color(0xFFFFB300),
-                    Color(0xFF43A047),
-                    Color(0xFF0094BF),
-                    Color(0xFFE91E63),
-                    Color(0xFFFFFFFF),
-                    Color(0xFFE53935),
+                    AppColors.darkBlue,
+                    AppColors.blue,
+                    AppColors.titleLight,
+                    Colors.white,
                   ],
                 ),
               ),
@@ -704,251 +704,240 @@ class _MemoryGameViewState extends State<MemoryGameView>
     );
   }
 
-  Widget _buildSuccessOverlay(GameViewModel vm) {
+  String? _getNextPlayableText(GameViewModel vm) {
+    final nextPlayableAt = vm.nextPlayableAt;
+    if (nextPlayableAt == null) {
+      return null;
+    }
+
+    return DateFormatter.toTurkish(nextPlayableAt.toIso8601String());
+  }
+
+  Widget _buildNextPlayableInfo(
+    GameViewModel vm, {
+    required Color accentColor,
+  }) {
+    final nextPlayableText = _getNextPlayableText(vm);
+
     return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(SizeTokens.p12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            // ignore: deprecated_member_use
-            const Color(0xFF001A3D).withOpacity(0.92),
-            // ignore: deprecated_member_use
-            const Color(0xFF003366).withOpacity(0.96),
-          ],
-        ),
+        color: accentColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(SizeTokens.r12),
+        border: Border.all(color: accentColor.withValues(alpha: 0.22)),
       ),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: SizeTokens.p24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ── Mascot floating above the card ──
-              Image.asset(
-                'assets/Adsız tasarım (10).png',
-                height: SizeTokens.p200,
-                fit: BoxFit.contain,
-              ),
-              // ── Card ──
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0A2A5E), Color(0xFF0D2040)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: SizeTokens.p32,
+            height: SizeTokens.p32,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.schedule_rounded,
+              color: accentColor,
+              size: SizeTokens.p16,
+            ),
+          ),
+          SizedBox(width: SizeTokens.p10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bir sonraki oyun hakkın',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: SizeTokens.f12,
+                    fontWeight: FontWeight.bold,
                   ),
-                  borderRadius: BorderRadius.circular(SizeTokens.r24),
-                  border: Border.all(color: const Color(0xFFFFB300), width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: const Color(0xFFFFB300).withOpacity(0.3),
-                      blurRadius: 24,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
                 ),
-                padding: EdgeInsets.fromLTRB(
-                  SizeTokens.p24,
-                  SizeTokens.p24,
-                  SizeTokens.p24,
-                  SizeTokens.p32,
+                SizedBox(height: SizeTokens.p2),
+                Text(
+                  nextPlayableText ??
+                      'Oyun sonucu kaydediliyor, süre hesaplanıyor...',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.78),
+                    fontSize: SizeTokens.f11,
+                    fontWeight: FontWeight.w500,
+                    height: 1.35,
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    // Stars row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        5,
-                        (i) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: Icon(
-                            Icons.star_rounded,
-                            color: const Color(0xFFFFB300),
-                            size: SizeTokens.p20,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: SizeTokens.p12),
-                    Text(
-                      'TEBRİKLER!',
-                      style: TextStyle(
-                        color: const Color(0xFFFFB300),
-                        fontSize: SizeTokens.f24,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2.5,
-                      ),
-                    ),
-                    SizedBox(height: SizeTokens.p8),
-                    Container(
-                      height: 2,
-                      width: 60,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            Color(0xFFFFB300),
-                            Colors.transparent,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
-                    SizedBox(height: SizeTokens.p12),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: SizeTokens.p20,
-                        vertical: SizeTokens.p10,
-                      ),
-                      decoration: BoxDecoration(
-                        // ignore: deprecated_member_use
-                        color: const Color(0xFFFFB300).withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(SizeTokens.r12),
-                        border: Border.all(
-                          // ignore: deprecated_member_use
-                          color: const Color(0xFFFFB300).withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.monetization_on_rounded,
-                            color: Color(0xFFFFB300),
-                            size: 22,
-                          ),
-                          SizedBox(width: SizeTokens.p8),
-                          Text(
-                            '${vm.displayEarnedAmount} DryPara Kazandınız!',
-                            style: TextStyle(
-                              color: const Color(0xFFFFB300),
-                              fontSize: SizeTokens.f14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: SizeTokens.p24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFB300),
-                          foregroundColor: const Color(0xFF001A3D),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(SizeTokens.r12),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: SizeTokens.p14,
-                          ),
-                          elevation: 4,
-                          shadowColor: const Color(
-                            0xFFFFB300,
-                          ).withValues(alpha: 0.5),
-                        ),
-                        onPressed: _closeView,
-                        child: Text(
-                          'Ana Sayfaya Dön',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: SizeTokens.f16,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultPrimaryButton({
+    required String label,
+    required VoidCallback onPressed,
+    required Color backgroundColor,
+    required Color foregroundColor,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          foregroundColor: foregroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(SizeTokens.r16),
+          ),
+          padding: EdgeInsets.symmetric(vertical: SizeTokens.p12),
+          elevation: 4,
+          shadowColor: backgroundColor.withValues(alpha: 0.35),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: SizeTokens.f14,
+            letterSpacing: 0.2,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFailedOverlay(GameViewModel vm) {
-    return Container(
-      // ignore: deprecated_member_use
-      color: Colors.black.withOpacity(0.80),
-      child: Center(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: SizeTokens.p32),
-          padding: EdgeInsets.all(SizeTokens.p32),
-          decoration: BoxDecoration(
-            color: AppColors.darkBlue,
-            borderRadius: BorderRadius.circular(SizeTokens.r24),
-            border: Border.all(color: const Color(0xFFE53935), width: 2),
-            boxShadow: [
-              BoxShadow(
-                // ignore: deprecated_member_use
-                color: const Color(0xFFE53935).withOpacity(0.25),
-                blurRadius: 20,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.sentiment_dissatisfied_rounded,
-                color: Color(0xFFE53935),
-                size: 64,
-              ),
-              SizedBox(height: SizeTokens.p16),
-              Text(
-                'Hepsini Bulamadın!',
+  Widget _buildSuccessOverlay(GameViewModel vm) {
+    const accentColor = AppColors.blue;
+    const highlightColor = AppColors.titleLight;
+
+    return MemoryGameResultOverlay(
+      overlayGradientColors: [
+        const Color(0xFF001A3D).withValues(alpha: 0.92),
+        const Color(0xFF003366).withValues(alpha: 0.96),
+      ],
+      mascotAsset: 'assets/Adsız tasarım (10).png',
+      cardGradientColors: const [Color(0xFF0A2A5E), Color(0xFF08172F)],
+      borderColor: accentColor,
+      shadowColor: accentColor.withValues(alpha: 0.2),
+      statusIcon: Icons.workspace_premium_rounded,
+      statusColor: accentColor,
+      title: 'Tebrikler!',
+      titleColor: highlightColor,
+      titleLetterSpacing: 1.2,
+      showTitleDivider: true,
+      dividerColor: accentColor,
+      description: Text(
+        'Tüm kartları eşleştirdin ve ödülünü kazandın.',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.80),
+          fontSize: SizeTokens.f12,
+          height: 1.4,
+        ),
+      ),
+      infoCard: MemoryGameResultInfoCard(
+        accentColor: highlightColor,
+        child: Row(
+          children: [
+            Icon(
+              Icons.monetization_on_rounded,
+              color: highlightColor,
+              size: SizeTokens.p20,
+            ),
+            SizedBox(width: SizeTokens.p8),
+            Expanded(
+              child: MemoryGameDpInlineText(
+                amount: vm.displayEarnedAmount,
+                suffix: ' kazandınız!',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: SizeTokens.f24,
+                  color: highlightColor,
+                  fontSize: SizeTokens.f12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: SizeTokens.p8),
-              Text(
-                'Kartları tamamlayarak\n${vm.rewardAmount} DryPara kazanabilirdin!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  // ignore: deprecated_member_use
-                  color: Colors.white.withOpacity(0.7),
-                  fontSize: SizeTokens.f14,
-                  height: 1.5,
-                ),
-              ),
-              SizedBox(height: SizeTokens.p24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0094BF),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(SizeTokens.r12),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: SizeTokens.p14),
-                    elevation: 0,
-                  ),
-                  onPressed: _closeView,
-                  child: Text(
-                    'Ana Sayfaya Dön',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: SizeTokens.f16,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+      bottomChildren: [
+        SizedBox(height: SizeTokens.p12),
+        _buildNextPlayableInfo(vm, accentColor: accentColor),
+        SizedBox(height: SizeTokens.p16),
+        _buildResultPrimaryButton(
+          label: 'Ana Sayfaya Dön',
+          onPressed: _closeView,
+          backgroundColor: highlightColor,
+          foregroundColor: AppColors.darkBlue,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFailedOverlay(GameViewModel vm) {
+    const accentColor = AppColors.blue;
+    const statusColor = Color(0xFFFF7A6B);
+
+    return MemoryGameResultOverlay(
+      overlayGradientColors: [
+        AppColors.darkBlue.withValues(alpha: 0.92),
+        const Color(0xFF062C4F).withValues(alpha: 0.96),
+      ],
+      mascotAsset: 'assets/Adsız tasarım.png',
+      cardGradientColors: const [Color(0xFF082038), Color(0xFF0B2C4B)],
+      borderColor: accentColor,
+      shadowColor: AppColors.darkBlue.withValues(alpha: 0.22),
+      statusIcon: Icons.sentiment_dissatisfied_rounded,
+      statusColor: statusColor,
+      title: 'Bu Kez Olmadı',
+      titleColor: Colors.white,
+      description: MemoryGameDpInlineText(
+        prefix: 'Kartların hepsini tamamlayamadın ama bir sonraki oyunda ',
+        amount: vm.rewardAmount,
+        suffix: ' kazanabilirsin.',
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.78),
+          fontSize: SizeTokens.f12,
+          height: 1.45,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      infoCard: MemoryGameResultInfoCard(
+        accentColor: accentColor,
+        borderAlpha: 0.18,
+        child: Row(
+          children: [
+            Icon(
+              Icons.volunteer_activism_rounded,
+              color: accentColor,
+              size: SizeTokens.p20,
+            ),
+            SizedBox(width: SizeTokens.p8),
+            Expanded(
+              child: MemoryGameDpInlineText(
+                amount: vm.rewardAmount,
+                suffix: ' kazanabilirdin.',
+                style: TextStyle(
+                  color: AppColors.titleLight,
+                  fontSize: SizeTokens.f12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomChildren: [
+        SizedBox(height: SizeTokens.p12),
+        _buildNextPlayableInfo(vm, accentColor: accentColor),
+        SizedBox(height: SizeTokens.p16),
+        _buildResultPrimaryButton(
+          label: 'Ana Sayfaya Dön',
+          onPressed: _closeView,
+          backgroundColor: const Color(0xFF0094BF),
+          foregroundColor: Colors.white,
+        ),
+      ],
     );
   }
 }
